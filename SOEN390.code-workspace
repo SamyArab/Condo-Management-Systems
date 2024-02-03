@@ -1,0 +1,11 @@
+{
+  "folders": [
+	{
+		"name": "Condo-Management-Systems",
+		"path": "."
+	}
+],
+"settings": {
+	"typescript.tsdk": "node_modules/typescript/lib"
+}
+}
