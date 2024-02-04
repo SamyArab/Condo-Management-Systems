@@ -17,7 +17,6 @@ const Login = () => {
       <div className="submit-container">
         <div className="submit">Login</div>
         <div className="submit"></div>Create New Account</div>
-      </div>
     </div>
   );
 };
