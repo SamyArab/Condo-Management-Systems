@@ -4,11 +4,7 @@ const Login = () => {
   return (
     <div className="container">
       <div className="header">
-        <div className="text">Login</div>
-      </div>
-      <div className="input">
-        <img src="" alt="" />
-        <input type="text" />
+        <div className="text">CondoMAXium</div>
       </div>
       <div className="input">
         <img src="" alt="" />
@@ -19,8 +15,10 @@ const Login = () => {
         <input type="password" />
       </div>
       <div className="submit-container">
-        <div className="submit">Sign Up</div>
         <div className="submit">Login</div>
+        <div className="submit" onClick="">
+          Create New Account
+        </div>
       </div>
     </div>
   );
