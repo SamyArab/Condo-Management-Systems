@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
+import App from "./App";
 
 //removed index.css, REMEMBER to import new style from boostrap or equivalent in here
 //import './index.css'
