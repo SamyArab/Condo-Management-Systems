@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AppBar, Box, Container, Toolbar, IconButton, Typography, Menu, Tooltip, Avatar, } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
+
 interface HeaderProps { }
 
 const Header: React.FC<HeaderProps> = () => {
@@ -21,7 +22,7 @@ const Header: React.FC<HeaderProps> = () => {
     };
 
     return (
-        <AppBar position="static" sx={{ paddingY: '20px', backgroundColor: 'rgba(0, 0, 0, 0.1)' }}>
+        <AppBar position="fixed" sx={{ paddingY: '20px', backgroundColor: 'rgba(0, 0, 0, 0.1)' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
