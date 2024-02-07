@@ -60,7 +60,7 @@ const ProfilePage: React.FC = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                         <Box className="profile-box">
-                            <Avatar alt={user.name} src="/path/to/profile-pic.jpg" sx={{ width: 100, height: 100, margin: '0 auto' }} />
+                            <Avatar alt={user.name} src="" sx={{ width: 95, height: 95, margin: '0 auto' }} />
                             <Typography variant="h4" component="h1" className="profile-header" gutterBottom>
                                 {user.name}
                             </Typography>
@@ -79,7 +79,7 @@ const ProfilePage: React.FC = () => {
                                 </Typography>
                             </Box>
                             <Box className="logout-button-container">
-                                <Button variant="contained" color="error" onClick={handleLogout}>
+                                <Button className="button" variant="contained" color="error" onClick={handleLogout}>
                                     Logout
                                 </Button>
                             </Box>
@@ -94,7 +94,7 @@ const ProfilePage: React.FC = () => {
                             <div className="properties-div">
                                 {user.properties.map((property, index) => (
                                     <Typography key={index} variant="body1">
-                                        {property.name} - <span style={{ color: property.available ? 'green' : 'red' }}>{property.available ? 'Available' : 'Rented'}</span>
+                                        {property.name} - <span style={{ color: property.available ? 'rgb(24,118,209)' : 'rgb(211,47,47)' }}>{property.available ? 'Available' : 'Rented'}</span>
                                     </Typography>
                                 ))}
                             </div>
@@ -125,7 +125,7 @@ const ProfilePage: React.FC = () => {
                                             <TableRow key={index}>
                                                 <TableCell>${payment.outstandingCharges}</TableCell>
                                                 <TableCell>
-                                                    <Button variant="contained" color="primary" onClick={() => handlePay(index)}>
+                                                    <Button className="button" variant="contained" color="primary" onClick={() => handlePay(index)}>
                                                         Pay
                                                     </Button>
                                                 </TableCell>

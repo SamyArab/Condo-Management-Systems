@@ -1,6 +1,7 @@
 body {
     margin: 0; /* Réinitialise les marges */
     padding: 0; /* Réinitialise les rembourrages */
+
 }
 
 /* Outer Container */
@@ -10,11 +11,13 @@ body {
     display: flex;
     justify-content: center; /* Centre les éléments horizontalement */
     align-items: center; /* Centre les éléments verticalement */
-    margin-top: 120px;
-    margin-bottom: 20px;
+    margin-top: 105px;
+    /*margin-bottom: 10px;*/
     /*width: 100%; !* Prend toute la largeur de son conteneur parent *!*/
     /*margin: 0; !* Supprime les marges par défaut du body *!*/
     /*padding: 0; !* Supprime les rembourrages par défaut du body *!*/
+    background-image: url("./bg-image2.png");
+    background-size: 75%;
 }
 
 /* Profile Container */

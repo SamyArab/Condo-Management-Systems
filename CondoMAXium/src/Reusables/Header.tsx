@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = () => {
     };
 
     return (
-        <AppBar position="fixed" sx={{ paddingY: '20px', backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
+        <AppBar position="fixed" sx={{ paddingY: '20px', backgroundColor: 'rgba(0, 0, 0, 0.1)' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
@@ -81,7 +81,7 @@ const Header: React.FC<HeaderProps> = () => {
                     <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', marginTop: '-15px' }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="User Avatar" src="/static/images/avatar.jpg" />
+                                <Avatar alt="" src="/static/images/avatar.jpg" />
                             </IconButton>
                         </Tooltip>
                         <Typography variant="body1" sx={{ marginLeft: '8px' }}></Typography>
