@@ -81,11 +81,12 @@ const Header: React.FC<HeaderProps> = () => {
                     <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', marginTop: '-15px' }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="" src="/static/images/avatar.jpg" />
+                                <Avatar alt="X" src="/static/images/avatar.jpg" />
                             </IconButton>
                         </Tooltip>
                         <Typography variant="body1" sx={{ marginLeft: '8px' }}></Typography>
                     </Box>
+                    {/*
                     <Menu
                         sx={{ mt: '45px' }}
                         id="menu-appbar"
@@ -101,9 +102,9 @@ const Header: React.FC<HeaderProps> = () => {
                         }}
                         open={Boolean(anchorElUser)}
                         onClose={() => handleCloseMenu('user')}
-                    >
+                    > 
                         {/* You can add your custom menu items here */}
-                    </Menu>
+                    {/* </Menu> */}
                 </Toolbar>
             </Container>
         </AppBar>
