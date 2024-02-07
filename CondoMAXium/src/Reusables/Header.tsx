@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = () => {
     };
 
     return (
-        <AppBar position="fixed" sx={{ paddingY: '20px', backgroundColor: 'rgba(0, 0, 0, 0.1)' }}>
+        <AppBar position="fixed" sx={{ paddingY: '20px', backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
