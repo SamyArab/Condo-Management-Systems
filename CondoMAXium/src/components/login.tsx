@@ -1,5 +1,5 @@
 import React from "react";
-// import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 //MUI IMPORTS
 import Avatar from "@mui/material/Avatar";
@@ -44,6 +44,12 @@ export default function SignInSide() {
       email: data.get("email"),
       password: data.get("password"),
     });
+  };
+
+  let navigate = useNavigate();
+  const routeChange = () => {
+    let path = "/profile";
+    navigate(path);
   };
 
   return (
@@ -118,6 +124,7 @@ export default function SignInSide() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                onClick={routeChange}
               >
                 Sign In
               </Button>
@@ -128,7 +135,7 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="/signup" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
