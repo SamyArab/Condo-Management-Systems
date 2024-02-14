@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import supabase from "../config/supabaseClient";
 
 //MUI IMPORTS
 import Avatar from "@mui/material/Avatar";

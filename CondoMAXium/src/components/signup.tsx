@@ -1,6 +1,9 @@
 import React from "react";
 // import Link from "next/link";
 import { useNavigate } from "react-router-dom";
+import  supabase  from "../config/supabaseClient";
+import { useState } from "react";
+import { AuthChangeEvent } from "@supabase/supabase-js";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -37,8 +40,13 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
+interface SignUpResponse {
+  user?: any;
+  error?: Error;
+}
+
 export default function SignUp() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+/*  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -51,7 +59,39 @@ export default function SignUp() {
   const routeChange = () => {
     let path = "/profile";
     navigate(path);
+  }; */
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        // options: {emailRedirectTo: "http://localhost:5173/signup"}
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      console.log("User signed up successfully:", data);
+      routeChange();
+    } catch (error) {
+      console.error("Error signing up:", error);
+    }
   };
+
+  const routeChange = () => {
+    let path = "/profile";
+    handleSubmit;
+    //navigate(path);
+  };
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -107,6 +147,10 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  value={email}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setEmail(event.target.value);
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -118,6 +162,10 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  value={password}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setPassword(event.target.value);
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
