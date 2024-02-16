@@ -64,6 +64,8 @@ export default function SignUp() {
     navigate(path);
   }; */
 
+
+
   // Mark and Nicolas' code
   /*
   const [email, setEmail] = useState("");
@@ -98,8 +100,9 @@ export default function SignUp() {
   };
   */
 
+  
 // Mark's new code, seems to be working
-const SignUpForm = () => {
+const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
@@ -232,7 +235,7 @@ const SignUpForm = () => {
     </ThemeProvider>
   );
 };
-export default SignUpForm;
+export default SignUp;
 
 // const Signup = () => {
 //   return (
