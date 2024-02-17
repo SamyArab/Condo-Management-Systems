@@ -105,7 +105,9 @@ export default function SignUp() {
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+  // Ricky: Added these variables to add to the user
+  const [first_name,setFirstName] = useState('');
+  const [last_name,setLastName] = useState('');
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   
@@ -113,6 +115,13 @@ const SignUp = () => {
       const { data, error } = await supabase.auth.signUp({          
         email: email,
         password: password,
+        // Added additional info to sign up
+        options: {
+          data: {
+            first_name: first_name,
+            last_name: last_name
+          }
+        }
       });
   
       if (error) {
@@ -165,6 +174,8 @@ const SignUp = () => {
                   fullWidth
                   id="firstName"
                   label="First Name"
+                  value={first_name}
+                  onChange={(event) => setFirstName(event.target.value)}
                   autoFocus
                 />
               </Grid>
@@ -176,6 +187,8 @@ const SignUp = () => {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  value={last_name}
+                  onChange={(event) => setLastName(event.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
