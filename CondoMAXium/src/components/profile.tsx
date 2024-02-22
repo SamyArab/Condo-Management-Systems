@@ -1,7 +1,10 @@
 // ProfilePage.tsx
 
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { AuthChangeEvent } from "@supabase/supabase-js";
+import supabase from "../config/supabaseClient";
+import { useState,useEffect } from "react";
 
 import {
   Typography,
@@ -40,8 +43,11 @@ interface Payment {
   outstandingCharges: number;
 }
 
+
+const { data, error } = await supabase.from('profiles').select().eq('first_name','Nicola');
+
 const user: UserProfile = {
-  name: "John Doe",
+  name:data[0].first_name.concat(' ', data[0].last_name),
   email: "john.doe@example.com",
   sex: "Male",
   phone: "438-886-9196",
@@ -60,15 +66,16 @@ const user: UserProfile = {
 };
 
 const ProfilePage: React.FC = () => {
+  let navigate = useNavigate();
   const handlePay = (paymentIndex: number) => {
     console.log(`Processing payment for payment index ${paymentIndex}...`);
   };
 
-  let navigate = useNavigate();
   const routeChange = () => {
     let path = "/";
     navigate(path);
   };
+
 
   return (
     <Box className="outer-container">
@@ -108,7 +115,20 @@ const ProfilePage: React.FC = () => {
                   className="button"
                   variant="contained"
                   color="error"
-                  onClick={routeChange}
+                  onClick={
+                    async function signOutUser() {
+                      const { error } = await supabase.auth.signOut();
+                      if (error) {
+                        console.error('Error signing out:', error.message);
+                      } else {
+                        console.log('User signed out successfully');
+                        // Clearing local storage and session storage
+                        localStorage.clear();
+                        sessionStorage.clear();
+                      }
+                      console.log(supabase.auth.getUser());
+                    }
+                }
                 >
                   Logout
                 </Button>
@@ -172,7 +192,7 @@ const ProfilePage: React.FC = () => {
                             className="button"
                             variant="contained"
                             color="primary"
-                            onClick={() => handlePay(index)}
+                            onClick={() => {handlePay(index); console.log(supabase.auth.getUser());}}
                           >
                             Pay
                           </Button>

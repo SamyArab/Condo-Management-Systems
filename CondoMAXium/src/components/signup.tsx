@@ -124,7 +124,8 @@ const SignUp = () => {
         }
       });
   
-      if (error) {
+      if (error?.status === 429) {
+        alert('Error signing up: Email rate limit exceeded');
         throw error;
       }
   
