@@ -2,11 +2,12 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import SignInSide from '../components/login';
 import '@testing-library/jest-dom';
+import {BrowserRouter as Router} from 'react-router-dom';
 
 
 
 test('renders sign in form', () => {
-  render(<SignInSide />);
+  render( <Router><SignInSide /> </Router>); 
 
   // Check if the "Sign in" text is present
   const signInText = screen.getByText(/Sign in/);
@@ -39,7 +40,7 @@ test('renders sign in form', () => {
 });
 
 test('form submission', () => {
-  render(<SignInSide />);
+  render(<Router><SignInSide /></Router>);
 
   // Mock the console.log function
   console.log = jest.fn();

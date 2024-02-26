@@ -1,14 +1,16 @@
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SignUp from '../components/signup';
 import '@testing-library/jest-dom';
+import 'react-router-dom';
+import {BrowserRouter as Router} from 'react-router-dom';
 
 // Mock console.log for testing purposes
 console.log = jest.fn();
 
 test('renders sign up form', () => {
-  render(<SignUp />);
+  render( <Router> <SignUp /> </Router>);
 
   // Check if the "Sign up" text is present
   const signUpText = screen.getByText(/Sign up/);
@@ -32,9 +34,31 @@ test('renders sign up form', () => {
   expect(signUpButton).toBeInTheDocument();
 });
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: jest.fn(),
+}));
+
+describe('SignUp component', () => {
+  test('should navigate to "/profile" after clicking "Sign Up"', async () => {
+    // Arrange
+    const { getByText } = render(<Router><SignUp /></Router>);
+    const signUpButton = getByText('Sign Up');
+    const navigateMock = jest.fn();
+    jest.spyOn(require('react-router-dom'), 'useNavigate').mockReturnValue(navigateMock);
+
+    // Act
+    fireEvent.click(signUpButton);
+
+    // Assert
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalledWith('/profile');
+    });
+  });
+});
 
 // test('handles form submission', () => {
-//     render(<SignUp />);
+//     render(<Router> <SignUp /> </Router>);
   
 //     // Simulate form submission
 //     const form = screen.getByRole('form');
