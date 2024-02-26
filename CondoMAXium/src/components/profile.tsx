@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { AuthChangeEvent } from "@supabase/supabase-js";
+import { AuthChangeEvent, QueryResult, QueryData, QueryError  } from "@supabase/supabase-js";
 import supabase from "../config/supabaseClient";
 import { useState,useEffect } from "react";
 
@@ -27,7 +27,7 @@ import "./profileCss.css";
 
 interface UserProfile {
   phone: string;
-  name: string;
+  name: any;
   email: string;
   sex: string;
   properties: Property[];
@@ -43,11 +43,48 @@ interface Payment {
   outstandingCharges: number;
 }
 
+//const { data: { user } } = await supabase.auth.getUser()
+// const { data, error } = await supabase.from('profiles').select(`
+// id, 
+// first_name, 
+// last_name,
+// auth.users(auth.users.id)
+// `);
 
-const { data, error } = await supabase.from('profiles').select().eq('first_name','Nicola');
+// const profilesWithUsersQuery = await supabase.from('profiles').select(`
+// id, 
+// first_name, 
+// last_name,
+// auth.users(id)
+// `)
 
-const user: UserProfile = {
-  name:data[0].first_name.concat(' ', data[0].last_name),
+// type ProfilesWithUsers = QueryData<typeof profilesWithUsersQuery>
+
+// const { data, error } = await profilesWithUsersQuery
+// if (error) throw error
+// const profilesWithUsers : ProfilesWithUsers = data;
+
+// Get the current user
+
+const { data: { user } } = await supabase.auth.getUser()
+
+// Get the user's ID
+const userId = user?.id
+
+// Fetch data from your_table where the user_id matches the current user's ID
+const { data, error } = await supabase
+  .from('profiles')
+  .select('*')
+  .eq('id', userId)
+
+if (error) {
+  console.error('Error: ', error)
+} else {
+  console.log('Data: ', data)
+}
+
+const userObject: UserProfile = {
+  name:data[0]?.first_name.concat(' ', data[0]?.last_name),//profilesWithUsers?.first_name.concat(' ', data?.last_name),
   email: "john.doe@example.com",
   sex: "Male",
   phone: "438-886-9196",
@@ -84,7 +121,7 @@ const ProfilePage: React.FC = () => {
           <Grid item xs={12} sm={6}>
             <Box className="profile-box">
               <Avatar
-                alt={user.name}
+                alt={userObject.name}
                 src=""
                 sx={{ width: 95, height: 95, margin: "0 auto" }}
               />
@@ -94,20 +131,20 @@ const ProfilePage: React.FC = () => {
                 className="profile-header"
                 gutterBottom
               >
-                {user.name}
+                {userObject.name}
               </Typography>
               <Typography className="profile-details" gutterBottom>
                 <strong>My Profile</strong>
               </Typography>
               <Box className="profile-details">
                 <Typography variant="h6">
-                  <strong>Sex: {user.sex}</strong>
+                  <strong>Sex: {userObject.sex}</strong>
                 </Typography>
                 <Typography variant="h6">
-                  <strong>{user.email}</strong>
+                  <strong>{userObject.email}</strong>
                 </Typography>
                 <Typography variant="h6">
-                  <strong>{user.phone}</strong>
+                  <strong>{userObject.phone}</strong>
                 </Typography>
               </Box>
               <Box className="logout-button-container">
@@ -142,7 +179,7 @@ const ProfilePage: React.FC = () => {
                 Properties
               </Typography>
               <div className="properties-div">
-                {user.properties.map((property, index) => (
+                {userObject.properties.map((property, index) => (
                   <Typography key={index} variant="body1">
                     {property.name} -{" "}
                     <span
@@ -184,7 +221,7 @@ const ProfilePage: React.FC = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {user.payments.map((payment, index) => (
+                    {userObject.payments.map((payment, index) => (
                       <TableRow key={index}>
                         <TableCell>${payment.outstandingCharges}</TableCell>
                         <TableCell>
