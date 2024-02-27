@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import supabase from "../config/supabaseClient";
 
 //MUI IMPORTS
 import Avatar from "@mui/material/Avatar";
@@ -37,13 +39,32 @@ function Copyright(props: any) {
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  // Ricky: Added login validation with supabase (redirects to profile if valid, alert if not)
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    try{
+      const {data, error} = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+      })
+      if(error){
+        throw error;
+      }
+      console.log("User logged in succesfully:", data)
+      routeChange()
+    }
+    // Old code from before
+  //   const data = new FormData(event.currentTarget);
+  //   console.log({
+  //     email: data.get("email"),
+  //     password: data.get("password"),
+  //   });
+    catch(error:any){
+      console.error("Error logging in:",error.message)
+      alert(error)
+    }
   };
 
   let navigate = useNavigate();
@@ -103,6 +124,8 @@ export default function SignInSide() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 autoFocus
               />
               <TextField
@@ -114,6 +137,8 @@ export default function SignInSide() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
@@ -124,7 +149,7 @@ export default function SignInSide() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                onClick={routeChange}
+                // onClick={routeChange}
               >
                 Sign In
               </Button>
