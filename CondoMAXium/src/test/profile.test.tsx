@@ -1,16 +1,16 @@
-// ProfilePage.test.tsx
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ProfilePage from '../components/profile';
 import '@testing-library/jest-dom';
+import {BrowserRouter as Router} from 'react-router-dom';
 
 // Mock console.log for testing purposes
 console.log = jest.fn();
 
 
 test('renders correctly', () => {
-    render(<ProfilePage />);
+    render(<Router><ProfilePage /></Router>);
   
     // Check if the user's name is rendered
     const userName = screen.getByText(/John Doe/i);
@@ -34,7 +34,7 @@ test('renders correctly', () => {
   });
 
 test('handles logout', () => {
-  render(<ProfilePage />);
+  render(<Router><ProfilePage /></Router>);
 
   // Click the "Logout" button
   const logoutButton = screen.getByRole('button', { name: /Logout/i });
@@ -42,10 +42,10 @@ test('handles logout', () => {
 
   // Check if console.log is called with the correct message
   expect(console.log).toHaveBeenCalledWith('Logging out...');
-});
+}); 
 
 test('handles payment', () => {
-  render(<ProfilePage />);
+  render(<Router><ProfilePage /></Router>);
 
   // Click the "Pay" button
   const payButton = screen.getByRole('button', { name: /Pay/i });
