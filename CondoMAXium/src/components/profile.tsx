@@ -1,5 +1,3 @@
-// ProfilePage.tsx
-
 import React from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { AuthChangeEvent, QueryResult, QueryData, QueryError  } from "@supabase/supabase-js";
@@ -28,7 +26,7 @@ import "./profileCss.css";
 interface UserProfile {
   phone: string;
   name: any;
-  email: string;
+  email: any;
   sex: string;
   properties: Property[];
   payments: Payment[];
@@ -43,49 +41,27 @@ interface Payment {
   outstandingCharges: number;
 }
 
-//const { data: { user } } = await supabase.auth.getUser()
-// const { data, error } = await supabase.from('profiles').select(`
-// id, 
-// first_name, 
-// last_name,
-// auth.users(auth.users.id)
-// `);
+  const { data: { user } } = await supabase.auth.getUser();
 
-// const profilesWithUsersQuery = await supabase.from('profiles').select(`
-// id, 
-// first_name, 
-// last_name,
-// auth.users(id)
-// `)
+  // Get the user's ID
+  const userId = user?.id;
 
-// type ProfilesWithUsers = QueryData<typeof profilesWithUsersQuery>
+  // Fetch data from your_table where the user_id matches the current user's ID
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
 
-// const { data, error } = await profilesWithUsersQuery
-// if (error) throw error
-// const profilesWithUsers : ProfilesWithUsers = data;
+  if (error) {
+    console.error('Error: ', error)
+  } else {
+    console.log('Data: ', data)
+  }
 
-// Get the current user
-
-const { data: { user } } = await supabase.auth.getUser()
-
-// Get the user's ID
-const userId = user?.id
-
-// Fetch data from your_table where the user_id matches the current user's ID
-const { data, error } = await supabase
-  .from('profiles')
-  .select('*')
-  .eq('id', userId)
-
-if (error) {
-  console.error('Error: ', error)
-} else {
-  console.log('Data: ', data)
-}
 
 const userObject: UserProfile = {
-  name:data[0]?.first_name.concat(' ', data[0]?.last_name),//profilesWithUsers?.first_name.concat(' ', data?.last_name),
-  email: "john.doe@example.com",
+  name: data?.[0]?.first_name.concat(' ', data?.[0]?.last_name),
+  email: user?.email,
   sex: "Male",
   phone: "438-886-9196",
   properties: [
@@ -154,6 +130,7 @@ const ProfilePage: React.FC = () => {
                   color="error"
                   onClick={
                     async function signOutUser() {
+                      window.location.href = '/';
                       const { error } = await supabase.auth.signOut();
                       if (error) {
                         console.error('Error signing out:', error.message);
@@ -164,7 +141,9 @@ const ProfilePage: React.FC = () => {
                         sessionStorage.clear();
                       }
                       console.log(supabase.auth.getUser());
+                      
                     }
+                    
                 }
                 >
                   Logout
