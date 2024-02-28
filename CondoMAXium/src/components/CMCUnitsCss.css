@@ -1,0 +1,91 @@
+body {
+    margin: 0; /* Réinitialise les marges */
+    padding: 0; /* Réinitialise les rembourrages */
+
+}
+
+/* outside Container */
+.outside-container {
+    background-color: #F9F9F9;
+    /*height: 100vh; !* Prend toute la hauteur de la fenêtre *!*/
+    display: flex;
+    justify-content: center; /* Centre les éléments horizontalement */
+    align-items: center; /* Centre les éléments verticalement */
+    margin-top: 105px;
+    /*margin-bottom: 10px;*/
+    /*width: 100%; !* Prend toute la largeur de son conteneur parent *!*/
+    /*margin: 0; !* Supprime les marges par défaut du body *!*/
+    /*padding: 0; !* Supprime les rembourrages par défaut du body *!*/
+    /* background-size: 75%; */
+}
+
+/* Units Container */
+.units-container {
+    /*width: 95% !important; !* Ajustez la largeur selon vos besoins *!*/
+    max-width: 80% !important;
+    /* !* Centre le conteneur horizontalement *! */
+    margin-top: 5% !important;
+    margin-bottom: 5% !important;
+    /*margin-left: 40% !important;*/
+    padding: 1.5%; /* Ajoutez un peu de marge intérieure */
+    background-color: white;
+    color-interpolation: linearRGB;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* box-sizing: content-box !important; */
+}
+
+.search-grid {
+    margin-bottom: 0% !important; /* Adjust the margin-bottom as needed */
+}
+
+/* units Header */
+.units-header {
+    color: #333;
+    padding-top: 10%;
+    text-align: center;
+}
+
+.search-box {
+    overflow: hidden; /* Ajoutez overflow: hidden; pour cacher tout contenu dépassant le cadre du deuxième grid */
+    margin-top: 3%;
+    margin-bottom: 3%;
+    padding: 20px;
+    background-color: white;
+    color-interpolation: linearRGB;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-height: 47%;
+}
+
+/* units Container */
+.units-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-height: 1000px;
+    overflow: auto;
+}
+
+/* units Table */
+.units-table {
+    width: 100%;
+    border-radius: 12px;
+}
+
+
+/* units Table Header */
+.units-table th {
+    background-color:#ABABAB ;
+    color:white;
+}
+
+.search-textField{
+    padding: 10px;
+    width: 40%;
+    border-style: solid;
+    border-color: red;
+    /* border-color: #C1C1C1; */
+    border-radius: 10px;
+}
