@@ -5,6 +5,7 @@ import Login from './components/login';
 import Profile from './components/profile';
 import SignUp from "./components/signup";
 import Dashboard from "./components/dashboard"
+import Addproperty from "./components/addproperty"
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/profile" element={<Layout><Profile /></Layout>} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/addproperty" element={<Layout><Addproperty /></Layout>} />
                 <Route path="*" element={<div>You lost?</div>} />
             </Routes>
         </BrowserRouter>
