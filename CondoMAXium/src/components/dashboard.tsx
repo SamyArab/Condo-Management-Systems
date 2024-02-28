@@ -1,4 +1,3 @@
-import PropertyIcon from '@mui/icons-material/Category';
 import * as React from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -22,6 +21,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import AddIcon from '@mui/icons-material/Add';
+import PropertyIcon from '@mui/icons-material/Category';
+import { useNavigate } from "react-router-dom";
 
 
 function Copyright(props: any) {
@@ -92,8 +93,14 @@ const defaultTheme = createTheme();
 
 export default function Dashboard() {
     const [open, setOpen] = React.useState(true);
+    const navigate = useNavigate();
     const toggleDrawer = () => {
         setOpen(!open);
+    };
+
+    const routeChange = () => {
+        let path = "/addproperty";
+        navigate(path); // Navigate to the specified path
     };
 
     return (
@@ -174,7 +181,7 @@ export default function Dashboard() {
                         </ListItem>
                         <Divider sx={{ my: 1 }} />
                         {/* Button to add property */}
-                        <ListItem button>
+                        <ListItem button onClick={routeChange}>
                             <ListItemIcon>
                                 <AddIcon /> {/* Icon for adding */}
                             </ListItemIcon>
