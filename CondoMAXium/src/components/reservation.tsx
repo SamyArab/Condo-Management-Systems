@@ -112,6 +112,10 @@ const ReservationPage: React.FC = () => {
         navigate('/my-reservations');
     }
 
+    const handleProfileClick = () => {
+      navigate('/profile');
+  }
+
     const handleDateChange = (date: Date) => {
         setSelectedDate(date);
     };
@@ -189,7 +193,7 @@ const ReservationPage: React.FC = () => {
                                     <Typography color="secondary">No new notifications</Typography>
                                 </Box>
                             </CSSTransition>
-                            <IconButton>
+                            <IconButton onClick={handleProfileClick}>
                                 <Badge
                                     color="secondary" // This is the badge color, "secondary" is typically a theme color
                                     anchorOrigin={{
@@ -233,23 +237,7 @@ const ReservationPage: React.FC = () => {
                         </Box>
 
                         <Grid container spacing={3}>
-                            {/* Chart */}
-                            {/* Recent Deposits */}
                             <Grid item xs={12} md={4} lg={15}>
-
-                                {/*/!* Financial Status *!/*/}
-                                {/*<Typography variant="h5" gutterBottom>*/}
-                                    {/*    Financial Status*/}
-                                    {/*</Typography>*/}
-                                    {/*<Typography variant="body1" gutterBottom>*/}
-                                    {/*    Remaining Balance: $84,500*/}
-                                    {/*</Typography>*/}
-                                    {/*<Typography variant="body1" gutterBottom>*/}
-                                    {/*    Next Month's Payment: $2,347.22*/}
-                                    {/*</Typography>*/}
-                                    {/*<Typography variant="body1" gutterBottom>*/}
-                                    {/*    Will be taken on February 14th, 2023.*/}
-                                    {/*</Typography>*/}
                                     {facilities.map((facility) => (
                                         <Paper
                                             sx={{
@@ -283,10 +271,6 @@ const ReservationPage: React.FC = () => {
                                                 <p>{facility.description}</p>
                                                 <p>Capacity: {facility.capacity} people</p>
                                                 <p>Hours: {facility.hours}</p>
-                                                {/*{isDateInPast || isDateMoreThanTwoMonthsAhead ? (*/}
-                                                {/*    <div*/}
-                                                {/*        className="reserved-overlay">{isDateInPast ? 'Reserved' : 'Cannot Book At This Time'}</div>*/}
-                                                {/*) : null}*/}
                                                 <button
                                                     className="button-22"
                                                     disabled={isDateInPast || isDateMoreThanTwoMonthsAhead}
