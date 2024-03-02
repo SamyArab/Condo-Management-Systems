@@ -19,6 +19,10 @@ import Divider from "@mui/material/Divider";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import GymRoom from "./gymroom.jpg"
+import RoofTopDeck from "./rooftop_deck.jpeg"
+import SpaRoom from "./sparoom.jpg"
+
 import "./reservationCss.css";
 
 const drawerWidth = 240;
@@ -74,7 +78,7 @@ const facilities: Facility[] = [
         description: 'Beautiful rooftop deck with decorated lights...',
         capacity: 30,
         hours: '18:00 - 23:00',
-        imgLink: '/Users/deluca/Desktop/test-react/src/rooftop_deck.jpeg',
+        imgLink: RoofTopDeck,
     },
     {
         id: 2,
@@ -82,7 +86,7 @@ const facilities: Facility[] = [
         description: 'You can work out here',
         capacity: 10,
         hours: '08:00 - 21:00',
-        imgLink: '/Users/deluca/Desktop/test-react/src/gymroom.jpg',
+        imgLink: GymRoom,
     },
     {
         id: 3,
@@ -90,7 +94,7 @@ const facilities: Facility[] = [
         description: 'Sauna and stuff',
         capacity: 4,
         hours: '08:00 - 21:00',
-        imgLink: '/Users/deluca/Desktop/test-react/src/sparoom.jpg',
+        imgLink: SpaRoom,
     },
 ];
 
