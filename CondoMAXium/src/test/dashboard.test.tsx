@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import {render, fireEvent, screen, waitFor} from '@testing-library/react';
 import Dashboard from '../components/dashboard';
 import '@testing-library/jest-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { toggleDrawer } from '../components/Dashboard';
 
 // Test to ensure essential elements are rendered in the dashboard
 test('renders dashboard components', () => {
@@ -44,3 +45,25 @@ test('toggles drawer visibility', () => {
     fireEvent.click(menuButton);
     expect(screen.getByRole('button', { name: /close drawer/i })).toBeInTheDocument(); // Ensure the drawer is opened
 });
+
+    test('should navigate to "/addproperty" after clicking "Add Property"', async () => {
+        // Mock useNavigate
+        const mockNavigate = jest.fn();
+
+        jest.mock('react-router-dom', () => ({
+            ...jest.requireActual('react-router-dom'),
+            useNavigate: () => mockNavigate,
+        }));
+
+        // Render the Dashboard component
+        const { getByText } =  render(<Router><Dashboard /></Router>);
+
+        // Find the "Add Property" button and click it
+        const addButton = getByText('Add Property');
+        fireEvent.click(addButton);
+
+        // Check if useNavigate was called with the correct path
+        expect(mockNavigate).toHaveBeenCalledWith('/addproperty');
+    });
+
+

@@ -181,7 +181,9 @@ export default function Dashboard() {
                         </ListItem>
                         <Divider sx={{ my: 1 }} />
                         {/* Button to add property */}
-                        <ListItem button onClick={routeChange}>
+                        <ListItem button
+                                  aria-label="add property"
+                                  onClick={routeChange}>
                             <ListItemIcon>
                                 <AddIcon /> {/* Icon for adding */}
                             </ListItemIcon>
@@ -274,16 +276,6 @@ export default function Dashboard() {
                                     {/* Request Status */}
                                     <Typography variant="h5" gutterBottom>
                                         Request Status
-                                    </Typography>
-
-                                    {/* Display the status */}
-                                    <Typography variant="body1" gutterBottom>
-                                        Status: Pending
-                                    </Typography>
-
-                                    {/* List of requests */}
-                                    <Typography variant="h6" gutterBottom>
-                                        Requests
                                     </Typography>
                                     <ul>
                                         <li>Request 1</li>
