@@ -1,7 +1,8 @@
-// ProfilePage.tsx
-
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { AuthChangeEvent, QueryResult, QueryData, QueryError  } from "@supabase/supabase-js";
+import supabase from "../config/supabaseClient";
+import { useState,useEffect } from "react";
 
 import {
   Typography,
@@ -24,8 +25,8 @@ import "./profileCss.css";
 
 interface UserProfile {
   phone: string;
-  name: string;
-  email: string;
+  name: any;
+  email: any;
   sex: string;
   properties: Property[];
   payments: Payment[];
@@ -40,9 +41,27 @@ interface Payment {
   outstandingCharges: number;
 }
 
-const user: UserProfile = {
-  name: "John Doe",
-  email: "john.doe@example.com",
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Get the user's ID
+  const userId = user?.id;
+
+  // Fetch data from your_table where the user_id matches the current user's ID
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+
+  if (error) {
+    console.error('Error: ', error)
+  } else {
+    console.log('Data: ', data)
+  }
+
+
+const userObject: UserProfile = {
+  name: data?.[0]?.first_name.concat(' ', data?.[0]?.last_name),
+  email: user?.email,
   sex: "Male",
   phone: "438-886-9196",
   properties: [
@@ -60,15 +79,16 @@ const user: UserProfile = {
 };
 
 const ProfilePage: React.FC = () => {
+  let navigate = useNavigate();
   const handlePay = (paymentIndex: number) => {
     console.log(`Processing payment for payment index ${paymentIndex}...`);
   };
 
-  let navigate = useNavigate();
   const routeChange = () => {
     let path = "/";
     navigate(path);
   };
+
 
   return (
     <Box className="outer-container">
@@ -77,7 +97,7 @@ const ProfilePage: React.FC = () => {
           <Grid item xs={12} sm={6}>
             <Box className="profile-box">
               <Avatar
-                alt={user.name}
+                alt={userObject.name}
                 src=""
                 sx={{ width: 95, height: 95, margin: "0 auto" }}
               />
@@ -87,20 +107,20 @@ const ProfilePage: React.FC = () => {
                 className="profile-header"
                 gutterBottom
               >
-                {user.name}
+                {userObject.name}
               </Typography>
               <Typography className="profile-details" gutterBottom>
                 <strong>My Profile</strong>
               </Typography>
               <Box className="profile-details">
                 <Typography variant="h6">
-                  <strong>Sex: {user.sex}</strong>
+                  <strong>Sex: {userObject.sex}</strong>
                 </Typography>
                 <Typography variant="h6">
-                  <strong>{user.email}</strong>
+                  <strong>{userObject.email}</strong>
                 </Typography>
                 <Typography variant="h6">
-                  <strong>{user.phone}</strong>
+                  <strong>{userObject.phone}</strong>
                 </Typography>
               </Box>
               <Box className="logout-button-container">
@@ -108,7 +128,23 @@ const ProfilePage: React.FC = () => {
                   className="button"
                   variant="contained"
                   color="error"
-                  onClick={routeChange}
+                  onClick={
+                    async function signOutUser() {
+                      window.location.href = '/';
+                      const { error } = await supabase.auth.signOut();
+                      if (error) {
+                        console.error('Error signing out:', error.message);
+                      } else {
+                        console.log('User signed out successfully');
+                        // Clearing local storage and session storage
+                        localStorage.clear();
+                        sessionStorage.clear();
+                      }
+                      console.log(supabase.auth.getUser());
+                      
+                    }
+                    
+                }
                 >
                   Logout
                 </Button>
@@ -122,7 +158,7 @@ const ProfilePage: React.FC = () => {
                 Properties
               </Typography>
               <div className="properties-div">
-                {user.properties.map((property, index) => (
+                {userObject.properties.map((property, index) => (
                   <Typography key={index} variant="body1">
                     {property.name} -{" "}
                     <span
@@ -164,7 +200,7 @@ const ProfilePage: React.FC = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {user.payments.map((payment, index) => (
+                    {userObject.payments.map((payment, index) => (
                       <TableRow key={index}>
                         <TableCell>${payment.outstandingCharges}</TableCell>
                         <TableCell>
@@ -172,7 +208,7 @@ const ProfilePage: React.FC = () => {
                             className="button"
                             variant="contained"
                             color="primary"
-                            onClick={() => handlePay(index)}
+                            onClick={() => {handlePay(index); console.log(supabase.auth.getUser());}}
                           >
                             Pay
                           </Button>
