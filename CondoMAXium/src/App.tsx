@@ -8,6 +8,7 @@ import Layout from './Layout';
 import Login from './components/login';
 import Profile from './components/profile';
 import SignUp from "./components/signup";
+import CMCUnits from './components/CMCUnits';
 import Dashboard from "./components/dashboard"
 import Addproperty from "./components/addproperty"
 
@@ -44,6 +45,7 @@ function App() {
                 <Route path="/profile" element={<AuthWrapper><Layout><Profile /></Layout></AuthWrapper>} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/addproperty" element={<Layout><Addproperty /></Layout>} />
+                <Route path="/CMCUnits" element={<Layout><CMCUnits /></Layout>} />
                 <Route path="*" element={<div>You lost?</div>} />
             </Routes>
         </BrowserRouter>
