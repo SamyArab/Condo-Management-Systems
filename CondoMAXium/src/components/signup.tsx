@@ -1,6 +1,9 @@
 import React from "react";
 // import Link from "next/link";
 import { useNavigate } from "react-router-dom";
+import supabase from "../config/supabaseClient";
+import { useState } from "react";
+import { AuthChangeEvent } from "@supabase/supabase-js";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -16,29 +19,19 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-// function Copyright(props: any) {
-//   return (
-//     <Typography
-//       variant="body2"
-//       color="text.secondary"
-//       align="center"
-//       {...props}
-//     >
-//       {"Copyright © "}
-//       <Link color="inherit" href="https://mui.com/">
-//         Your Website
-//       </Link>{" "}
-//       {new Date().getFullYear()}
-//       {"."}
-//     </Typography>
-//   );
-// }
 
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
+interface SignUpResponse {
+  user?: any;
+  error?: Error;
+}
+
+  // Original Code from Samy
+  /*
 export default function SignUp() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -51,6 +44,84 @@ export default function SignUp() {
   const routeChange = () => {
     let path = "/profile";
     navigate(path);
+  }; */
+
+
+
+  // Mark and Nicolas' code
+  /*
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        // options: {emailRedirectTo: "http://localhost:5173/signup"}
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      console.log("User signed up successfully:", data);
+      routeChange();
+    } catch (error) {
+      console.error("Error signing up:", error);
+    }
+  };
+
+  const routeChange = () => {
+    let path = "/profile";
+    handleSubmit;
+    //navigate(path);
+  };
+  */
+
+  
+// Mark's new code, seems to be working
+const SignUp = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  // Ricky: Added these variables to add to the user
+  const [first_name,setFirstName] = useState('');
+  const [last_name,setLastName] = useState('');
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  
+    try {
+      const { data, error } = await supabase.auth.signUp({          
+        email: email,
+        password: password,
+        // Added additional info to sign up
+        options: {
+          data: {
+            first_name: first_name,
+            last_name: last_name
+          }
+        }
+      });
+  
+      if (error?.status === 429) {
+        alert('Error signing up: Email rate limit exceeded');
+        throw error;
+      }
+  
+      console.log("User signed up successfully:", data);
+      routeChange();
+    } catch (error: any) {
+      console.error("Error signing up:", error.message);
+    }
+  };
+  
+  const routeChange = () => {
+    let path = "/profile";
+    console.log("Navigating to:", path);
+    // Implement navigation logic here
   };
 
   return (
@@ -86,6 +157,8 @@ export default function SignUp() {
                   fullWidth
                   id="firstName"
                   label="First Name"
+                  value={first_name}
+                  onChange={(event) => setFirstName(event.target.value)}
                   autoFocus
                 />
               </Grid>
@@ -97,6 +170,8 @@ export default function SignUp() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  value={last_name}
+                  onChange={(event) => setLastName(event.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -107,6 +182,8 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -118,6 +195,8 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -134,7 +213,7 @@ export default function SignUp() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={routeChange}
+              // onClick={routeChange}
             >
               Sign Up
             </Button>
@@ -151,7 +230,8 @@ export default function SignUp() {
       </Container>
     </ThemeProvider>
   );
-}
+};
+export default SignUp;
 
 // const Signup = () => {
 //   return (
