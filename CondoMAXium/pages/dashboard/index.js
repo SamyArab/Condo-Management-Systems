@@ -24,7 +24,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import AddIcon from "@mui/icons-material/Add";
 import PropertyIcon from "@mui/icons-material/Category";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import Image from "next/image";
 
 function Copyright(props) {
