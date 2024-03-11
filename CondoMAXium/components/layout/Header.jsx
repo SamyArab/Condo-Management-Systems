@@ -29,10 +29,7 @@ const Header = () => {
   };
 
   return (
-    <AppBar
-      position="fixed"
-      sx={{ paddingY: "20px", backgroundColor: "rgba(0, 0, 0, 0.1)" }}
-    >
+    <AppBar position="static" sx={{ paddingY: "10px", marginBottom: "25px" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -43,9 +40,9 @@ const Header = () => {
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
+              fontFamily: "Arial",
               fontWeight: 700,
-              letterSpacing: ".3rem",
+              // letterSpacing: ".1rem",
               color: "inherit",
               textDecoration: "none",
               marginTop: "-15px",
