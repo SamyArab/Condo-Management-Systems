@@ -220,7 +220,7 @@ export default function Dashboard() {
                   }}
                 >
                   {/* Property Picture */}
-                  <Image
+                  <img
                     src="/property1.jpg"
                     alt="property1"
                     style={{ width: "100%", marginBottom: "1rem" }}
@@ -264,11 +264,14 @@ export default function Dashboard() {
                   <div style={{ marginTop: "2rem" }}>
                     {/* Your graph component */}
                     {/* Replace this with your actual graph component */}
-                    <Image
-                      src="/payment_graph.png"
-                      alt="Payment Graph"
-                      style={{ width: "100%" }}
-                    />
+                    <div>
+                      <img
+                        src="/payment_graph.png"
+                        alt="Payment Graph"
+                        style={{ width: "100%" }}
+                        fill
+                      />
+                    </div>
                   </div>
                 </Paper>
               </Grid>

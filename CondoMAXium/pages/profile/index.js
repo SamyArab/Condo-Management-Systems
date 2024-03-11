@@ -122,7 +122,7 @@ const ProfilePage = () => {
                     variant="contained"
                     color="error"
                     onClick={async function signOutUser() {
-                      router.push("/dashboard");
+                      router.push("/");
                       const { error } = await supabase.auth.signOut();
                       if (error) {
                         console.error("Error signing out:", error.message);
