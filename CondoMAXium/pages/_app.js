@@ -1,9 +1,9 @@
-import { Navigate, useLocation } from "react-router-dom";
+// import { Navigate, useLocation } from "react-router-dom";
 import supabase from "../config/supabaseClient"; // Import your Supabase client
 import React from "react";
-import { Route } from "react-router-dom";
-import { Routes } from "react-router-dom";
-import { BrowserRouter } from "react-router-dom";
+// import { Route } from "react-router-dom";
+// import { Routes } from "react-router-dom";
+// import { BrowserRouter } from "react-router-dom";
 import Layout from "../components/layout/layout";
 import SignInSide from "./login";
 import Profile from "./profile";
