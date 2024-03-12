@@ -24,7 +24,7 @@ import RoofTopDeck from "../../public/rooftop_deck.jpeg";
 import SpaRoom from "../../public/sparoom.jpg";
 
 import { useRouter } from "next/router";
-import "../../styles/reservation.module.css";
+import styles from "../../styles/reservation.module.css";
 
 const drawerWidth = 240;
 
@@ -48,7 +48,7 @@ const AppBar = styled(MuiAppBar, {
 
 // eslint-disable-next-line react/display-name
 const CustomInput = forwardRef(({ value, onClick }, ref) => (
-  <button className="date-picker-button" onClick={onClick} ref={ref}>
+  <button className={styles.datePickerButton} onClick={onClick} ref={ref}>
     {value} <FaCalendarAlt />
   </button>
 ));
@@ -181,7 +181,7 @@ const ReservationPage = () => {
               <CSSTransition
                 in={showNotifications}
                 timeout={300}
-                classNames="dropdown"
+                classNames={styles.dropdown}
                 unmountOnExit
                 onEnter={() => setShowNotifications(true)}
                 onExited={() => setShowNotifications(false)}
@@ -241,7 +241,7 @@ const ReservationPage = () => {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <h2 className="formattedDate">{formattedDate}</h2>
+              <h2 className={styles.formattedDate}>{formattedDate}</h2>
 
               <DatePicker
                 selected={selectedDate}
@@ -297,7 +297,7 @@ const ReservationPage = () => {
                       <p>Capacity: {facility.capacity} people</p>
                       <p>Hours: {facility.hours}</p>
                       <button
-                        className="button-22"
+                        className={styles.button22}
                         disabled={isDateInPast || isDateMoreThanTwoMonthsAhead}
                         onClick={() => handleReserveClick(facility.id)}
                       >
