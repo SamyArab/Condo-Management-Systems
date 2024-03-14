@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useRouter } from "next/router";
+import supabase from "../../config/supabaseClient";
 import {
   TextField,
   Button,
@@ -10,6 +12,55 @@ import {
   DialogActions,
 } from "@mui/material";
 
+import {
+  AuthChangeEvent,
+  QueryResult,
+  QueryData,
+  QueryError,
+} from "@supabase/supabase-js";
+
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+// Get the user's ID
+const userId = user?.id;
+
+const AddPropertyForm = () => {
+  const [propertyName, setPropertyName] = useState("");
+  const [yearBuilt, setYearBuilt] = useState("");
+  const [unitCount, setUnitCount] = useState("");
+  const [province, setProvince] = useState("");
+  const [parkingCount, setParkingCount] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [lockerCount, setLockerCount] = useState("");
+  const [street, setStreet] = useState("");
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    
+    try {
+      const { data, error } = await supabase.from("properties").insert([
+        {
+          buildingName: propertyName,
+          yearBuilt: yearBuilt,
+          unitsCount: unitCount,
+          province: province,
+          parkingCount: parkingCount,
+          postalCode: postalCode,
+          lockerCount: lockerCount,
+          street: street,
+          profileFky: userId,
+        },
+      ]);
+
+      console.log("Successfully added property: ", data);
+    } catch (error) {
+      console.error("Error adding property: ", error.message);
+    }
+    
+  };
+
+/*
 const AddPropertyForm = () => {
   const [propertyInfo, setPropertyInfo] = useState({
     propertyName: "",
@@ -21,7 +72,7 @@ const AddPropertyForm = () => {
     lockerCount: "",
     street: "",
   });
-
+*/
   const [open, setOpen] = useState(false); // State for controlling dialog visibility
 
   const handleChange = (e) => {
@@ -31,14 +82,14 @@ const AddPropertyForm = () => {
       [name]: value,
     }));
   };
-
+/*
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission logic here
     console.log("Property Info:", propertyInfo);
     // To  send the propertyInfo to the backend
   };
-
+*/
   const handleOpen = () => {
     setOpen(true);
   };
@@ -46,6 +97,8 @@ const AddPropertyForm = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const router = useRouter();
 
   return (
     <div style={{ paddingTop: "140px", paddingBottom: "40px" }}>
@@ -61,8 +114,8 @@ const AddPropertyForm = () => {
               <TextField
                 name="propertyName"
                 label="Property Name"
-                value={propertyInfo.propertyName}
-                onChange={handleChange}
+                value={propertyName}
+                onChange={(event) => setPropertyName(event.target.value)}
                 fullWidth
                 margin="normal"
               />
@@ -71,8 +124,8 @@ const AddPropertyForm = () => {
               <TextField
                 name="yearBuilt"
                 label="Year Built"
-                value={propertyInfo.yearBuilt}
-                onChange={handleChange}
+                value={yearBuilt}
+                onChange={(event) => setYearBuilt(event.target.value)}
                 fullWidth
                 margin="normal"
               />
@@ -81,8 +134,8 @@ const AddPropertyForm = () => {
               <TextField
                 name="unitCount"
                 label="Unit Count"
-                value={propertyInfo.unitCount}
-                onChange={handleChange}
+                value={unitCount}
+                onChange={(event) => setUnitCount(event.target.value)}
                 fullWidth
                 margin="normal"
               />
@@ -91,8 +144,8 @@ const AddPropertyForm = () => {
               <TextField
                 name="province"
                 label="Province"
-                value={propertyInfo.province}
-                onChange={handleChange}
+                value={province}
+                onChange={(event) => setProvince(event.target.value)}
                 fullWidth
                 margin="normal"
               />
@@ -101,8 +154,8 @@ const AddPropertyForm = () => {
               <TextField
                 name="parkingCount"
                 label="Parking Count"
-                value={propertyInfo.parkingCount}
-                onChange={handleChange}
+                value={parkingCount}
+                onChange={(event) => setParkingCount(event.target.value)}
                 fullWidth
                 margin="normal"
               />
@@ -111,8 +164,8 @@ const AddPropertyForm = () => {
               <TextField
                 name="postalCode"
                 label="Postal Code"
-                value={propertyInfo.postalCode}
-                onChange={handleChange}
+                value={postalCode}
+                onChange={(event) => setPostalCode(event.target.value)}
                 fullWidth
                 margin="normal"
               />
@@ -121,8 +174,8 @@ const AddPropertyForm = () => {
               <TextField
                 name="lockerCount"
                 label="Locker Count"
-                value={propertyInfo.lockerCount}
-                onChange={handleChange}
+                value={lockerCount}
+                onChange={(event) => setLockerCount(event.target.value)}
                 fullWidth
                 margin="normal"
               />
@@ -131,8 +184,8 @@ const AddPropertyForm = () => {
               <TextField
                 name="street"
                 label="Street"
-                value={propertyInfo.street}
-                onChange={handleChange}
+                value={street}
+                onChange={(event) => setStreet(event.target.value)}
                 fullWidth
                 margin="normal"
               />
@@ -143,7 +196,7 @@ const AddPropertyForm = () => {
               type="submit"
               variant="contained"
               color="inherit"
-              onClick={handleOpen}
+              onClick={() => router.push("/profile")}
             >
               Register Property
             </Button>
