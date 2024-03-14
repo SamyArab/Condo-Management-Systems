@@ -81,6 +81,13 @@ const ProfilePage = () => {
 
   const router = useRouter();
 
+  // Check if the user is authenticated or redirect to the login page
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+  }, [user, router]);
+
   return (
     <>
       <Header></Header>
