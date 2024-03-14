@@ -70,6 +70,29 @@ export default function SignInSide() {
     }
   };
 
+  // Handle Signin and signup with Google
+  const handleGoogleSignIn = async () => {
+    try {
+      const { user, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+      });
+      if (error) {
+        throw error;
+      }
+      console.log("User logged in with Google:", user);
+      
+      // If user has a name, redirect to profile, else redirect to signupGoogle
+      if (user.user_metadata?.name) {
+        router.push("/profile");
+      } else {
+        router.push("/signupGoogle");
+      }
+    } catch (error) {
+      console.error("Error logging in with Google:", error.message);
+      alert(error);
+    }
+  };
+
   //!!!!!!!!!!! find another way to change pages
   // let navigate = useNavigate();
   // const routeChange = () => {
@@ -156,6 +179,15 @@ export default function SignInSide() {
                 sx={{ mt: 3, mb: 2 }}
               >
                 Sign In
+              </Button>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                onClick={handleGoogleSignIn}
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign In with Google
               </Button>
               <Grid container>
                 <Grid item xs>
