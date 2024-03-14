@@ -1,6 +1,7 @@
 import React from "react";
 import supabase from "../../config/supabaseClient";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -112,6 +113,8 @@ const SignUp = () => {
   //   // Implement navigation logic here
   // };
 
+  const router = useRouter();
+  
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
