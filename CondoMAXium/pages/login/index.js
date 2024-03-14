@@ -52,6 +52,7 @@ export default function SignInSide() {
         password: password,
       });
       if (error) {
+        router.push("/");
         throw error;
       }
       console.log("User logged in succesfully:", data);
