@@ -1,12 +1,11 @@
 // ProfilePage.tsx
 import Header from "../../components/layout/Header";
 import React, { useState } from "react";
-// import { useNavigate } from "react-router-dom";
 
 import {
   Typography,
   Container,
-  Box, // Button,
+  Box, 
   TextField,
   Grid,
   FormControl,
@@ -24,8 +23,9 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
-import "../../styles/units.module.css";
+import styles from "../../styles/units.module.css";
 
+//mockup list of units, to be changed when adding backend
 const unitsList = {
   units: [
     {
@@ -160,17 +160,18 @@ const CMCUnits = () => {
   return (
     <>
       {/* <Header></Header> */}
-      <Box className="outside-container">
-        <Container className="units-container" maxWidth="sm">
+      <Box className={styles.outsideContainer}>
+        <Container className={styles.unitsContainer} 
+                   maxWidth="sm">
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <Typography variant="h4" component="h1" className="units-header">
+              <Typography variant="h4" component="h1" className={styles.unitsHeader}>
                 All Units
               </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={6} className="search-grid">
-              <Box className="search-box">
+            <Grid item xs={12} sm={6} className={styles.searchGrid}>
+              <Box className={styles.searchBox}>
                 <TextField
                   size="small"
                   type="text"
@@ -183,12 +184,11 @@ const CMCUnits = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Box className="units-box">
+              <Box className={styles.unitsBox}>
                 {/* filter for properties */}
                 <FormControl variant="outlined" sx={{ m: 1, width: 180 }}>
                   <InputLabel>Property Name</InputLabel>
                   <Select
-                    data-testid="property-filter"
                     multiple
                     value={selectedProperties}
                     onChange={handlePropertyChange}
@@ -214,7 +214,6 @@ const CMCUnits = () => {
                   <InputLabel>Unit Id</InputLabel>
                   <Select
                     multiple
-                    //ignore value error here, still works
                     value={selectedUnitNumbers}
                     onChange={handleUnitNumberChange}
                     label="Unit Id"
@@ -243,7 +242,6 @@ const CMCUnits = () => {
                   <InputLabel>Unit Owner</InputLabel>
                   <Select
                     multiple
-                    //ignore value error here, still works
                     value={selectedOwners}
                     onChange={handleOwnerChange}
                     label="Unit Owner"
@@ -268,7 +266,6 @@ const CMCUnits = () => {
                   <InputLabel>Occupied By</InputLabel>
                   <Select
                     multiple
-                    //ignore value error here, still works
                     value={selectedOccupy}
                     onChange={handleOccupyChange}
                     label="Occupied By"
@@ -313,7 +310,7 @@ const CMCUnits = () => {
                 </FormControl>
 
                 <TableContainer>
-                  <Table className="units-table">
+                  <Table className={styles.unitsTable}>
                     <TableHead>
                       <TableRow>
                         <TableCell>
