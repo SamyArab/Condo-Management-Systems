@@ -62,6 +62,9 @@ const facilities = [
     capacity: 30,
     hours: "18:00 - 23:00",
     imgLink: "/RoofTop_Deck.jpeg",
+    availableStartTime: "18:00",
+    availableEndTime: "23:00",
+    maxGuests: 15,
   },
   {
     id: 2,
@@ -70,6 +73,9 @@ const facilities = [
     capacity: 10,
     hours: "08:00 - 21:00",
     imgLink: "GymRoom.jpg",
+    availableStartTime: "08:00",
+    availableEndTime: "21:00",
+    maxGuests: 3,
   },
   {
     id: 3,
@@ -78,6 +84,9 @@ const facilities = [
     capacity: 4,
     hours: "08:00 - 21:00",
     imgLink: "SpaRoom.jpg",
+    availableStartTime: "08:00",
+    availableEndTime: "21:00",
+    maxGuests: 1,
   },
 ];
 
@@ -88,18 +97,46 @@ const ReservationPage = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationsRef = useRef(null);
   const notificationButtonRef = useRef(null);
+  const [showForm, setShowForm] = useState(false);
+  const [activeForm, setActiveForm] = useState(null); // "form1", "form2", or "form3"
 
   //   const navigate = useNavigate();
   const router = useRouter();
-  const handleReserveClick = (facilityId) => {
+  const handleReserveClick = (facility) => {
     console.log(
-      `Reserve facility with ID: ${facilityId} on ${format(
+      `Reserve facility with ID: ${facility} on ${format(
         selectedDate,
         "PPPP"
       )}`
     );
+
+    // switch (facility.id) {
+    //   case 1: // Assuming Rooftop Deck requires Form1
+    //     setActiveForm('form1');
+    //     break;
+    //   case 2: // Assuming Private Gym/Workout Room requires Form2
+    //     setActiveForm('form2');
+    //     break;
+    //   case 3: // Assuming Private Spa Session/Sparoom requires Form3
+    //     setActiveForm('form3');
+    //     break;
+    //   default:
+    //     console.error('Unknown facility');
+    //     return;
+    // }
+    // setShowForm(true); // Show the form
+
     // navigate("/form-reservation");
-    router.push("/form-reservation");
+    router.push({
+      pathname: '/form-reservation',
+      query: {
+        facilityId: facility.id,
+        facilityTitle: facility.title,
+        maxGuests: facility.maxGuests,
+        availableStartTime: facility.availableStartTime,
+        availableEndTime: facility.availableEndTime,
+      },
+    });
   };
 
   const handleViewReservationsClick = () => {
