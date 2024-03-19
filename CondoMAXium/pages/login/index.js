@@ -76,6 +76,7 @@ export default function SignInSide() {
   //   let path = "/profile";
   //   navigate(path);
   // };
+  const num = Math.floor(Math.random() * 8);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -87,8 +88,8 @@ export default function SignInSide() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage:
-              "url(https://source.unsplash.com/random?wallpapers)",
+            backgroundImage: "url(/bg-img/" + num + ".png)",
+            // "url(https://source.unsplash.com/random?wallpapers)",
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -97,7 +98,28 @@ export default function SignInSide() {
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
-        />
+        >
+          {/* <Typography
+            color="white"
+            // align="center"
+            variant="h2"
+            // marked="center"
+            item
+            xs={false}
+            sm={4}
+            md={7}
+            // paddingTop="30px"
+            sx={{
+              fontFamily: "Roboto Condensed",
+              position: "fixed",
+              top: "50%",
+              left: "30%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            CondoMAXium
+          </Typography> */}
+        </Grid>
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
             sx={{

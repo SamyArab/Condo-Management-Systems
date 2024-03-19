@@ -29,23 +29,26 @@ const Header = () => {
   };
 
   return (
-    <AppBar position="static" sx={{ paddingY: "10px", marginBottom: "25px" }}>
+    <AppBar position="fixed" sx={{ paddingY: "10px" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
             variant="h4"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            // href=""
             sx={{
               mr: 2,
-              display: { xs: "none", md: "flex" },
+              display: {
+                // xs: "none",
+                md: "flex",
+              },
               fontFamily: "Arial",
-              fontWeight: 700,
+              fontWeight: 600,
               // letterSpacing: ".1rem",
               color: "inherit",
-              textDecoration: "none",
-              marginTop: "-15px",
+              // textDecoration: "none",
+              // marginTop: "-15px",
               alignSelf: "center", // align to the vertical center
             }}
           >
@@ -54,9 +57,12 @@ const Header = () => {
 
           <Box
             sx={{
-              flexGrow: 1,
-              display: { xs: "flex", md: "none" },
-              alignSelf: "center",
+              // flexGrow: 1,
+              // display: { xs: "flex", md: "none" },
+              // alignSelf: "center",
+              display: "flex",
+              alignItems: "center",
+              marginLeft: "auto",
             }}
           >
             <IconButton
@@ -71,7 +77,7 @@ const Header = () => {
             </IconButton>
             <Menu
               id="menu-appbar"
-              anchorEl={anchorElNav}
+              // anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "left",
@@ -91,12 +97,12 @@ const Header = () => {
             </Menu>
           </Box>
 
-          <Box
+          {/* <Box
             sx={{
               display: "flex",
               alignItems: "center",
               marginLeft: "auto",
-              marginTop: "-15px",
+              // marginTop: "-15px",
             }}
           >
             <Tooltip title="Open settings">
@@ -104,8 +110,8 @@ const Header = () => {
                 <Avatar alt="X" src="/static/images/avatar.jpg" />
               </IconButton>
             </Tooltip>
-            <Typography variant="body1" sx={{ marginLeft: "8px" }}></Typography>
-          </Box>
+            {/* <Typography variant="body1" sx={{ marginLeft: "8px" }}></Typography> */}
+          {/* </Box> */}
           {/*
                     <Menu
                         sx={{ mt: '45px' }}
