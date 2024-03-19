@@ -14,7 +14,6 @@ import Badge from "@mui/material/Badge";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { CSSTransition } from "react-transition-group";
 import { AccountCircle } from "@mui/icons-material";
-// import { useNavigate } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -28,6 +27,9 @@ import "../../styles/reservation.module.css";
 
 const drawerWidth = 240;
 
+/**
+ * Stylized App Bar at the top of all of the reservation pages
+ */
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -46,14 +48,9 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-// eslint-disable-next-line react/display-name
-const CustomInput = forwardRef(({ value, onClick }, ref) => (
-  <button className="date-picker-button" onClick={onClick} ref={ref}>
-    {value} <FaCalendarAlt />
-  </button>
-));
-// ReservationPage.displayName = "ReservationPage";
-
+/**
+ * List of facilities and their data fields
+ */
 const facilities = [
   {
     id: 1,
@@ -65,6 +62,7 @@ const facilities = [
     availableStartTime: "18:00",
     availableEndTime: "23:00",
     maxGuests: 15,
+    buttonRoute: '/form-rooftop-deck',
   },
   {
     id: 2,
@@ -75,7 +73,8 @@ const facilities = [
     imgLink: "GymRoom.jpg",
     availableStartTime: "08:00",
     availableEndTime: "21:00",
-    maxGuests: 3,
+    maxGuests: 2,
+    buttonRoute: '/form-gym',
   },
   {
     id: 3,
@@ -87,48 +86,28 @@ const facilities = [
     availableStartTime: "08:00",
     availableEndTime: "21:00",
     maxGuests: 1,
+    buttonRoute: '/form-spa',
   },
 ];
+
 
 const defaultTheme = createTheme();
 
 const ReservationPage = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationsRef = useRef(null);
   const notificationButtonRef = useRef(null);
-  const [showForm, setShowForm] = useState(false);
-  const [activeForm, setActiveForm] = useState(null); // "form1", "form2", or "form3"
-
-  //   const navigate = useNavigate();
   const router = useRouter();
+
+  /**
+   * Method for handling the click of the Reserve button
+   */
   const handleReserveClick = (facility) => {
     console.log(
-      `Reserve facility with ID: ${facility} on ${format(
-        selectedDate,
-        "PPPP"
-      )}`
+      `Reserve facility with ID: ${facility} on `
     );
-
-    // switch (facility.id) {
-    //   case 1: // Assuming Rooftop Deck requires Form1
-    //     setActiveForm('form1');
-    //     break;
-    //   case 2: // Assuming Private Gym/Workout Room requires Form2
-    //     setActiveForm('form2');
-    //     break;
-    //   case 3: // Assuming Private Spa Session/Sparoom requires Form3
-    //     setActiveForm('form3');
-    //     break;
-    //   default:
-    //     console.error('Unknown facility');
-    //     return;
-    // }
-    // setShowForm(true); // Show the form
-
-    // navigate("/form-reservation");
     router.push({
-      pathname: '/form-reservation',
+      pathname: facility.buttonRoute,
       query: {
         facilityId: facility.id,
         facilityTitle: facility.title,
@@ -139,31 +118,34 @@ const ReservationPage = () => {
     });
   };
 
+  /**
+   * Method for handling the click of the View Reservations button
+   */
   const handleViewReservationsClick = () => {
     // navigate("/my-reservations");
     router.push("/my-reservations");
   };
 
+  /**
+   * Method for handling the click of the Profile button
+   */
   const handleProfileClick = () => {
     // navigate("/profile");
     router.push("/profile");
   };
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
-
-  const isDateInPast = isBefore(selectedDate, startOfDay(new Date()));
-  const isDateMoreThanTwoMonthsAhead = isBefore(
-    addMonths(startOfDay(new Date()), 2),
-    selectedDate
-  );
-
+  /**
+   * Method for handling the click of the Notifications button
+   */
   const toggleNotifications = (event) => {
     event.stopPropagation(); // Prevents click event from propagating to the document
     setShowNotifications(!showNotifications);
   };
 
+
+  /**
+   * Method for handling clicking outside of notifications box to close it
+   */
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -182,8 +164,6 @@ const ReservationPage = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  const formattedDate = format(selectedDate, "PPPP");
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -245,7 +225,6 @@ const ReservationPage = () => {
               </CSSTransition>
               <IconButton onClick={handleProfileClick}>
                 <Badge
-                  // This is the badge color, "secondary" is typically a theme color
                   color="secondary"
                   anchorOrigin={{
                     vertical: "bottom",
@@ -277,17 +256,6 @@ const ReservationPage = () => {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <h2 className="formattedDate">{formattedDate}</h2>
-
-              <DatePicker
-                selected={selectedDate}
-                onChange={handleDateChange}
-                customInput={<CustomInput value={formattedDate} />}
-                withPortal
-              />
-            </Box>
-
             <Grid container spacing={3}>
               <Grid item xs={12} md={4} lg={15}>
                 {facilities.map((facility) => (
@@ -300,20 +268,13 @@ const ReservationPage = () => {
                       mb: 2,
                     }}
                   >
-                    <div
-                      key={facility.id}
-                      className={`facility-card ${
-                        isDateInPast || isDateMoreThanTwoMonthsAhead
-                          ? "dimmed"
-                          : ""
-                      }`}
-                    >
+                    <div key={facility.id}>
                       <div
                         style={{
-                          backgroundColor: "#f5f5f5", // Light grey background
-                          width: "100%", // Take up the full width of its container
-                          padding: "8px", // Add some padding around the content for better presentation
-                          boxSizing: "border-box", // Ensures padding does not add to the total width
+                          backgroundColor: "#f5f5f5", 
+                          width: "100%", 
+                          padding: "8px", 
+                          boxSizing: "border-box", 
                         }}
                       >
                         <h3 style={{ textDecoration: "underline" }}>
@@ -321,9 +282,7 @@ const ReservationPage = () => {
                         </h3>
                       </div>
                       <img
-                        // Use the imageUrl from your facility object
                         src={facility.imgLink}
-                        // Providing an alt text for accessibility
                         alt={facility.title}
                         style={{
                           width: "100%",
@@ -335,12 +294,9 @@ const ReservationPage = () => {
                       <p>Hours: {facility.hours}</p>
                       <button
                         className="button-22"
-                        disabled={isDateInPast || isDateMoreThanTwoMonthsAhead}
-                        onClick={() => handleReserveClick(facility.id)}
+                        onClick={() => handleReserveClick(facility)}
                       >
-                        {!isDateInPast && !isDateMoreThanTwoMonthsAhead
-                          ? "Reserve"
-                          : "Unavailable"}
+                          Reserve
                       </button>
                     </div>
                   </Paper>
