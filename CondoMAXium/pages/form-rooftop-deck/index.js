@@ -19,6 +19,12 @@ import Divider from "@mui/material/Divider";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import supabase from "../../config/supabaseClient";
+
+
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 
 const drawerWidth = 240;
 
@@ -124,9 +130,13 @@ const FormRooftopDeck = () => {
     const router = useRouter();
     const { facilityId, facilityTitle, maxGuests, availableStartTime, availableEndTime } = router.query;
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log({ guests, startTime, endTime });
+        // Integrate with backend here for capacity checks and reservation submission
+        const { error } = await supabase
+        .from('reservations')
+        .insert({ startTime: startTime, endTime: endTime, profileFky: user.id, numOfGuests: guests});
     };
 
     const formattedDate = format(selectedDate, "PPPP");
