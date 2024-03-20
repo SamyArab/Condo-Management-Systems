@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import { useRouter } from "next/router";
 
+
 import {
   Box,
   Checkbox,
@@ -196,7 +197,7 @@ const CMCUnits = () => {
     <>
       {/* <Header></Header> */}
       <Box className="outside-container">
-        <Container className="units-container" maxWidth="sm">
+        <Container className="units-container" maxWidth={5}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Typography variant="h4" component="h1" className="units-header">
@@ -395,46 +396,10 @@ const CMCUnits = () => {
                             </TableCell>
                           </TableRow>
                         ))}
-                        <TableRow>
-                          <TableCell colSpan={6}>
-                            <button onClick={handleAddUnitClick}> Add Unit </button>
-                          </TableCell>
-                        </TableRow>
-                    </TableBody>
-                    {/* <TableBody>
-                      {filteredUnits.map((unit, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{unit.propertyName}</TableCell>
-                          <TableCell>{unit.unitNumber}</TableCell>
-                          <TableCell>{unit.unitOwner}</TableCell>
-                          <TableCell>{unit.occupied}</TableCell>
-                          <TableCell>{unit.unitSize}</TableCell>
-                          <TableCell>
-                            <button onClick={handleEditClick}>Edit Unit</button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      <TableRow>
-                        <button onClick={handleAddUnitClick}> Add Unit </button></TableRow>
-                    </TableBody> */}
-                    {/* <TableBody>
-                      {fetchedUnits.map((unit, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{unit.propertyName}</TableCell>
-                          <TableCell>{unit.unitNumber}</TableCell>
-                          <TableCell>{unit.unitOwner}</TableCell>
-                          <TableCell>{unit.occupied}</TableCell>
-                          <TableCell>{unit.unitSize}</TableCell>
-                          <TableCell>
-                            <button onClick={handleEditClick}>Edit Unit</button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      <TableRow>
-                        <button onClick={handleAddUnitClick}> Add Unit </button></TableRow>
-                    </TableBody> */}
+                    </TableBody> 
                   </Table>
                 </TableContainer>
+                <button id="centeredButton" onClick={handleAddUnitClick} style={{ display: 'block', margin: 'auto', marginTop: '20px' }}>Add Unit</button>
               </Box>
             </Grid>
           </Grid>

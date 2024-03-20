@@ -2,9 +2,13 @@ import {
   Button,
   Container,
   Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography
 } from "@mui/material";
+
 import { useRouter } from "next/router";
 import { useState } from "react";
 import supabase from "../../config/supabaseClient";
@@ -22,7 +26,6 @@ const AddUnitForm = () => {
   const [unitNumber, setUnitNumber] = useState("");
   const [propertyName, setPropertyName] = useState("");
   const [ownerFullName, setOwnerFullName] = useState("");
-
   const [occupiedBy, setOccupiedBy] = useState("");
   const [tenantFullName, setTenantFullName] = useState("");
   const [unitSize, setUnitSize] = useState("");
@@ -57,7 +60,7 @@ const AddUnitForm = () => {
   };
 
 
-  const [open, setOpen] = useState(false); // State for controlling dialog visibility
+  //const [open, setOpen] = useState(false); // State for controlling dialog visibility
 
   const router = useRouter();
 
@@ -87,7 +90,7 @@ const AddUnitForm = () => {
                 name="unitNumber"
                 label="Unit Number"
                 value={unitNumber}
-                onChange={(event) =>setUnitNumber(event.target.value)}
+                onChange={(event) => setUnitNumber(event.target.value)}
                 fullWidth
                 margin="normal"
                 required
@@ -106,13 +109,16 @@ const AddUnitForm = () => {
             </Grid>
             <Grid item xs={6}></Grid>
             <Grid item xs={6}>
-              <div class="dropdown">
-                <button class="dropdown-btn">Occupied By</button>
-                <div class="dropdown-content">
-                  <a href="#" onClick={() => setOccupiedBy("Owner")}>Owner</a>
-                  <a href="#" onClick={() => setOccupiedBy("Tenant")}>Tenant</a>
-                </div>
-              </div>
+              <InputLabel id="occupied-by-label">Occupied By</InputLabel>
+              <Select
+                labelId="occupied-by-label"
+                id="occupied-by-select"
+                value={occupiedBy}
+                onChange={(event) => setOccupiedBy(event.target.value)}
+              >
+                <MenuItem value="Owner">Owner</MenuItem>
+                <MenuItem value="Tenant">Tenant</MenuItem>
+              </Select>
             </Grid>
             {occupiedBy === "Tenant" && (
               <Grid item xs={6}>
@@ -127,7 +133,7 @@ const AddUnitForm = () => {
                 />
               </Grid>
             )}
-            
+
             <Grid item xs={6}>
               <TextField
                 name="unitSize"
