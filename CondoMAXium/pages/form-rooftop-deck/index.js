@@ -52,31 +52,54 @@ const CustomInput = forwardRef(({ value, onClick }, ref) => (
     {value} <FaCalendarAlt />
   </button>
 ));
-// FormRooftopDeck.displayName = "FormRooftopDeck";
 
+  
 
 // Adjusted generateTimeOptions to accept start and end parameters
-const generateTimeOptions = (availableStartTime, availableEndTime) => {
-  const options = [];
-  let startHour, startMinute, endHour, endMinute;
-  if (availableStartTime && availableEndTime) {
-    [startHour, startMinute] = availableStartTime.split(':').map(Number);
-    [endHour, endMinute] = availableEndTime.split(':').map(Number);
-  } else {
-    // Default to full day if not specified
-    startHour = 0; startMinute = 0;
-    endHour = 23; endMinute = 30;
-  }
+const generateTimeOptions = async (start, end, increment, limitHours = null) => {
+    const options = [];
+    let startTime = new Date(`2022-01-01T${start}:00`);
+    let endTime = new Date(`2022-01-01T${end}:00`);
 
-  for (let hour = startHour; hour <= endHour; hour++) {
-    for (let minute = hour === startHour ? startMinute : 0; minute < 60; minute += 30) {
-      if (hour === endHour && minute > endMinute) break;
-      const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-      options.push(time);
+    // If there's a limitHours, adjust endTime accordingly
+    if (limitHours !== null) {
+        const limitEndTime = new Date(startTime.getTime() + limitHours * 3600000);
+        if (limitEndTime < endTime) {
+            endTime = limitEndTime;
+        }
     }
-  }
-  return options;
+
+    while (startTime <= endTime) {
+        const timeString = `${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')}`;
+        const isReserved = await isTimeReserved(timeString);
+        if (!isReserved) {
+            options.push(timeString);
+        }
+        startTime.setMinutes(startTime.getMinutes() + increment);
+    }
+
+    return options;
 };
+
+const isTimeReserved = async (time) => {
+    const { data, error } = await supabase
+        .from('reservations')
+        .select('*')
+        .eq('date', selectedDate.toISOString().split('T')[0]) // Filter by selected date
+        .eq('startTime', time);
+
+    if (error) {
+        console.error('Error fetching reservation: ', error);
+        return false;
+    }
+
+    return data.length > 0; // Returns true if there are reservations for the specified time
+};
+
+
+  
+  
+  
 
 const defaultTheme = createTheme();
 
@@ -130,14 +153,65 @@ const FormRooftopDeck = () => {
     const router = useRouter();
     const { facilityId, facilityTitle, maxGuests, availableStartTime, availableEndTime } = router.query;
 
-    const handleSubmit = async (e) => {
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+      
+      const handleSubmit = async (e) => {
         e.preventDefault();
         console.log({ guests, startTime, endTime });
-        // Integrate with backend here for capacity checks and reservation submission
-        const { error } = await supabase
-        .from('reservations')
-        .insert({ startTime: startTime, endTime: endTime, profileFky: user.id, numOfGuests: guests});
+    
+        // Format the selected date and times
+        const startDate = new Date(selectedDate);
+        startDate.setHours(parseInt(startTime.split(':')[0]));
+        startDate.setMinutes(parseInt(startTime.split(':')[1]));
+        startDate.setSeconds(0); // Ensure seconds are set to 0
+    
+        const endDate = new Date(selectedDate);
+        endDate.setHours(parseInt(endTime.split(':')[0]));
+        endDate.setMinutes(parseInt(endTime.split(':')[1]));
+        endDate.setSeconds(0); // Ensure seconds are set to 0
+    
+        // Combine date and time into a full timestamp
+        const startTimestamp = `${startDate.toISOString().split('T')[0]} ${startTime}`;
+        const endTimestamp = `${endDate.toISOString().split('T')[0]} ${endTime}`;
+    
+        // Check if the reservation already exists
+        let { data: existingReservations, error } = await supabase
+            .from('reservations')
+            .select('*')
+            .eq('starttime', startTimestamp)
+            .eq('endtime', endTimestamp)
+            .eq('profileFky', user.id);
+    
+        if (error) {
+            console.log('Error fetching reservations:', error);
+            return;
+        }
+    
+        // If no existing reservation is found, insert the new one
+        if (existingReservations.length === 0) {
+            let { error } = await supabase
+                .from('reservations')
+                .insert({ starttime: startTimestamp, endtime: endTimestamp, profileFky: user.id, numOfGuests: guests });
+    
+            if (error) {
+                console.log('Error inserting reservation:', error);
+            } else {
+                console.log('Reservation inserted successfully');
+            }
+        } else {
+            console.log('Reservation already exists');
+        }
     };
+    
+    
+    
+    
+      
+    
+    
+    
 
     const formattedDate = format(selectedDate, "PPPP");
 
