@@ -11,8 +11,8 @@ import supabase from "../../config/supabaseClient";
 
 const EditUnitPage = () => {
   const router = useRouter();
-  const { index } = router.query;
-  console.log("we're workig on index: ", index)
+  const { unitid } = router.query;
+  console.log("we're workig on unitid: ", unitid)
 
   const [unit, setUnit] = useState({
     property_name: '',
@@ -31,7 +31,7 @@ const EditUnitPage = () => {
   useEffect(() => {
     async function fetchUnit() {
       try {
-        const { data, error } = await supabase.from('units').select('*').eq('id', index+1);
+        const { data, error } = await supabase.from('units').select('*').eq('id', unitid);
         if (error) {
           throw error;
         }
@@ -69,10 +69,10 @@ const EditUnitPage = () => {
       }
     }
   
-    if (index) {
+    if (unitid) {
       fetchUnit();
     }
-  }, [index]);
+  }, [unitid]);
   
   // const unitCopy= {...unit};
 
@@ -99,7 +99,7 @@ const EditUnitPage = () => {
       }
       console.log("updated fields", updatedFields)
       // Execute the update query to update only the changed fields
-      const { error } = await supabase.from('units').update(updatedFields).eq('id', index + 1);
+      const { error } = await supabase.from('units').update(updatedFields).eq('id', unitid);
       if (error) {
         throw error;
       }
