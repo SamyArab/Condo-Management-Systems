@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import { useRouter } from 'next/router';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format, isBefore, startOfDay, addMonths } from "date-fns";
+import { format, isBefore, startOfDay, addMonths, endOfDay, formatISO  } from "date-fns";
 import { FaCalendarAlt } from "react-icons/fa";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -52,35 +52,55 @@ const CustomInput = forwardRef(({ value, onClick }, ref) => (
     {value} <FaCalendarAlt />
   </button>
 ));
-// FormRooftopDeck.displayName = "FormRooftopDeck";
 
+  
 
 // Adjusted generateTimeOptions to accept start and end parameters
-const generateTimeOptions = (availableStartTime, availableEndTime) => {
-  const options = [];
-  let startHour, startMinute, endHour, endMinute;
-  if (availableStartTime && availableEndTime) {
-    [startHour, startMinute] = availableStartTime.split(':').map(Number);
-    [endHour, endMinute] = availableEndTime.split(':').map(Number);
-  } else {
-    // Default to full day if not specified
-    startHour = 0; startMinute = 0;
-    endHour = 23; endMinute = 30;
-  }
+const generateTimeOptions = async (start, end, increment, limitHours = null) => {
+    const options = [];
+    let startTime = new Date(`2022-01-01T${start}:00`);
+    let endTime = new Date(`2022-01-01T${end}:00`);
 
-  for (let hour = startHour; hour <= endHour; hour++) {
-    for (let minute = hour === startHour ? startMinute : 0; minute < 60; minute += 30) {
-      if (hour === endHour && minute > endMinute) break;
-      const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-      options.push(time);
+    // If there's a limitHours, adjust endTime accordingly
+    if (limitHours !== null) {
+        const limitEndTime = new Date(startTime.getTime() + limitHours * 3600000);
+        if (limitEndTime < endTime) {
+            endTime = limitEndTime;
+        }
     }
-  }
-  return options;
+
+    while (startTime <= endTime) {
+        const timeString = `${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')}`;
+        const isReserved = await isTimeReserved(timeString);
+        if (!isReserved) {
+            options.push(timeString);
+        }
+        startTime.setMinutes(startTime.getMinutes() + increment);
+    }
+
+    return options;
+};
+
+const isTimeReserved = async (time) => {
+    const { data, error } = await supabase
+        .from('reservations')
+        .select('*')
+        .eq('date', selectedDate.toISOString().split('T')[0]) // Filter by selected date
+        .eq('starttime', time);
+
+    if (error) {
+        console.error('Error fetching reservation: ', error);
+        return false;
+    }
+
+    return data.length > 0; // Returns true if there are reservations for the specified time
 };
 
 const defaultTheme = createTheme();
 
 const FormRooftopDeck = () => {
+    const [reservedTimes, setReservedTimes] = useState([]);
+    const [startTimeOptions, setStartTimeOptions] = useState([]);
     const [guests, setGuests] = useState(0); 
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
@@ -121,22 +141,129 @@ const FormRooftopDeck = () => {
         return options;
     };
 
+    const fetchReservedTimes = async (selectedDate) => {
+            // Ensure selectedDate is a valid Date object
+            if (!(selectedDate instanceof Date && !isNaN(selectedDate))) {
+                console.error('selectedDate is not a valid date:', selectedDate);
+                return [];
+            }
+            // Format the selected date to ISO string for comparison
+            const dateStr = format(selectedDate, 'yyyy-MM-dd');
+
+            let { data, error } = await supabase
+                .from('reservations')
+                .select('starttime, endtime')
+                // Assuming 'starttime' and 'endtime' are stored as timestamp with time zone
+                .gte('starttime', `${dateStr}T00:00:00+00:00`)
+                .lt('endtime', `${dateStr}T23:59:59+00:00`);
+
+            if (error) {
+                console.error("Error fetching reserved times:", error);
+                return [];
+            } else {
+                return data.map(({ starttime, endtime }) => ({
+                    start: new Date(starttime).getTime(),
+                    end: new Date(endtime).getTime(),
+                }));
+            }
+    };
+
+    useEffect(() => {
+        fetchReservedTimes();
+    }, [selectedDate]); 
+
+    const filterAvailableTimes = (allTimes, reservedRanges) => {
+        return allTimes.filter(time => {
+            const timeStart = new Date(`${format(selectedDate, 'yyyy-MM-dd')}T${time}:00+00:00`).getTime();
+    
+            // Check if the time slot starts before any reservation ends and ends after any reservation starts
+            return !reservedRanges.some(range => timeStart >= range.start && timeStart < range.end);
+        });
+    };
+    
+    useEffect(() => {
+        const updateAvailableTimes = async () => {
+            const reservedRanges = await fetchReservedTimes(selectedDate);
+            const allTimes = generateTimeOptions('18:00', '23:00', 30);
+            const availableTimes = filterAvailableTimes(allTimes, reservedRanges);
+            setStartTimeOptions(availableTimes);
+        };
+        updateAvailableTimes();
+    }, [selectedDate]);
+    
+
+    // // Function to generate and update start time options excluding reserved times
+    // const updateStartTimeOptions = (reservedTimes) => {
+    //     const allTimes = generateTimeOptions('18:00', '23:00', 30);
+    //     const availableTimes = allTimes.filter(time => {
+    //         // Convert time option to a comparable format
+    //         const optionDateTime = new Date(`${format(selectedDate, "yyyy-MM-dd")}T${time}:00+00:00`);
+    //         // Check if this time option falls within any reserved time ranges
+    //         return !reservedTimes.some(({starttime, endtime}) => {
+    //             const start = new Date(starttime);
+    //             const end = new Date(endtime);
+    //             return optionDateTime >= start && optionDateTime < end;
+    //         });
+    //     });
+    //     setStartTimeOptions(availableTimes);
+    // };
+    
+
     // Time options for start time
-    const startTimeOptions = generateTimeOptions('18:00', '23:00', 30);
+    // const startTimeOptions = generateTimeOptions('18:00', '23:00', 30);
 
     // Calculate end time options based on selected start time
     let endTimeOptions = startTime ? generateTimeOptions(startTime, '23:00', 30, 2) : [];
 
     const router = useRouter();
     const { facilityId, facilityTitle, maxGuests, availableStartTime, availableEndTime } = router.query;
-
-    const handleSubmit = async (e) => {
+      
+      const handleSubmit = async (e) => {
         e.preventDefault();
         console.log({ guests, startTime, endTime });
-        // Integrate with backend here for capacity checks and reservation submission
-        const { error } = await supabase
-        .from('reservations')
-        .insert({ startTime: startTime, endTime: endTime, profileFky: user.id, numOfGuests: guests});
+    
+        // Format the selected date and times
+        const startDate = new Date(selectedDate);
+        startDate.setHours(parseInt(startTime.split(':')[0]));
+        startDate.setMinutes(parseInt(startTime.split(':')[1]));
+        startDate.setSeconds(0); // Ensure seconds are set to 0
+    
+        const endDate = new Date(selectedDate);
+        endDate.setHours(parseInt(endTime.split(':')[0]));
+        endDate.setMinutes(parseInt(endTime.split(':')[1]));
+        endDate.setSeconds(0); // Ensure seconds are set to 0
+    
+        // Combine date and time into a full timestamp
+        const startTimestamp = `${startDate.toISOString().split('T')[0]} ${startTime}`;
+        const endTimestamp = `${endDate.toISOString().split('T')[0]} ${endTime}`;
+    
+        // Check if the reservation already exists
+        let { data: existingReservations, error } = await supabase
+            .from('reservations')
+            .select('*')
+            .eq('starttime', startTimestamp)
+            .eq('endtime', endTimestamp)
+            .eq('profileFky', user.id);
+    
+        if (error) {
+            console.log('Error fetching reservations:', error);
+            return;
+        }
+    
+        // If no existing reservation is found, insert the new one
+        if (existingReservations.length === 0) {
+            let { error } = await supabase
+                .from('reservations')
+                .insert({ starttime: startTimestamp, endtime: endTimestamp, profileFky: user.id, numOfGuests: guests });
+    
+            if (error) {
+                console.log('Error inserting reservation:', error);
+            } else {
+                console.log('Reservation inserted successfully');
+            }
+        } else {
+            console.log('Reservation already exists');
+        }
     };
 
     const formattedDate = format(selectedDate, "PPPP");
@@ -236,11 +363,11 @@ const FormRooftopDeck = () => {
                                         <div>
                                         <label style={{ borderBottom: "1px solid lightgrey", paddingBottom: "10px", display: "block", borderWidth: "100%"}}>
                                             Start Time:
-                                            <select value={startTime} onChange={(e) => setStartTime(e.target.value)} style={{ marginLeft: "10px" }}>
-                                            <option value="">Select a start time</option>
-                                            {startTimeOptions.map(time => (
-                                                <option key={time} value={time}>{time}</option>
-                                            ))}
+                                            <select value={startTime} onChange={(e) => setStartTime(e.target.value)}>
+                                                <option value="">Select a start time</option>
+                                                {startTimeOptions.map(time => (
+                                                    <option key={time} value={time}>{time}</option>
+                                                ))}
                                             </select>
                                         </label>
                                         </div>
@@ -303,7 +430,6 @@ const FormRooftopDeck = () => {
                         </Grid>
                     </Container>
                 </Box>
-
             </Box>
         </ThemeProvider>
     );
