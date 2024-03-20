@@ -13,7 +13,7 @@ const EditUnitPage = () => {
   const router = useRouter();
   const { unitid } = router.query;
   console.log("we're workig on unitid: ", unitid)
-
+  //initialize unit object to save fetched data 
   const [unit, setUnit] = useState({
     property_name: '',
     unit_number: '',
@@ -25,9 +25,10 @@ const EditUnitPage = () => {
     plocker_number: '',
     condo_fee: '',
   });
-
+  //A copy of unit used for comparing changes
   const [unitCopy, setUnitCopy] = useState({...unit});
 
+  //fetch data from DB
   useEffect(() => {
     async function fetchUnit() {
       try {
@@ -38,26 +39,26 @@ const EditUnitPage = () => {
         if (data && data.length > 0) {
           const fetchedUnit = data[0];
           setUnit({
-            property_name: fetchedUnit.property_name || '', // Default value for property_name
-            unit_number: fetchedUnit.unit_number || '', // Default value for unit_number
-            unit_owner: fetchedUnit.unit_owner || '', // Default value for unit_owner
-            occupied_by: fetchedUnit.occupied_by || '', // Default value for occupied_by
-            tenantFullName: fetchedUnit.tenantFullName || '', // Default value for tenantFullName
-            size: fetchedUnit.size || '', // Default value for size
-            parking_number: fetchedUnit.parking_number || '', // Default value for parking_number
-            plocker_number: fetchedUnit.locker_number || '', // Default value for plocker_number
-            condo_fee: fetchedUnit.condo_fee || '', // Default value for condo_fee
+            property_name: fetchedUnit.property_name || '',
+            unit_number: fetchedUnit.unit_number || '',
+            unit_owner: fetchedUnit.unit_owner || '',
+            occupied_by: fetchedUnit.occupied_by || '',
+            tenantFullName: fetchedUnit.tenantFullName || '',
+            size: fetchedUnit.size || '',
+            parking_number: fetchedUnit.parking_number || '',
+            plocker_number: fetchedUnit.locker_number || '',
+            condo_fee: fetchedUnit.condo_fee || '',
           });
           setUnitCopy({
-            property_name: fetchedUnit.property_name || '', // Default value for property_name
-            unit_number: fetchedUnit.unit_number || '', // Default value for unit_number
-            unit_owner: fetchedUnit.unit_owner || '', // Default value for unit_owner
-            occupied_by: fetchedUnit.occupied_by || '', // Default value for occupied_by
-            tenantFullName: fetchedUnit.tenantFullName || '', // Default value for tenantFullName
-            size: fetchedUnit.size || '', // Default value for size
-            parking_number: fetchedUnit.parking_number || '', // Default value for parking_number
-            plocker_number: fetchedUnit.locker_number || '', // Default value for plocker_number
-            condo_fee: fetchedUnit.condo_fee || '', // Default value for condo_fee
+            property_name: fetchedUnit.property_name || '',
+            unit_number: fetchedUnit.unit_number || '',
+            unit_owner: fetchedUnit.unit_owner || '',
+            occupied_by: fetchedUnit.occupied_by || '',
+            tenantFullName: fetchedUnit.tenantFullName || '',
+            size: fetchedUnit.size || '',
+            parking_number: fetchedUnit.parking_number || '',
+            plocker_number: fetchedUnit.locker_number || '',
+            condo_fee: fetchedUnit.condo_fee || '',
           });
           
           console.log("property name is ", property_name)
@@ -73,9 +74,8 @@ const EditUnitPage = () => {
       fetchUnit();
     }
   }, [unitid]);
-  
-  // const unitCopy= {...unit};
 
+  //update unit
   const handleLocalChange = (event) => {
     const { name, value } = event.target;
     setUnit((prevUnit) => ({
@@ -84,29 +84,23 @@ const EditUnitPage = () => {
     }));
   };
 
+  //push updates to the DB
   const handleDBChange = async (event) => {
-    event.preventDefault(); // Prevent the default form submission behavior
     
     try {
-      // Construct an object to hold the updated fields
       const updatedFields = {};
-      
-      // Compare each field in unit with the corresponding field in originalUnit
       for (const key in unit) {
         if (unit[key] !== unitCopy[key]) {
-          updatedFields[key] = unit[key]; // Add the changed field to updatedFields
+          updatedFields[key] = unit[key];
         }
       }
       console.log("updated fields", updatedFields)
-      // Execute the update query to update only the changed fields
       const { error } = await supabase.from('units').update(updatedFields).eq('id', unitid);
       if (error) {
         throw error;
       }
-      
       console.log('Unit updated successfully');
       
-      // Optionally, you can navigate the user to another page or perform other actions upon successful save.
     } catch (error) {
       console.error("Error updating unit:", error.message);
     }
@@ -227,7 +221,7 @@ const EditUnitPage = () => {
               type="submit"
               variant="contained"
               color="inherit"
-              onClick={() => router.push("/units2")}
+              onClick={() => router.push("/units")}
             >
               Edit Unit
             </Button>
