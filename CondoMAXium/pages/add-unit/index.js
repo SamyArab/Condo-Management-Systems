@@ -178,7 +178,7 @@ const AddUnitForm = () => {
               type="submit"
               variant="contained"
               color="inherit"
-              onClick={() => router.push("/units2")}
+              onClick={() => router.push("/units")}
             >
               Add Unit
             </Button>
