@@ -25,6 +25,12 @@ import SpaRoom from "../../public/sparoom.jpg";
 import { useRouter } from "next/router";
 import "../../styles/reservation.module.css";
 
+/**
+ * ${1:Description placeholder}
+ * @date 3/20/2024 - 9:28:02 PM
+ *
+ * @type {240}
+ */
 const drawerWidth = 240;
 
 /**
@@ -91,8 +97,20 @@ const facilities = [
 ];
 
 
+/**
+ * ${1:Description placeholder}
+ * @date 3/20/2024 - 9:28:02 PM
+ *
+ * @type {*}
+ */
 const defaultTheme = createTheme();
 
+/**
+ * ${1:Description placeholder}
+ * @date 3/20/2024 - 9:28:02 PM
+ *
+ * @returns {*}
+ */
 const ReservationPage = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationsRef = useRef(null);

@@ -17,87 +17,21 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-/**
- * ${1:Description placeholder}
- * @date 3/20/2024 - 9:27:31 PM
- *
- * @type {*}
- */
 const defaultTheme = createTheme();
 
-/*
-export default function SignUp() {
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
-  const data = new FormData(event.currentTarget);
-  console.log({
-    email: data.get("email"),
-    password: data.get("password"),
-  });
-};
-
-let navigate = useNavigate();
-const routeChange = () => {
-  let path = "/profile";
-  navigate(path);
-}; */
-
-// Mark and Nicolas' code
-/*
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-const navigate = useNavigate();
-
-const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
-
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-      // options: {emailRedirectTo: "http://localhost:5173/signup"}
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    console.log("User signed up successfully:", data);
-    routeChange();
-  } catch (error) {
-    console.error("Error signing up:", error);
-  }
-};
-
-const routeChange = () => {
-  let path = "/profile";
-  handleSubmit;
-  //navigate(path);
-};
-*/
-
-// Mark's new code, seems to be working
-/**
- * ${1:Description placeholder}
- * @date 3/20/2024 - 9:27:31 PM
- *
- * @returns {*}
- */
-const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  // Ricky: Added these variables to add to the user
+// Sign up with Google in order to get their first and last name similar to signup
+const SignUpGoogle = () => {
+    
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
+
+
+/*
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      
       const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
         // Added additional info to sign up
         options: {
           data: {
@@ -119,14 +53,10 @@ const SignUp = () => {
       console.error("Error signing up:", error.message);
     }
   };
-
-  // const routeChange = () => {
-  //   let path = "/profile";
-  //   console.log("Navigating to:", path);
-  //   // Implement navigation logic here
-  // };
-
+*/
   const router = useRouter();
+
+  
   
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -179,31 +109,6 @@ const SignUp = () => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12}>
                 <FormControlLabel
                   control={
                     <Checkbox value="allowExtraEmails" color="primary" />
@@ -235,39 +140,4 @@ const SignUp = () => {
     </ThemeProvider>
   );
 };
-export default SignUp;
-
-// const Signup = () => {
-//   return (
-//     <div className="container">
-//       <div className="header">
-//         <div className="text">CondoMAXium</div>
-//       </div>
-//       <div className="input">
-//         <img src="" alt="" />
-//         <input type="Username" />
-//       </div>
-//       <div className="input">
-//         <img src="" alt="" />
-//         <input type="Email" />
-//       </div>
-//       <div className="input">
-//         <img src="" alt="" />
-//         <input type="Phone number" />
-//       </div>
-//       <div className="input">
-//         <img src="" alt="" />
-//         <input type="Password" />
-//       </div>
-//       <div className="input">
-//         <img src="" alt="" />
-//         <input type="IMAGE??????" />
-//       </div>
-//       <div className="submit-container">
-//         <div className="submit">Create</div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Signup;
+export default SignUpGoogle;

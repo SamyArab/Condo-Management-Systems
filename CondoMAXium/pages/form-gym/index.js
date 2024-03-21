@@ -2,26 +2,31 @@ import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import { useRouter } from 'next/router';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format, isBefore, startOfDay, addMonths } from "date-fns";
+import { format, isBefore, startOfDay, addMonths, endOfDay, formatISO  } from "date-fns";
 import { FaCalendarAlt } from "react-icons/fa";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import { CSSTransition } from "react-transition-group";
-import { AccountCircle } from "@mui/icons-material";
 import Divider from "@mui/material/Divider";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import supabase from "../../config/supabaseClient";
 
+/**
+ * Supabase connection with user
+ */
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+/**
+ * Stylization of website
+ */
 const drawerWidth = 240;
-
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -41,42 +46,84 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-// eslint-disable-next-line react/display-name
 const CustomInput = forwardRef(({ value, onClick }, ref) => (
   <button className="date-picker-button" onClick={onClick} ref={ref}>
     {value} <FaCalendarAlt />
   </button>
 ));
-// FormGym.displayName = "FormGym";
 
+  
 
 // Adjusted generateTimeOptions to accept start and end parameters
-const generateTimeOptions = (availableStartTime, availableEndTime) => {
-  const options = [];
-  let startHour, startMinute, endHour, endMinute;
-  if (availableStartTime && availableEndTime) {
-    [startHour, startMinute] = availableStartTime.split(':').map(Number);
-    [endHour, endMinute] = availableEndTime.split(':').map(Number);
-  } else {
-    // Default to full day if not specified
-    startHour = 0; startMinute = 0;
-    endHour = 23; endMinute = 30;
-  }
+/**
+ * @async
+ * @param {*} start
+ * @param {*} end
+ * @param {*} increment
+ * @param {*} [limitHours=null]
+ * @returns {unknown}
+ */
+const generateTimeOptions = async (start, end, increment, limitHours = null) => {
+    const options = [];
+    let startTime = new Date(`2022-01-01T${start}:00`);
+    let endTime = new Date(`2022-01-01T${end}:00`);
 
-  for (let hour = startHour; hour <= endHour; hour++) {
-    for (let minute = hour === startHour ? startMinute : 0; minute < 60; minute += 30) {
-      if (hour === endHour && minute > endMinute) break;
-      const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-      options.push(time);
+    // If there's a limitHours, adjust endTime accordingly
+    if (limitHours !== null) {
+        const limitEndTime = new Date(startTime.getTime() + limitHours * 3600000);
+        if (limitEndTime < endTime) {
+            endTime = limitEndTime;
+        }
     }
-  }
-  return options;
+
+    while (startTime <= endTime) {
+        const timeString = `${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')}`;
+        const isReserved = await isTimeReserved(timeString);
+        if (!isReserved) {
+            options.push(timeString);
+        }
+        startTime.setMinutes(startTime.getMinutes() + increment);
+    }
+
+    return options;
+};
+
+/**
+ * Checks if a specific time slot is reserved on a given date.
+ * @async
+ * @param {string} time - The time slot to check in "HH:mm" format.
+ * @returns {Promise<boolean>} A Promise that resolves to true if the time slot is reserved, false otherwise.
+ * @throws {Error} Throws an error if there's an issue with the database query.
+ * @example
+ * output example : 
+ * Check if the time slot '10:00' is reserved on the date '2022-03-20'
+ * const isReserved = await isTimeReserved('10:00');
+ * console.log(isReserved); // Output: true or false
+ */
+
+const isTimeReserved = async (time) => {
+    const { data, error } = await supabase
+        .from('reservations_gym')
+        .select('*')
+        .eq('date', selectedDate.toISOString().split('T')[0]) // Filter by selected date
+        .eq('starttime', time);
+
+    if (error) {
+        console.error('Error fetching reservation: ', error);
+        return false;
+    }
+
+    return data.length > 0; // Returns true if there are reservations_gym for the specified time
 };
 
 const defaultTheme = createTheme();
 
-const FormGym = () => {
-    const [guests, setGuests] = useState(0); // Default to 1 guest
+const FormSpa = () => {
+    const [open, setOpen] = useState(false);
+    const [showThankYouPopup, setShowThankYouPopup] = useState(false);
+    const [reservedTimes, setReservedTimes] = useState([]);
+    const [startTimeOptions, setStartTimeOptions] = useState([]);
+    const [guests, setGuests] = useState(0); 
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -116,18 +163,148 @@ const FormGym = () => {
         return options;
     };
 
-    // Time options for start time
-    const startTimeOptions = generateTimeOptions('08:00', '21:00', 30);
+    /**
+     * Function to get reserved times from supabase
+     * 
+     * @param {Date} selectedDate - The date for which reserved times are to be fetched.
+     * @returns {Promise<Array<Object>>} An array of objects containing reserved start and end times.
+     * 
+     * @example
+     * const reservedTimes = await fetchReservedTimes(new Date('2024-03-20'));
+     * console.log(reservedTimes);
+     * // Output: [{ start: 1647772800000, end: 1647776400000 }, { start: 1647780000000, end: 1647783600000 }]
+     */
+    const fetchReservedTimes = async (selectedDate) => {
+            // Ensure selectedDate is a valid Date object
+            if (!(selectedDate instanceof Date && !isNaN(selectedDate))) {
+                console.error('selectedDate is not a valid date:', selectedDate);
+                return [];
+            }
+            // Format the selected date to ISO string for comparison
+            const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
+            let { data, error } = await supabase
+                .from('reservations_gym')
+                .select('starttime, endtime')
+                // Assuming 'starttime' and 'endtime' are stored as timestamp with time zone
+                .gte('starttime', `${dateStr}T00:00:00+00:00`)
+                .lt('endtime', `${dateStr}T23:59:59+00:00`);
+
+            if (error) {
+                console.error("Error fetching reserved times:", error);
+                return [];
+            } else {
+                return data.map(({ starttime, endtime }) => ({
+                    start: new Date(starttime).getTime(),
+                    end: new Date(endtime).getTime(),
+                }));
+            }
+    };
+
+    useEffect(() => {
+        fetchReservedTimes();
+    }, [selectedDate]); 
+
+    /**
+     * Filters available times based on reserved time ranges.
+     * 
+     * @param {Array<string>} allTimes - Array of available time slots.
+     * @param {Array<Object>} reservedRanges - Array of reserved time ranges.
+     * @returns {Array<string>} Array of available time slots after filtering.
+     * 
+     * @example
+     * const allTimes = ['09:00', '09:30', '10:00', '10:30', '11:00'];
+     * const reservedRanges = [{ start: 1647772800000, end: 1647776400000 }, { start: 1647780000000, end: 1647783600000 }];
+     * const availableTimes = filterAvailableTimes(allTimes, reservedRanges);
+     * console.log(availableTimes);
+     * // Output: ['09:00', '09:30', '11:00']
+     */
+
+    const filterAvailableTimes = (allTimes, reservedRanges) => {
+        return allTimes.filter(time => {
+            const timeStart = new Date(`${format(selectedDate, 'yyyy-MM-dd')}T${time}:00+00:00`).getTime();
+    
+            // Check if the time slot starts before any reservation ends and ends after any reservation starts
+            return !reservedRanges.some(range => timeStart >= range.start && timeStart < range.end);
+        });
+    };
+    
+    useEffect(() => {
+        const updateAvailableTimes = async () => {
+            const reservedRanges = await fetchReservedTimes(selectedDate);
+            const allTimes = generateTimeOptions('08:00', '23:00', 30);
+            const availableTimes = filterAvailableTimes(allTimes, reservedRanges);
+            setStartTimeOptions(availableTimes);
+        };
+        updateAvailableTimes();
+    }, [selectedDate]);
+    
     // Calculate end time options based on selected start time
-    let endTimeOptions = startTime ? generateTimeOptions(startTime, '21:00', 30, 2) : [];
+    let endTimeOptions = startTime ? generateTimeOptions(startTime, '23:00', 30, 2) : [];
 
+    // Router to move between pages
     const router = useRouter();
     const { facilityId, facilityTitle, maxGuests, availableStartTime, availableEndTime } = router.query;
-
-    const handleSubmit = (e) => {
+    
+/**
+ * Handles the submission of reservation form.
+ * 
+ * @param {Event} e - The submit event.
+ * @returns {void}
+ * 
+ */
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log({ guests, startTime, endTime });
+    
+        // Format the selected date and times
+        const startDate = new Date(selectedDate);
+        startDate.setHours(parseInt(startTime.split(':')[0]));
+        startDate.setMinutes(parseInt(startTime.split(':')[1]));
+        startDate.setSeconds(0); // Ensure seconds are set to 0
+    
+        const endDate = new Date(selectedDate);
+        endDate.setHours(parseInt(endTime.split(':')[0]));
+        endDate.setMinutes(parseInt(endTime.split(':')[1]));
+        endDate.setSeconds(0); // Ensure seconds are set to 0
+    
+        // Combine date and time into a full timestamp
+        const startTimestamp = `${startDate.toISOString().split('T')[0]} ${startTime}`;
+        const endTimestamp = `${endDate.toISOString().split('T')[0]} ${endTime}`;
+    
+        // Check if the reservation already exists
+        let { data: existingreservations_gym, error } = await supabase
+            .from('reservations_gym')
+            .select('*')
+            .eq('starttime', startTimestamp)
+            .eq('endtime', endTimestamp)
+            .eq('profileFky', user.id);
+    
+        if (error) {
+            console.log('Error fetching reservations_gym:', error);
+            return;
+        }
+    
+        // If no existing reservation is found, insert the new one
+        if (existingreservations_gym.length === 0) {
+            let { error } = await supabase
+                .from('reservations_gym')
+                .insert({ starttime: startTimestamp, endtime: endTimestamp, profileFky: user.id, numOfGuests: guests });
+    
+            if (error) {
+                console.log('Error inserting reservation:', error);
+            } else {
+                console.log('Reservation inserted successfully');
+            }
+        } else {
+            console.log('Reservation already exists');
+        }
+        // Show thank you popup and redirect after a short delay
+        setShowThankYouPopup(true);
+        setTimeout(() => {
+            setShowThankYouPopup(false); // Hide the popup
+            router.push('/profile'); // Redirect to the profile page
+        }, 3000); 
     };
 
     const formattedDate = format(selectedDate, "PPPP");
@@ -177,8 +354,8 @@ const FormGym = () => {
                             {/* Image Grid */}
                             <Grid item xs={12} md={6} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                 <img
-                                    src="GymRoom.jpg"
-                                    alt="Private Gym/Workout Room"
+                                    src="gymroom.jpg"
+                                    alt="Private Gym"
                                     style={{
                                         width: "100%", // Adjust as necessary
                                         height: "auto",
@@ -216,9 +393,9 @@ const FormGym = () => {
                                             <input
                                                 type="number"
                                                 value={guests}
-                                                onChange={(e) => setGuests(Math.min(2, Math.max(1, parseInt(e.target.value))))}
+                                                onChange={(e) => setGuests(Math.min(15, Math.max(1, parseInt(e.target.value))))}
                                                 min="0"
-                                                max="2"
+                                                max="15"
                                                 style={{ marginLeft: "10px" }}
                                             />
                                         </label>
@@ -227,11 +404,11 @@ const FormGym = () => {
                                         <div>
                                         <label style={{ borderBottom: "1px solid lightgrey", paddingBottom: "10px", display: "block", borderWidth: "100%"}}>
                                             Start Time:
-                                            <select value={startTime} onChange={(e) => setStartTime(e.target.value)} style={{ marginLeft: "10px" }}>
-                                            <option value="">Select a start time</option>
-                                            {startTimeOptions.map(time => (
-                                                <option key={time} value={time}>{time}</option>
-                                            ))}
+                                            <select value={startTime} onChange={(e) => setStartTime(e.target.value)}>
+                                                <option value="">Select a start time</option>
+                                                {startTimeOptions.map(time => (
+                                                    <option key={time} value={time}>{time}</option>
+                                                ))}
                                             </select>
                                         </label>
                                         </div>
@@ -294,10 +471,29 @@ const FormGym = () => {
                         </Grid>
                     </Container>
                 </Box>
-
-            </Box>
+                {/* Popup Message */}
+                {showThankYouPopup && (
+                    <Box
+                        sx={{
+                            position: 'fixed',
+                            top: '20%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            zIndex: 100,
+                            background: 'white',
+                            padding: '20px',
+                            borderRadius: '10px',
+                            boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
+                            width: 'auto', // Adjust based on your needs
+                            maxWidth: '80%', // Prevents the popup from being too wide on large screens
+                        }}
+                    >
+                        Thank you for reserving the gym!
+                    </Box>
+                )}
+                </Box>
         </ThemeProvider>
     );
 };
 
-export default FormGym;
+export default FormSpa;
