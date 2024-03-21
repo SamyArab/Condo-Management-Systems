@@ -1,13 +1,16 @@
 // ProfilePage.tsx
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import { useRouter } from "next/router";
-
+// import Header from "../../components/layout/Header";
 
 import {
   Box,
   Checkbox,
   Container,
+  Box, 
+  TextField,
+  Grid,
   FormControl,
   FormControlLabel,
   Grid,
@@ -24,56 +27,56 @@ import {
   Typography
 } from "@mui/material";
 import supabase from "../../config/supabaseClient";
-import "../../styles/units.module.css";
+import styles from "../../styles/units.module.css";
 
-
+//mockup list of units, to be changed when adding backend
 const unitsList = {
   units: [
     {
       propertyName: "Mason Building",
-      unitNumber: 101,
+      unitNumber: "101",
       unitOwner: "Maurine Thatcher",
       occupied: "Owner",
       unitSize: "900sqft",
     },
     {
       propertyName: "Mason Building",
-      unitNumber: 102,
+      unitNumber: "102",
       unitOwner: "Maurine Thatcher",
       occupied: "Tenant",
       unitSize: "800sqft",
     },
     {
       propertyName: "Mason Building",
-      unitNumber: 103,
+      unitNumber: "103",
       unitOwner: "Jack Brown",
       occupied: "Owner",
       unitSize: "830sqft",
     },
     {
       propertyName: "Mason Building",
-      unitNumber: 104,
+      unitNumber: "104",
       unitOwner: "Lily Aldrin",
       occupied: "Tenant",
       unitSize: "800sqft",
     },
     {
       propertyName: "Write Building",
-      unitNumber: 101,
+      unitNumber: "101",
       unitOwner: "Ted Mosby",
       occupied: "Owner",
       unitSize: "850sqft",
     },
     {
       propertyName: "Write Building",
-      unitNumber: 102,
+      unitNumber: "102",
       unitOwner: "Marshall Ericson",
       occupied: "Tenant",
       unitSize: "850sqft",
     },
     {
       propertyName: "Write Building",
-      unitNumber: 103,
+      unitNumber: "103",
       unitOwner: "Barney Stinson",
       occupied: "Tenant",
       unitSize: "850sqft",
@@ -118,27 +121,32 @@ const CMCUnits = () => {
 
   //to handle property filter
   const handlePropertyChange = (event) => {
-    setSelectedProperties(event.target.value);
+    const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
+    setSelectedProperties(value);
   };
 
   //to handle unit number filter
   const handleUnitNumberChange = (event) => {
-    setSelectedUnitNumbers(event.target.value);
+    const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
+    setSelectedUnitNumbers(value);
   };
 
   //to handle owner filter
   const handleOwnerChange = (event) => {
-    setSelectedOwners(event.target.value);
+    const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
+    setSelectedOwners(value);
   };
 
   //to handle owner filter
   const handleOccupyChange = (event) => {
-    setSelectedOccupy(event.target.value);
+    const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
+    setSelectedOccupy(value);
   };
 
   //to handle owner filter
   const handleSizeChange = (event) => {
-    setSelectedSizes(event.target.value);
+    const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
+    setSelectedSizes(value);
   };
 
   //to not repeat values in filter
@@ -196,17 +204,20 @@ const CMCUnits = () => {
   return (
     <>
       {/* <Header></Header> */}
-      <Box className="outside-container">
-        <Container className="units-container" maxWidth={5}>
+        //<Container className="units-container" maxWidth={5}>
+      <Box className={styles.outsideContainer}>
+        <Container className={styles.unitsContainer} 
+                  //CHECK IF "sm" CAUSES ISSUES
+                   maxWidth="sm">
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <Typography variant="h4" component="h1" className="units-header">
+              <Typography variant="h4" component="h1" className={styles.unitsHeader}>
                 All Units
               </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={6} className="search-grid">
-              <Box className="search-box">
+            <Grid item xs={12} sm={6} className={styles.searchGrid}>
+              <Box className={styles.searchBox}>
                 <TextField
                   size="small"
                   type="text"
@@ -219,12 +230,13 @@ const CMCUnits = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Box className="units-box">
+              <Box className={styles.unitsBox}>
                 {/* filter for properties */}
                 <FormControl variant="outlined" sx={{ m: 1, width: 180 }}>
-                  <InputLabel>Property Name</InputLabel>
+                  <InputLabel >Property Name</InputLabel>
                   <Select
-                    data-testid="property-filter"
+                    inputProps={{ "data-testid": "property-select"}}
+                    name="property"
                     multiple
                     value={selectedProperties}
                     onChange={handlePropertyChange}
@@ -249,8 +261,9 @@ const CMCUnits = () => {
                 <FormControl variant="outlined" sx={{ m: 1, width: 150 }}>
                   <InputLabel>Unit Id</InputLabel>
                   <Select
+                    inputProps={{ "data-testid": "unit-select"}}
+                    name="unit"
                     multiple
-                    //ignore value error here, still works
                     value={selectedUnitNumbers}
                     onChange={handleUnitNumberChange}
                     label="Unit Id"
@@ -271,15 +284,12 @@ const CMCUnits = () => {
                 </FormControl>
 
                 {/* filter for unit owner */}
-                <FormControl
-                  data-testid="owner-filter"
-                  variant="outlined"
-                  sx={{ m: 1, width: 180 }}
-                >
+                <FormControl variant="outlined" sx={{ m: 1, width: 180 }}>
                   <InputLabel>Unit Owner</InputLabel>
                   <Select
+                    inputProps={{ "data-testid": "owner-select"}}
+                    name="owner"
                     multiple
-                    //ignore value error here, still works
                     value={selectedOwners}
                     onChange={handleOwnerChange}
                     label="Unit Owner"
@@ -303,8 +313,9 @@ const CMCUnits = () => {
                 <FormControl variant="outlined" sx={{ m: 1, width: 180 }}>
                   <InputLabel>Occupied By</InputLabel>
                   <Select
+                    inputProps={{ "data-testid": "occupant-select"}}
+                    name="occupant"
                     multiple
-                    //ignore value error here, still works
                     value={selectedOccupy}
                     onChange={handleOccupyChange}
                     label="Occupied By"
@@ -328,6 +339,8 @@ const CMCUnits = () => {
                 <FormControl variant="outlined" sx={{ m: 1, width: 150 }}>
                   <InputLabel>Size</InputLabel>
                   <Select
+                    inputProps={{ "data-testid": "size-select"}}
+                    name="size"
                     multiple
                     value={selectedSizes}
                     onChange={handleSizeChange}
@@ -349,7 +362,7 @@ const CMCUnits = () => {
                 </FormControl>
 
                 <TableContainer>
-                  <Table className="units-table">
+                  <Table className={styles.unitsTable}>
                     <TableHead>
                       <TableRow>
                         <TableCell>

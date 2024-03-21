@@ -5,7 +5,7 @@
 /* } */
 
 /* Outer Container */
-.outer-container {
+.outerContainer {
   background-color: white;
   /*height: 100vh; !* Prend toute la hauteur de la fenêtre *!*/
   display: flex;
@@ -21,7 +21,7 @@
 }
 
 /* Profile Container */
-.profile-container {
+.profileContainer {
   /*width: 95% !important; !* Ajustez la largeur selon vos besoins *!*/
   max-width: 55% !important;
   /*margin: 40% !important; !* Centre le conteneur horizontalement *!*/
@@ -34,11 +34,11 @@
   box-sizing: content-box !important;
 }
 
-.second-grid {
+.secondGrid {
   margin-bottom: -6% !important; /* Adjust the margin-bottom as needed */
 }
 
-.profile-box {
+.profileBox {
   max-height: 100%;
   max-width: 100%;
   margin: 0 auto;
@@ -49,7 +49,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.key-box {
+.keyBox {
   /*max-width: 100%;*/
   /*margin: 0 auto;*/
   padding: 20px;
@@ -62,14 +62,14 @@
 }
 
 /* Properties Box */
-.properties-div {
+.propertiesDiv {
   overflow-y: auto; /* Utilisez auto au lieu de scroll pour afficher la barre de défilement uniquement si nécessaire */
   display: flex;
   flex-direction: column;
   /*padding-right: 10px; !* Ajoutez un padding pour éviter le chevauchement du contenu par la barre de défilement *!*/
 }
 
-.properties-box {
+.propertiesBox {
   overflow: hidden; /* Ajoutez overflow: hidden; pour cacher tout contenu dépassant le cadre du deuxième grid */
   margin-bottom: 3%;
   padding: 20px;
@@ -81,7 +81,7 @@
 }
 
 /* Properties Box */
-.properties-box {
+.propertiesBox {
   overflow-y: scroll;
   overflow: hidden;
   display: flex;
@@ -89,7 +89,7 @@
 }
 
 /* Payment Container */
-.payment-box {
+.paymentBox {
   background-color: white;
   padding: 20px;
   border-radius: 15px;
@@ -99,38 +99,38 @@
 }
 
 /* Profile Header */
-.profile-header {
+.profileHeader {
   color: #333;
   margin-bottom: 10px;
   text-align: center;
 }
 
 /* Profile Details */
-.profile-details {
+.profileDetails {
   margin-top: 20px;
   text-align: left;
   font-size: 15px !important;
 }
 
 /* Profile Details Strong */
-.profile-details strong {
+.profileDetails strong {
   font-weight: bold;
   margin-right: 5px;
   font-size: 15px !important;
 }
 
 /* Logout Button Container */
-.logout-button-container {
+.logoutButtonContainer {
   display: flex;
   justify-content: center;
   margin-top: 20px;
 }
 
 /* Payment Title */
-.payment-title,
-.key-title,
-.properties-title,
-.profile-title {
+.paymentTitle,
+.keyTitle,
+.propertiesTitle,
+.profileTitle {
   font-size: 20px !important;
   color: black;
   text-align: center;
@@ -138,23 +138,23 @@
 }
 
 /* Payment Table */
-.payment-table {
+.paymentTable {
   width: 100%;
 }
 
 /* Payment Table Headers and Cells */
-.payment-table th,
-.payment-table td {
+.paymentTable th,
+.paymentTable td {
   padding: 10px;
   text-align: center;
 }
 
 /* Payment Table Header */
-.payment-table th {
+.paymentTable th {
   background-color: #f0f0f0;
 }
 
 /* Payment Table Button */
-.payment-table td button {
+.paymentTable td button {
   text-transform: none;
 }

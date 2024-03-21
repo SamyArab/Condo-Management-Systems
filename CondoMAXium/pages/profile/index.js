@@ -28,7 +28,7 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
-import "../../styles/profile.module.css";
+import styles from "../../styles/profile.module.css";
 
 const {
   data: { user },
@@ -84,11 +84,11 @@ const ProfilePage = () => {
   return (
     <>
       <Header></Header>
-      <Box className="outer-container">
-        <Container className="profile-container" maxWidth="sm">
+      <Box className={styles.outerContainer}>
+        <Container className={styles.profileContainer} maxWidth="sm">
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <Box className="profile-box">
+              <Box className={styles.profileBox}>
                 <Avatar
                   alt={userObject.name}
                   src=""
@@ -97,15 +97,15 @@ const ProfilePage = () => {
                 <Typography
                   variant="h4"
                   component="h1"
-                  className="profile-header"
+                  className={styles.profileHeader}
                   gutterBottom
                 >
                   {userObject.name}
                 </Typography>
-                <Typography className="profile-details" gutterBottom>
+                <Typography className={styles.profileDetails} gutterBottom>
                   <strong>My Profile</strong>
                 </Typography>
-                <Box className="profile-details">
+                <Box className={styles.profileDetails}>
                   <Typography variant="h6">
                     <strong>Sex: {userObject.sex}</strong>
                   </Typography>
@@ -116,9 +116,9 @@ const ProfilePage = () => {
                     <strong>{userObject.phone}</strong>
                   </Typography>
                 </Box>
-                <Box className="logout-button-container">
+                <Box className={styles.logoutButtonContainer}>
                   <Button
-                    className="button"
+                    className={styles.button}
                     variant="contained"
                     color="error"
                     onClick={async function signOutUser() {
@@ -141,12 +141,12 @@ const ProfilePage = () => {
               </Box>
             </Grid>
 
-            <Grid item xs={12} sm={6} className="second-grid">
-              <Box className="properties-box">
-                <Typography className="properties-title" gutterBottom>
+            <Grid item xs={12} sm={6} className={styles.secondGrid}>
+              <Box className={styles.propertiesBox}>
+                <Typography className={styles.propertiesTitle} gutterBottom>
                   Properties
                 </Typography>
-                <div className="properties-div">
+                <div className={styles.propertiesDiv}>
                   {userObject.properties.map((property, index) => (
                     <Typography key={index} variant="body1">
                       {property.name} -{" "}
@@ -163,8 +163,8 @@ const ProfilePage = () => {
                   ))}
                 </div>
               </Box>
-              <Box className="key-box">
-                <Typography className="key-title" gutterBottom>
+              <Box className={styles.keyBox}>
+                <Typography className={styles.keyTitle} gutterBottom>
                   Keys
                 </Typography>
                 <TextField
@@ -176,12 +176,12 @@ const ProfilePage = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Box className="payment-box">
-                <Typography className="payment-title" gutterBottom>
+              <Box className={styles.paymentBox}>
+                <Typography className={styles.paymentTitle} gutterBottom>
                   Payments
                 </Typography>
                 <TableContainer>
-                  <Table className="payment-table">
+                  <Table className={styles.paymentTable}>
                     <TableHead>
                       <TableRow>
                         <TableCell>Outstanding Charges</TableCell>
@@ -194,7 +194,7 @@ const ProfilePage = () => {
                           <TableCell>${payment.outstandingCharges}</TableCell>
                           <TableCell>
                             <Button
-                              className="button"
+                              className={styles.button}
                               variant="contained"
                               color="primary"
                               onClick={() => {
@@ -218,17 +218,17 @@ const ProfilePage = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Box className="payment-box">
-                <Typography className="payment-title" gutterBottom>
+              <Box className={styles.paymentBox}>
+                <Typography className={styles.paymentTitle} gutterBottom>
                   Features
                 </Typography>
                 <TableContainer>
-                  <Table className="payment-table">
+                  <Table className={styles.paymentTable}>
                     <TableBody>
                       <TableRow>
                         <TableCell>
                           <Button
-                            className="button"
+                            className={styles.button}
                             variant="contained"
                             color="primary"
                             onClick={() => router.push("/units")}
@@ -239,7 +239,7 @@ const ProfilePage = () => {
 
                         <TableCell>
                           <Button
-                            className="button"
+                            className={styles.button}
                             variant="contained"
                             color="primary"
                             onClick={() => router.push("/dashboard")}
@@ -249,7 +249,7 @@ const ProfilePage = () => {
                         </TableCell>
                         <TableCell>
                           <Button
-                            className="button"
+                            className={styles.button}
                             variant="contained"
                             color="primary"
                             onClick={() => router.push("/reservation")}

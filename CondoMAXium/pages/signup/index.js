@@ -181,10 +181,11 @@ const SignUp = () => {
                 <TextField
                   required
                   fullWidth
-                  name="password"
+                  id="Password"
                   label="Password"
+                  inputProps={{ "data-testid": "pwd"}}
+                  name="password"
                   type="password"
-                  id="password"
                   autoComplete="new-password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}

@@ -1,22 +1,22 @@
-.dropdown-enter {
+.dropdownEnter {
   opacity: 0;
   transform: translateY(-20px);
 }
-.dropdown-enter-active {
+.dropdownEnterActive {
   opacity: 1;
   transform: translateY(0px);
   transition: opacity 300ms, transform 300ms;
 }
-.dropdown-exit {
+.dropdownExit {
   opacity: 1;
 }
-.dropdown-exit-active {
+.dropdownExitActive {
   opacity: 0;
   transition: opacity 300ms;
 }
 
 /* CSS */
-.button-22 {
+.button22 {
   align-items: center;
   appearance: button;
   background-color: #0276ff;
@@ -43,10 +43,10 @@
   touch-action: manipulation;
 }
 
-.button-22:active {
+.button22:active {
   background-color: #006ae8;
 }
 
-.button-22:hover {
+.button22:hover {
   background-color: #1c84ff;
 }
