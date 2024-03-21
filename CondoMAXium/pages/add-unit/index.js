@@ -2,16 +2,19 @@ import {
   Button,
   Container,
   Grid,
+  Box,
   InputLabel,
   MenuItem,
   Select,
   TextField,
+  FormControl,
   Typography
 } from "@mui/material";
 
 import { useRouter } from "next/router";
-import { useState } from "react";
+import React, { useState } from "react";
 import supabase from "../../config/supabaseClient";
+import styles from "../../styles/units.module.css";
 
 
 const {
@@ -53,6 +56,7 @@ const AddUnitForm = () => {
       ]);
 
       console.log("Successfully added unit: ", data);
+      router.push("/units");
     } catch (error) {
       console.error("Error adding unit: ", error.message);
     }
@@ -65,14 +69,15 @@ const AddUnitForm = () => {
   const router = useRouter();
 
   return (
-    <div style={{ paddingTop: "140px", paddingBottom: "40px" }}>
-      {" "}
+    <Box className={styles.outsideContainer}>
+        <Container className={styles.unitsContainer}>
+      {/* {" "} */}
       {/* Add padding top and bottom */}
-      <Container>
-        <Typography variant="h4" gutterBottom>
+      {/* <Container> */}
+        <Typography variant="h4" gutterBottom className={styles.editUnitsHeader}>
           Add Unit
         </Typography>
-        <form onSubmit={handleAdd}>
+        {/* <form onSubmit={handleAdd}> */}
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <TextField
@@ -107,18 +112,21 @@ const AddUnitForm = () => {
                 required
               />
             </Grid>
-            <Grid item xs={6}></Grid>
+            {/* <Grid item xs={6}></Grid> */}
             <Grid item xs={6}>
-              <InputLabel id="occupied-by-label">Occupied By</InputLabel>
-              <Select
-                labelId="occupied-by-label"
-                id="occupied-by-select"
-                value={occupiedBy}
-                onChange={(event) => setOccupiedBy(event.target.value)}
-              >
-                <MenuItem value="Owner">Owner</MenuItem>
-                <MenuItem value="Tenant">Tenant</MenuItem>
-              </Select>
+              <FormControl required fullWidth style={{margingTop:"200px"}}>
+                <InputLabel id="occupied-by-label">Occupied By</InputLabel>
+                <Select
+                  labelId="occupied-by-label"
+                  id="occupied-by-select"
+                  value={occupiedBy}
+                  style={{margingTop:"200px"}}
+                  onChange={(event) => setOccupiedBy(event.target.value)}
+                >
+                  <MenuItem value="Owner">Owner</MenuItem>
+                  <MenuItem value="Tenant">Tenant</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             {occupiedBy === "Tenant" && (
               <Grid item xs={6}>
@@ -157,15 +165,15 @@ const AddUnitForm = () => {
               />
             </Grid>
             <Grid item xs={6}>
-              // <TextField
-              //   name="lockerNumber"
-              //   label="Assigned Locker Number"
-              //   value={lockerNumber}
-              //   onChange={(event) => setLockerNumber(event.target.value)}
-              //   fullWidth
-              //   margin="normal"
-              //   required
-              // />
+              <TextField
+                name="lockerNumber"
+                label="Assigned Locker Number"
+                value={lockerNumber}
+                onChange={(event) => setLockerNumber(event.target.value)}
+                fullWidth
+                margin="normal"
+                required
+              />
             </Grid>
             <Grid item xs={6}>
               <TextField
@@ -181,17 +189,17 @@ const AddUnitForm = () => {
           </Grid>
           <Grid container justifyContent="center" style={{ marginTop: "20px" }}>
             <Button
-              type="submit"
-              variant="contained"
-              color="inherit"
-              onClick={() => router.push("/units")}
+              variant="contained" 
+              size="large"
+              onClick={handleAdd}
+              // onClick={() => router.push("/units")}
             >
-              Add Unit
+              Save
             </Button>
           </Grid>
-        </form>
+        {/* </form> */}
       </Container>
-    </div>
+    </Box>
   );
 };
 

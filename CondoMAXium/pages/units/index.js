@@ -6,14 +6,13 @@ import { useRouter } from "next/router";
 
 import {
   Box,
+  Button,
   Checkbox,
   Container,
-  Box, 
   TextField,
   Grid,
   FormControl,
   FormControlLabel,
-  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -23,66 +22,67 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography
 } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import supabase from "../../config/supabaseClient";
 import styles from "../../styles/units.module.css";
 
 //mockup list of units, to be changed when adding backend
-const unitsList = {
-  units: [
-    {
-      propertyName: "Mason Building",
-      unitNumber: "101",
-      unitOwner: "Maurine Thatcher",
-      occupied: "Owner",
-      unitSize: "900sqft",
-    },
-    {
-      propertyName: "Mason Building",
-      unitNumber: "102",
-      unitOwner: "Maurine Thatcher",
-      occupied: "Tenant",
-      unitSize: "800sqft",
-    },
-    {
-      propertyName: "Mason Building",
-      unitNumber: "103",
-      unitOwner: "Jack Brown",
-      occupied: "Owner",
-      unitSize: "830sqft",
-    },
-    {
-      propertyName: "Mason Building",
-      unitNumber: "104",
-      unitOwner: "Lily Aldrin",
-      occupied: "Tenant",
-      unitSize: "800sqft",
-    },
-    {
-      propertyName: "Write Building",
-      unitNumber: "101",
-      unitOwner: "Ted Mosby",
-      occupied: "Owner",
-      unitSize: "850sqft",
-    },
-    {
-      propertyName: "Write Building",
-      unitNumber: "102",
-      unitOwner: "Marshall Ericson",
-      occupied: "Tenant",
-      unitSize: "850sqft",
-    },
-    {
-      propertyName: "Write Building",
-      unitNumber: "103",
-      unitOwner: "Barney Stinson",
-      occupied: "Tenant",
-      unitSize: "850sqft",
-    },
-  ],
-};
+// const unitsList = {
+//   units: [
+//     {
+//       propertyName: "Mason Building",
+//       unitNumber: "101",
+//       unitOwner: "Maurine Thatcher",
+//       occupied: "Owner",
+//       unitSize: "900sqft",
+//     },
+//     {
+//       propertyName: "Mason Building",
+//       unitNumber: "102",
+//       unitOwner: "Maurine Thatcher",
+//       occupied: "Tenant",
+//       unitSize: "800sqft",
+//     },
+//     {
+//       propertyName: "Mason Building",
+//       unitNumber: "103",
+//       unitOwner: "Jack Brown",
+//       occupied: "Owner",
+//       unitSize: "830sqft",
+//     },
+//     {
+//       propertyName: "Mason Building",
+//       unitNumber: "104",
+//       unitOwner: "Lily Aldrin",
+//       occupied: "Tenant",
+//       unitSize: "800sqft",
+//     },
+//     {
+//       propertyName: "Write Building",
+//       unitNumber: "101",
+//       unitOwner: "Ted Mosby",
+//       occupied: "Owner",
+//       unitSize: "850sqft",
+//     },
+//     {
+//       propertyName: "Write Building",
+//       unitNumber: "102",
+//       unitOwner: "Marshall Ericson",
+//       occupied: "Tenant",
+//       unitSize: "850sqft",
+//     },
+//     {
+//       propertyName: "Write Building",
+//       unitNumber: "103",
+//       unitOwner: "Barney Stinson",
+//       occupied: "Tenant",
+//       unitSize: "850sqft",
+//     },
+//   ],
+// };
 
 const CMCUnits = () => {
   const [units, setUnits] = useState([]);
@@ -93,10 +93,10 @@ const CMCUnits = () => {
     async function fetchUnits() {
       try {
         const { data, error } = await supabase.from('units').select('*');
+        setUnits(data); 
         if (error) {
           throw error;
         }
-        setUnits(data);
       } catch (error) {
         console.log("Error fetching units", error.message);
       }
@@ -108,11 +108,11 @@ const CMCUnits = () => {
 
 
   //for filters
-  const [selectedProperties, setSelectedProperties] = useState([]);
-  const [selectedUnitNumbers, setSelectedUnitNumbers] = useState([]);
-  const [selectedOwners, setSelectedOwners] = useState([]);
-  const [selectedOccupy, setSelectedOccupy] = useState([]);
-  const [selectedSizes, setSelectedSizes] = useState([]);
+  // const [selectedProperties, setSelectedProperties] = useState([]);
+  // const [selectedUnitNumbers, setSelectedUnitNumbers] = useState([]);
+  // const [selectedOwners, setSelectedOwners] = useState([]);
+  // const [selectedOccupy, setSelectedOccupy] = useState([]);
+  // const [selectedSizes, setSelectedSizes] = useState([]);
 
   //to handle search bar
   const handleSearch = (event) => {
@@ -120,69 +120,70 @@ const CMCUnits = () => {
   };
 
   //to handle property filter
-  const handlePropertyChange = (event) => {
-    const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
-    setSelectedProperties(value);
-  };
+  // const handlePropertyChange = (event) => {
+  //   const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
+  //   setSelectedProperties(value);
+  // };
 
   //to handle unit number filter
-  const handleUnitNumberChange = (event) => {
-    const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
-    setSelectedUnitNumbers(value);
-  };
+  // const handleUnitNumberChange = (event) => {
+  //   const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
+  //   setSelectedUnitNumbers(value);
+  // };
 
   //to handle owner filter
-  const handleOwnerChange = (event) => {
-    const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
-    setSelectedOwners(value);
-  };
+  // const handleOwnerChange = (event) => {
+  //   const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
+  //   setSelectedOwners(value);
+  // };
 
   //to handle owner filter
-  const handleOccupyChange = (event) => {
-    const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
-    setSelectedOccupy(value);
-  };
+  // const handleOccupyChange = (event) => {
+  //   const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
+  //   setSelectedOccupy(value);
+  // };
 
   //to handle owner filter
-  const handleSizeChange = (event) => {
-    const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
-    setSelectedSizes(value);
-  };
+  // const handleSizeChange = (event) => {
+  //   const value = Array.isArray(event.target.value) ? event.target.value : [event.target.value];
+  //   setSelectedSizes(value);
+  // };
 
   //to not repeat values in filter
-  const uniqueProperties = Array.from(
-    new Set(unitsList.units.map((unit) => unit.property_name))
-  );
-  const uniqueUnitIds = Array.from(
-    new Set(unitsList.units.map((unit) => unit.unit_number))
-  );
-  const uniqueOwners = Array.from(
-    new Set(unitsList.units.map((unit) => unit.unitOwner))
-  );
-  const uniqueOccupy = Array.from(
-    new Set(unitsList.units.map((unit) => unit.occupied))
-  );
-  const uniqueSizes = Array.from(
-    new Set(unitsList.units.map((unit) => unit.unitSize))
-  );
-  const sortedUniqueSizes = uniqueSizes.sort();
+  // const uniqueProperties = Array.from(
+  //   new Set(unitsList.units.map((unit) => unit.property_name))
+  // );
+  // const uniqueUnitIds = Array.from(
+  //   new Set(unitsList.units.map((unit) => unit.unit_number))
+  // );
+  // const uniqueOwners = Array.from(
+  //   new Set(unitsList.units.map((unit) => unit.unitOwner))
+  // );
+  // const uniqueOccupy = Array.from(
+  //   new Set(unitsList.units.map((unit) => unit.occupied))
+  // );
+  // const uniqueSizes = Array.from(
+  //   new Set(unitsList.units.map((unit) => unit.unitSize))
+  // );
+  // const sortedUniqueSizes = uniqueSizes.sort();
 
-  //to filter
-  const filteredUnits = unitsList.units.filter(
-    (unit) =>
-      (selectedProperties.length === 0 ||
-        selectedProperties.includes(unit.propertyName)) &&
-      (selectedUnitNumbers.length === 0 ||
-        selectedUnitNumbers.includes(unit.unitNumber)) &&
-      (selectedOwners.length === 0 ||
-        selectedOwners.includes(unit.unitOwner)) &&
-      (selectedOccupy.length === 0 || selectedOccupy.includes(unit.occupied)) &&
-      (selectedSizes.length === 0 || selectedSizes.includes(unit.unitSize)) &&
-      (unit.propertyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        String(unit.unitNumber).includes(searchTerm) ||
-        unit.unitOwner.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        unit.occupied.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        unit.unitSize.toLowerCase().includes(searchTerm.toLowerCase()))
+  // to filter
+  const filteredUnits = units.filter( unit =>
+    // (unit) =>
+      // (selectedProperties.length === 0 ||
+      //   selectedProperties.includes(unit.propertyName)) &&
+      // (selectedUnitNumbers.length === 0 ||
+      //   selectedUnitNumbers.includes(unit.unitNumber)) &&
+      // (selectedOwners.length === 0 ||
+      //   selectedOwners.includes(unit.unitOwner)) &&
+      // (selectedOccupy.length === 0 || selectedOccupy.includes(unit.occupied)) &&
+      // (selectedSizes.length === 0 || selectedSizes.includes(unit.unitSize)) &&
+      (unit.property_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        String(unit.unit_number).includes(searchTerm) ||
+        unit.unit_owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        unit.occupied_by.toLowerCase().includes(searchTerm.toLowerCase()) 
+        // || String(unit.unit_size).includes(searchTerm)
+        ) 
   );
   const router = useRouter();
 
@@ -197,14 +198,16 @@ const CMCUnits = () => {
 
   //route to add a new unit page
   const handleAddUnitClick = (unitId) => {
-    console.log('adding new unit');
-    router.push("/add-unit");
+    const result = router.push("/add-unit");
+    // if (result) {
+      console.log('adding new unit');
+    // }
   }
 
   return (
     <>
       {/* <Header></Header> */}
-        //<Container className="units-container" maxWidth={5}>
+        {/* <Container className="units-container" maxWidth={5}> */}
       <Box className={styles.outsideContainer}>
         <Container className={styles.unitsContainer} 
                   //CHECK IF "sm" CAUSES ISSUES
@@ -227,12 +230,19 @@ const CMCUnits = () => {
                   fullWidth
                 />
               </Box>
+              <Box textAlign="right" style={{marginRight: '20px'}}>
+                <Button 
+                  variant="contained" 
+                  startIcon={<AddIcon />} 
+                  onClick={handleAddUnitClick} 
+                >Add Unit</Button>
+              </Box>
             </Grid>
-
+            
             <Grid item xs={12}>
               <Box className={styles.unitsBox}>
                 {/* filter for properties */}
-                <FormControl variant="outlined" sx={{ m: 1, width: 180 }}>
+                {/* <FormControl variant="outlined" sx={{ m: 1, width: 180 }}>
                   <InputLabel >Property Name</InputLabel>
                   <Select
                     inputProps={{ "data-testid": "property-select"}}
@@ -255,10 +265,10 @@ const CMCUnits = () => {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
 
                 {/* filter for unit number */}
-                <FormControl variant="outlined" sx={{ m: 1, width: 150 }}>
+                {/* <FormControl variant="outlined" sx={{ m: 1, width: 150 }}>
                   <InputLabel>Unit Id</InputLabel>
                   <Select
                     inputProps={{ "data-testid": "unit-select"}}
@@ -281,10 +291,10 @@ const CMCUnits = () => {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
 
                 {/* filter for unit owner */}
-                <FormControl variant="outlined" sx={{ m: 1, width: 180 }}>
+                {/* <FormControl variant="outlined" sx={{ m: 1, width: 180 }}>
                   <InputLabel>Unit Owner</InputLabel>
                   <Select
                     inputProps={{ "data-testid": "owner-select"}}
@@ -307,10 +317,10 @@ const CMCUnits = () => {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
 
                 {/* filter for who occupies unit */}
-                <FormControl variant="outlined" sx={{ m: 1, width: 180 }}>
+                {/* <FormControl variant="outlined" sx={{ m: 1, width: 180 }}>
                   <InputLabel>Occupied By</InputLabel>
                   <Select
                     inputProps={{ "data-testid": "occupant-select"}}
@@ -333,10 +343,10 @@ const CMCUnits = () => {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
 
                 {/* filter for size */}
-                <FormControl variant="outlined" sx={{ m: 1, width: 150 }}>
+                {/* <FormControl variant="outlined" sx={{ m: 1, width: 150 }}>
                   <InputLabel>Size</InputLabel>
                   <Select
                     inputProps={{ "data-testid": "size-select"}}
@@ -359,7 +369,7 @@ const CMCUnits = () => {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
 
                 <TableContainer>
                   <Table className={styles.unitsTable}>
@@ -394,7 +404,7 @@ const CMCUnits = () => {
                     </TableHead>
                     <TableBody>
                     {/* print values from the DB */}
-                    {units.map((unit, index) => (
+                    {filteredUnits.map((unit, index) => (
                           <TableRow key={index}>
                             <TableCell>{unit.property_name}</TableCell>
                             <TableCell>{unit.unit_number}</TableCell>
@@ -405,14 +415,18 @@ const CMCUnits = () => {
                             <TableCell>{unit.locker_number}</TableCell>
                             <TableCell>{unit.condo_fee}</TableCell>
                             <TableCell>
-                              <button onClick={() => handleEditClick(unit.id)}>Edit Unit</button>
+                              <Button 
+                                variant="contained" 
+                                size="small"
+                                startIcon={<EditIcon />} 
+                                onClick={() => handleEditClick(unit.id)}
+                              >Edit</Button>
                             </TableCell>
                           </TableRow>
                         ))}
                     </TableBody> 
                   </Table>
                 </TableContainer>
-                <button id="centeredButton" onClick={handleAddUnitClick} style={{ display: 'block', margin: 'auto', marginTop: '20px' }}>Add Unit</button>
               </Box>
             </Grid>
           </Grid>
