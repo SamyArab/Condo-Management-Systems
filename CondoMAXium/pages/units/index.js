@@ -1,28 +1,32 @@
 // ProfilePage.tsx
+import React, { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/router";
 // import Header from "../../components/layout/Header";
-import React, { useState } from "react";
 
 import {
-  Typography,
+  Box,
+  Checkbox,
   Container,
   Box, 
   TextField,
   Grid,
   FormControl,
-  InputLabel,
-  Checkbox,
-  Select,
-  MenuItem,
   FormControlLabel,
-} from "@mui/material";
-import {
-  TableContainer,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   Table,
+  TableBody,
+  TableCell,
+  TableContainer,
   TableHead,
   TableRow,
-  TableCell,
-  TableBody,
+  TextField,
+  Typography
 } from "@mui/material";
+import supabase from "../../config/supabaseClient";
 import styles from "../../styles/units.module.css";
 
 //mockup list of units, to be changed when adding backend
@@ -81,8 +85,27 @@ const unitsList = {
 };
 
 const CMCUnits = () => {
-  //for search bar
+  const [units, setUnits] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  //fetching units from database
+  useEffect(() => {
+    async function fetchUnits() {
+      try {
+        const { data, error } = await supabase.from('units').select('*');
+        if (error) {
+          throw error;
+        }
+        setUnits(data);
+      } catch (error) {
+        console.log("Error fetching units", error.message);
+      }
+    }
+    
+    fetchUnits();
+  }, []);
+
+
 
   //for filters
   const [selectedProperties, setSelectedProperties] = useState([]);
@@ -128,10 +151,10 @@ const CMCUnits = () => {
 
   //to not repeat values in filter
   const uniqueProperties = Array.from(
-    new Set(unitsList.units.map((unit) => unit.propertyName))
+    new Set(unitsList.units.map((unit) => unit.property_name))
   );
   const uniqueUnitIds = Array.from(
-    new Set(unitsList.units.map((unit) => unit.unitNumber))
+    new Set(unitsList.units.map((unit) => unit.unit_number))
   );
   const uniqueOwners = Array.from(
     new Set(unitsList.units.map((unit) => unit.unitOwner))
@@ -161,12 +184,30 @@ const CMCUnits = () => {
         unit.occupied.toLowerCase().includes(searchTerm.toLowerCase()) ||
         unit.unitSize.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+  const router = useRouter();
+
+  //route to the edit-unit page
+  const handleEditClick = (unitid) => {
+    console.log('editing unit with index :', unitid);
+    router.push({
+      pathname: '/edit-unit',
+      query: {unitid:unitid}
+    });
+  }
+
+  //route to add a new unit page
+  const handleAddUnitClick = (unitId) => {
+    console.log('adding new unit');
+    router.push("/add-unit");
+  }
 
   return (
     <>
       {/* <Header></Header> */}
+        //<Container className="units-container" maxWidth={5}>
       <Box className={styles.outsideContainer}>
         <Container className={styles.unitsContainer} 
+                  //CHECK IF "sm" CAUSES ISSUES
                    maxWidth="sm">
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -339,22 +380,39 @@ const CMCUnits = () => {
                         <TableCell>
                           <b>Size</b>
                         </TableCell>
+                        <TableCell>
+                          <b>Parking Number</b>
+                        </TableCell>
+                        <TableCell>
+                          <b>Locker Number</b>
+                        </TableCell>
+                        <TableCell>
+                          <b>Condo Fee</b>
+                        </TableCell>
+
                       </TableRow>
                     </TableHead>
-
                     <TableBody>
-                      {filteredUnits.map((unit, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{unit.propertyName}</TableCell>
-                          <TableCell>{unit.unitNumber}</TableCell>
-                          <TableCell>{unit.unitOwner}</TableCell>
-                          <TableCell>{unit.occupied}</TableCell>
-                          <TableCell>{unit.unitSize}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
+                    {/* print values from the DB */}
+                    {units.map((unit, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{unit.property_name}</TableCell>
+                            <TableCell>{unit.unit_number}</TableCell>
+                            <TableCell>{unit.unit_owner}</TableCell>
+                            <TableCell>{unit.occupied_by}</TableCell>
+                            <TableCell>{unit.size}</TableCell>
+                            <TableCell>{unit.parking_number}</TableCell>
+                            <TableCell>{unit.locker_number}</TableCell>
+                            <TableCell>{unit.condo_fee}</TableCell>
+                            <TableCell>
+                              <button onClick={() => handleEditClick(unit.id)}>Edit Unit</button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody> 
                   </Table>
                 </TableContainer>
+                <button id="centeredButton" onClick={handleAddUnitClick} style={{ display: 'block', margin: 'auto', marginTop: '20px' }}>Add Unit</button>
               </Box>
             </Grid>
           </Grid>
