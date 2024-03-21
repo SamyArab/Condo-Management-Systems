@@ -28,12 +28,6 @@ const {
  */
 const drawerWidth = 240;
 
-/**
- * ${1:Description placeholder}
- * @date 3/20/2024 - 9:30:40 PM
- *
- * @type {*}
- */
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -52,13 +46,6 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-// eslint-disable-next-line react/display-name
-/**
- * ${1:Description placeholder}
- * @date 3/20/2024 - 9:30:40 PM
- *
- * @type {*}
- */
 const CustomInput = forwardRef(({ value, onClick }, ref) => (
   <button className="date-picker-button" onClick={onClick} ref={ref}>
     {value} <FaCalendarAlt />
@@ -69,9 +56,6 @@ const CustomInput = forwardRef(({ value, onClick }, ref) => (
 
 // Adjusted generateTimeOptions to accept start and end parameters
 /**
- * ${1:Description placeholder}
- * @date 3/20/2024 - 9:30:40 PM
- *
  * @async
  * @param {*} start
  * @param {*} end
@@ -132,12 +116,6 @@ const isTimeReserved = async (time) => {
     return data.length > 0; // Returns true if there are reservations for the specified time
 };
 
-/**
- * ${1:Description placeholder}
- * @date 3/20/2024 - 9:30:40 PM
- *
- * @type {*}
- */
 const defaultTheme = createTheme();
 
 /**
@@ -247,6 +225,7 @@ const FormRooftopDeck = () => {
      * console.log(availableTimes);
      * // Output: ['09:00', '09:30', '11:00']
      */
+
     const filterAvailableTimes = (allTimes, reservedRanges) => {
         return allTimes.filter(time => {
             const timeStart = new Date(`${format(selectedDate, 'yyyy-MM-dd')}T${time}:00+00:00`).getTime();
