@@ -1,5 +1,5 @@
 // ProfilePage.tsx
-import Header from "../../components/layout/Header";
+// import Header from "../../components/layout/Header";
 import React, { useState } from "react";
 
 import {
@@ -246,13 +246,15 @@ const profileForm = () => {
                             <FormControl required variant="filled" fullWidth>
                                 <InputLabel>Associated Condo Management Company</InputLabel>
                                 <Select
-                                value={CMC}
-                                onChange={handleCMCChange}
+                                    inputProps={{ "data-testid": "CMC-select"}}
+                                    name="CMC"
+                                    value={CMC}
+                                    onChange={handleCMCChange}
                                 >
-                                <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem>
-                                <MenuItem value={'test'}>test</MenuItem> 
+                                    <MenuItem value="">
+                                        <em>None</em>
+                                    </MenuItem>
+                                    <MenuItem value={'test'}>test</MenuItem> 
                                 {/* <MenuItem value={'Tenant'}>I am a tenant</MenuItem> */}
                                 </Select>
                             </FormControl>
@@ -263,14 +265,16 @@ const profileForm = () => {
                             <FormControl required variant="filled" fullWidth>
                                 <InputLabel>Owner/Tenant</InputLabel>
                                 <Select
-                                value={profileType}
-                                onChange={handleProfileTypeChange}
+                                    inputProps={{ "data-testid": "type-select"}}
+                                    name="type"
+                                    value={profileType}
+                                    onChange={handleProfileTypeChange}
                                 >
-                                <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem>
-                                <MenuItem value={'Owner'}>I am an owner</MenuItem>
-                                <MenuItem value={'Tenant'}>I am a tenant</MenuItem>
+                                    <MenuItem value="">
+                                        <em>None</em>
+                                    </MenuItem>
+                                    <MenuItem value={'Owner'}>I am an owner</MenuItem>
+                                    <MenuItem value={'Tenant'}>I am a tenant</MenuItem>
                                 </Select>
                             </FormControl>
                             <br/><br/>
@@ -343,9 +347,10 @@ const profileForm = () => {
                                                 <FormControl required variant="filled" fullWidth>
                                                     <InputLabel>Occupant</InputLabel>
                                                     <Select
-                                                    name='occupant'
-                                                    value={input.occupant}
-                                                    onChange={(event) => handleFieldsChange(index, event)}
+                                                        inputProps={{ "data-testid": "occupant-select"}}
+                                                        name='occupant'
+                                                        value={input.occupant}
+                                                        onChange={(event) => handleFieldsChange(index, event)}
                                                     >
                                                         <MenuItem value="">
                                                             <em>None</em>
