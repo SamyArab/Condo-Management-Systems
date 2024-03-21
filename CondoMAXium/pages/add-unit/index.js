@@ -157,15 +157,15 @@ const AddUnitForm = () => {
               />
             </Grid>
             <Grid item xs={6}>
-              <TextField
-                name="lockerNumber"
-                label="Assigned Locker Number"
-                value={lockerNumber}
-                onChange={(event) => setLockerNumber(event.target.value)}
-                fullWidth
-                margin="normal"
-                required
-              />
+              // <TextField
+              //   name="lockerNumber"
+              //   label="Assigned Locker Number"
+              //   value={lockerNumber}
+              //   onChange={(event) => setLockerNumber(event.target.value)}
+              //   fullWidth
+              //   margin="normal"
+              //   required
+              // />
             </Grid>
             <Grid item xs={6}>
               <TextField
