@@ -5,27 +5,27 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format, isBefore, startOfDay, addMonths, endOfDay, formatISO  } from "date-fns";
 import { FaCalendarAlt } from "react-icons/fa";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import { CSSTransition } from "react-transition-group";
-import { AccountCircle } from "@mui/icons-material";
 import Divider from "@mui/material/Divider";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import supabase from "../../config/supabaseClient";
 
-
+/**
+ * Supabase connection with user
+ */
 const {
   data: { user },
 } = await supabase.auth.getUser();
 
+/**
+ * Stylization of website
+ */
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -81,6 +81,9 @@ const generateTimeOptions = async (start, end, increment, limitHours = null) => 
     return options;
 };
 
+/**
+ * Method to check if timeslot is reserved in supabase
+ */
 const isTimeReserved = async (time) => {
     const { data, error } = await supabase
         .from('reservations')
@@ -99,6 +102,8 @@ const isTimeReserved = async (time) => {
 const defaultTheme = createTheme();
 
 const FormRooftopDeck = () => {
+    const [open, setOpen] = useState(false);
+    const [showThankYouPopup, setShowThankYouPopup] = useState(false);
     const [reservedTimes, setReservedTimes] = useState([]);
     const [startTimeOptions, setStartTimeOptions] = useState([]);
     const [guests, setGuests] = useState(0); 
@@ -141,6 +146,9 @@ const FormRooftopDeck = () => {
         return options;
     };
 
+    /**
+     * Method to get reserved times from supabase
+     */
     const fetchReservedTimes = async (selectedDate) => {
             // Ensure selectedDate is a valid Date object
             if (!(selectedDate instanceof Date && !isNaN(selectedDate))) {
@@ -191,34 +199,17 @@ const FormRooftopDeck = () => {
         updateAvailableTimes();
     }, [selectedDate]);
     
-
-    // // Function to generate and update start time options excluding reserved times
-    // const updateStartTimeOptions = (reservedTimes) => {
-    //     const allTimes = generateTimeOptions('18:00', '23:00', 30);
-    //     const availableTimes = allTimes.filter(time => {
-    //         // Convert time option to a comparable format
-    //         const optionDateTime = new Date(`${format(selectedDate, "yyyy-MM-dd")}T${time}:00+00:00`);
-    //         // Check if this time option falls within any reserved time ranges
-    //         return !reservedTimes.some(({starttime, endtime}) => {
-    //             const start = new Date(starttime);
-    //             const end = new Date(endtime);
-    //             return optionDateTime >= start && optionDateTime < end;
-    //         });
-    //     });
-    //     setStartTimeOptions(availableTimes);
-    // };
-    
-
-    // Time options for start time
-    // const startTimeOptions = generateTimeOptions('18:00', '23:00', 30);
-
     // Calculate end time options based on selected start time
     let endTimeOptions = startTime ? generateTimeOptions(startTime, '23:00', 30, 2) : [];
 
+    // Router to move between pages
     const router = useRouter();
     const { facilityId, facilityTitle, maxGuests, availableStartTime, availableEndTime } = router.query;
-      
-      const handleSubmit = async (e) => {
+    
+    /**
+     * Method to handle form submission
+     */
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log({ guests, startTime, endTime });
     
@@ -264,6 +255,12 @@ const FormRooftopDeck = () => {
         } else {
             console.log('Reservation already exists');
         }
+        // Show thank you popup and redirect after a short delay
+        setShowThankYouPopup(true);
+        setTimeout(() => {
+            setShowThankYouPopup(false); // Hide the popup
+            router.push('/profile'); // Redirect to the profile page
+        }, 3000); 
     };
 
     const formattedDate = format(selectedDate, "PPPP");
@@ -430,7 +427,27 @@ const FormRooftopDeck = () => {
                         </Grid>
                     </Container>
                 </Box>
-            </Box>
+                {/* Popup Message */}
+                {showThankYouPopup && (
+                    <Box
+                        sx={{
+                            position: 'fixed',
+                            top: '20%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            zIndex: 100,
+                            background: 'white',
+                            padding: '20px',
+                            borderRadius: '10px',
+                            boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
+                            width: 'auto', // Adjust based on your needs
+                            maxWidth: '80%', // Prevents the popup from being too wide on large screens
+                        }}
+                    >
+                        Thank you for reserving the Rooftop Deck!
+                    </Box>
+                )}
+                </Box>
         </ThemeProvider>
     );
 };
