@@ -59,6 +59,7 @@ function renderReservation(reservation) {
                     borderRadius: "12px",
                     width: "100%" // Ensure the paper takes full width
                 }}
+                data-testid="reservation-card" // Add data-testid attribute here
             >
                 <img
                     src={reservation.image}
