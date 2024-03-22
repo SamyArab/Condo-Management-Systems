@@ -45,6 +45,13 @@
   text-align: center;
 }
 
+/* edit-units Header */
+.editUnitsHeader {
+  color: #333;
+  padding: 2%;
+  /* text-align: center; */
+}
+
 .searchBox {
   overflow: hidden; /* Ajoutez overflow: hidden; pour cacher tout contenu dépassant le cadre du deuxième grid */
   margin-top: 3%;
