@@ -2,12 +2,14 @@ import {
   Button,
   Container,
   Grid,
+  Box,
   TextField,
   Typography
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import supabase from "../../config/supabaseClient";
+import styles from "../../styles/units.module.css";
 
 const EditUnitPage = () => {
   const router = useRouter();
@@ -100,6 +102,7 @@ const EditUnitPage = () => {
         throw error;
       }
       console.log('Unit updated successfully');
+      router.push("/units");
       
     } catch (error) {
       console.error("Error updating unit:", error.message);
@@ -107,12 +110,12 @@ const EditUnitPage = () => {
   };
 
   return (
-    <div style={{ paddingTop: "140px", paddingBottom: "40px" }}>
-      <Container>
-        <Typography variant="h4" gutterBottom>
+    <Box className={styles.outsideContainer}>
+        <Container className={styles.unitsContainer}>
+        <Typography variant="h4" gutterBottom className={styles.editUnitsHeader}>
           Edit Unit
         </Typography>
-        <form onSubmit={handleDBChange}>
+        {/* <form onSubmit={handleDBChange}> */}
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <TextField
@@ -147,7 +150,7 @@ const EditUnitPage = () => {
                 required
               />
             </Grid>
-            <Grid item xs={6}></Grid>
+            {/* <Grid item xs={6}></Grid> */}
             {/* <Grid item xs={6}>
               <div class="dropdown">
                 <button class="dropdown-btn">Occupied By</button>
@@ -157,7 +160,7 @@ const EditUnitPage = () => {
                 </div>
               </div>
             </Grid> */}
-            {unit.occupied_by === "Tenant" && (
+            {/* {unit.occupied_by === "Tenant" && (
               <Grid item xs={6}>
                 <TextField
                   name="tenantFullName"
@@ -169,7 +172,7 @@ const EditUnitPage = () => {
                   required
                 />
               </Grid>
-            )}
+            )} */}
             
             <Grid item xs={6}>
               <TextField
@@ -217,18 +220,17 @@ const EditUnitPage = () => {
             </Grid>
           </Grid>
           <Grid container justifyContent="center" style={{ marginTop: "20px" }}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="inherit"
-              onClick={() => router.push("/units")}
-            >
-              Edit Unit
-            </Button>
+          <Button 
+            type="submit"
+            variant="contained" 
+            size="large"
+            onClick={handleDBChange}
+            // onClick={() => router.push("/units")}
+          >Save</Button>
           </Grid>
-        </form>
+        {/* </form> */}
       </Container>
-    </div>
+    </Box>
   );
 };
 
