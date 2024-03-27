@@ -10,9 +10,8 @@ import {
   FormControl,
   Typography
 } from "@mui/material";
-
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import supabase from "../../config/supabaseClient";
 import styles from "../../styles/units.module.css";
 
@@ -34,8 +33,76 @@ const AddUnitForm = () => {
   const [unitSize, setUnitSize] = useState("");
   const [parkingNumber, setParkingNumber] = useState("");
   const [lockerNumber, setLockerNumber] = useState("");
-  const [condoFee, setCondoFee] = useState("");
+  const [condoFeeSqft, setcondoFeeSqft] = useState("");
+  const [condoFeeParking, setCondoFeeParking] = useState("");
+  const [propertyFky, setPropertyFky] = useState(0);
+  const [ownerFky, setOwnerFky] = useState(0);
+  const [tenantFky, setTenantFky] = useState(0);
 
+
+
+  // property ID for propertFky
+  useEffect(() => {
+    async function fetchPropertyID() {
+      try {
+        const { data } = await supabase.from('properties').select('*').eq('buildingName', propertyName);
+        if (data && data.length > 0) {
+          const propertyId = data[0].propertyId;
+          setPropertyFky(propertyId);
+          console.log("Property ID:", propertyId);
+        } else {
+          console.log("No property found with name:", propertyName);
+        }
+      } catch (error) {
+        console.error("Error fetching property ", error.message);
+      }
+    }
+    if (propertyName) {
+      fetchPropertyID();
+    }
+  }, [propertyName]);
+  
+  //Owner ID for ownerFky
+  // useEffect(() => {
+  //   async function fetchOwnerID() {
+  //     try {
+  //       const { data } = await supabase.from('owner').select('*').eq('', ownerFullName);
+  //       if (data && data.length > 0) {
+  //         const ownerId = data[0].ownerId;
+  //         setOwnerFky(ownerId);
+  //         console.log("Property ID:", ownerId);
+  //       } else {
+  //         console.log("No owner found with name:", ownerFullName);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching owner ", error.message);
+  //     }
+  //   }
+  //   if (ownerFullName) {
+  //     fetchOwnerID();
+  //   }
+  // }, [ownerFullName]);
+  
+    // For tenant fky
+    // useEffect(() => {
+    //   async function fetchPropertyID() {
+    //     try {
+    //       const { data } = await supabase.from('properties').select('*').eq('buildingName', propertyName);
+    //       if (data && data.length > 0) {
+    //         const propertyId = data[0].propertyId;
+    //         setPropertyFky(propertyId);
+    //         console.log("Property ID:", propertyId);
+    //       } else {
+    //         console.log("No property found with name:", propertyName);
+    //       }
+    //     } catch (error) {
+    //       console.error("Error fetching property ", error.message);
+    //     }
+    //   }
+    //   if (propertyName) {
+    //     fetchPropertyID();
+    //   }
+    // }, [propertyName]);
 
 
   const handleAdd = async (event) => {
@@ -46,17 +113,35 @@ const AddUnitForm = () => {
         {
           property_name: propertyName,
           unit_number: unitNumber,
+          //to be removed?
           unit_owner: ownerFullName,
           occupied_by: occupiedBy,
           size: unitSize,
-          condo_fee: condoFee,
+          condo_fee_sqft: condoFeeSqft,
           parking_number: parkingNumber,
-          locker_number: lockerNumber
+          locker_number: lockerNumber,
+          condo_fee_total: ((condoFeeSqft*unitSize)+parseInt(condoFeeParking)),
+          parking_fee: condoFeeParking,
+          jan_fee: null,
+          feb_fee: null,
+          mar_fee: null,
+          apr_fee: null,
+          may_fee: null,
+          jun_fee: null,
+          jul_fee: null,
+          aug_fee: null,
+          sep_fee: null,
+          oct_fee: null,
+          nov_fee: null,
+          dec_fee: null,
+          //fky
+          propertyFky: propertyFky,
+          ownerFky: null,
+          tenantFky: null
         },
       ]);
 
       console.log("Successfully added unit: ", data);
-      router.push("/units");
     } catch (error) {
       console.error("Error adding unit: ", error.message);
     }
@@ -177,10 +262,21 @@ const AddUnitForm = () => {
             </Grid>
             <Grid item xs={6}>
               <TextField
-                name="condoFee"
-                label="Condo Fee"
-                value={condoFee}
-                onChange={(event) => setCondoFee(event.target.value)}
+                name="condoFeeSqft"
+                label="Condo Fee Per sqft"
+                value={condoFeeSqft}
+                onChange={(event) => setcondoFeeSqft(event.target.value)}
+                fullWidth
+                margin="normal"
+                required
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                name="condoFeeParking"
+                label="Condo Fee - Parking"
+                value={condoFeeParking}
+                onChange={(event) => setCondoFeeParking(event.target.value)}
                 fullWidth
                 margin="normal"
                 required
@@ -189,7 +285,7 @@ const AddUnitForm = () => {
           </Grid>
           <Grid container justifyContent="center" style={{ marginTop: "20px" }}>
             <Button
-              variant="contained" 
+              variant="contained"
               size="large"
               onClick={handleAdd}
               // onClick={() => router.push("/units")}
