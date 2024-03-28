@@ -8,7 +8,8 @@ import {
   Select,
   TextField,
   FormControl,
-  Typography
+  Typography,
+  InputAdornment
 } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -27,9 +28,15 @@ const {
 const AddUnitForm = () => {
   const [unitNumber, setUnitNumber] = useState("");
   const [propertyName, setPropertyName] = useState("");
-  const [ownerFullName, setOwnerFullName] = useState("");
+  const [ownerFirstName, setOwnerFirstName] = useState("");
+  const [ownerLastName, setOwnerLastName] = useState("");
+  const [ownerEmail, setOwnerEmail] = useState("");
+  const [ownerPhone, setOwnerPhone] = useState("");
   const [occupiedBy, setOccupiedBy] = useState("");
-  const [tenantFullName, setTenantFullName] = useState("");
+  const [tenantFirstName, setTenantFirstName] = useState("");
+  const [tenantLastName, setTenantLastName] = useState("");
+  const [tenantEmail, setTenantEmail] = useState("");
+  const [tenantPhone, setTenantPhone] = useState("");
   const [unitSize, setUnitSize] = useState("");
   const [parkingNumber, setParkingNumber] = useState("");
   const [lockerNumber, setLockerNumber] = useState("");
@@ -104,17 +111,23 @@ const AddUnitForm = () => {
     //   }
     // }, [propertyName]);
 
+  const handleSizeChange = (value) => {
+    // Regular expression to remove any non-numeric characters from the input
+    const numericValue = value.replace(/\D/g, '');
+    setUnitSize(numericValue);
+  };
+
 
   const handleAdd = async (event) => {
     event.preventDefault();
 
     try {
-      const { data, error } = await supabase.from("units").insert([
+      // Insert data into the "units" table
+      const { data: unitData, error: unitError } = await supabase.from("units").insert([
         {
           property_name: propertyName,
           unit_number: unitNumber,
-          //to be removed?
-          unit_owner: ownerFullName,
+          unit_owner: null,
           occupied_by: occupiedBy,
           size: unitSize,
           condo_fee_sqft: condoFeeSqft,
@@ -141,12 +154,62 @@ const AddUnitForm = () => {
         },
       ]);
 
-      console.log("Successfully added unit: ", data);
-    } catch (error) {
-      console.error("Error adding unit: ", error.message);
-    }
+      // Insert data into the "owner" table
+      const { data: ownerData, error: ownerError } = await supabase.from("owner").insert([
+        {
+          // Include owner data here
+          firstname: ownerFirstName,
+          lastName: ownerLastName, 
+          email: ownerEmail,
+          phoneNumber: ownerPhone
+        },
+      ]);
 
-  };
+      // Insert data into the "tenant" table
+      const { data: tenantData, error: tenantError } = await supabase.from("tenant").insert([
+        {
+          // Include tenant data here
+          firstName: tenantFirstName,
+          lastName: tenantLastName,
+          email: tenantEmail,
+          phoneNumber: tenantPhone
+        },
+      ]);
+
+      console.log("Successfully added unit: ", unitData);
+      console.log("Successfully added owner: ", ownerData);
+      console.log("Successfully added tenant: ", tenantData);
+      router.push("/units");
+    } catch (error) {
+      console.error("Error adding data: ", error.message);
+    }
+};
+
+//handle method for owner phone number
+const handleOwnerPhoneChange = (event) => {
+  // Format the phone number as the user types
+  const formattedPhoneNumber = formatPhoneNumber(event.target.value);
+  setOwnerPhone(formattedPhoneNumber);
+};
+
+//handle method for owner phone number
+const handleTenantPhoneChange = (event) => {
+  // Format the phone number as the user types
+  const formattedPhoneNumber = formatPhoneNumber(event.target.value);
+  setTenantPhone(formattedPhoneNumber);
+};
+
+//correct formatting for phone number
+const formatPhoneNumber = (input) => {
+  // Remove non-numeric characters
+  const numericInput = input.replace(/\D/g, '');
+  
+  // Apply the desired pattern (XXX-XXX-XXXX)
+  const formattedPhoneNumber = numericInput.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+
+  return formattedPhoneNumber;
+};
+
 
 
   //const [open, setOpen] = useState(false); // State for controlling dialog visibility
@@ -156,24 +219,88 @@ const AddUnitForm = () => {
   return (
     <Box className={styles.outsideContainer}>
         <Container className={styles.unitsContainer}>
-      {/* {" "} */}
-      {/* Add padding top and bottom */}
-      {/* <Container> */}
+
         <Typography variant="h4" gutterBottom className={styles.editUnitsHeader}>
           Add Unit
         </Typography>
-        {/* <form onSubmit={handleAdd}> */}
+        <Typography 
+          variant="h5" 
+          gutterBottom 
+          sx={{textDecoration: 'underline'}} 
+          display="inline" 
+          style={{ color:"#333", padding: "2%" }}
+          >
+          Owner Information
+        </Typography>
+
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <TextField
-                name="propertyName"
-                label="Property Name"
-                value={propertyName}
-                onChange={(event) => setPropertyName(event.target.value)}
+                name="ownerFirtsName"
+                label="Owners First Name"
+                value={ownerFirstName}
+                onChange={(event) => setOwnerFirstName(event.target.value)}
                 fullWidth
                 margin="normal"
                 required
               />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                name="ownerLastName"
+                label="Owners Last Name"
+                value={ownerLastName}
+                onChange={(event) => setOwnerLastName(event.target.value)}
+                fullWidth
+                margin="normal"
+                required
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                name="ownerEmail"
+                label="Owners Email"
+                value={ownerEmail}
+                onChange={(event) => setOwnerEmail(event.target.value)}
+                fullWidth
+                margin="normal"
+                required
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                name="ownerPhone"
+                label="Owners Phone"
+                value={ownerPhone}
+                onChange={handleOwnerPhoneChange}
+                fullWidth
+                margin="normal"
+                required
+              />
+            </Grid>
+          </Grid>
+          <br/>
+          <Typography 
+            variant="h5" 
+            gutterBottom 
+            sx={{textDecoration: 'underline'}} 
+            display="inline" 
+            style={{ color:"#333", padding: "2%" }}
+            >
+            Unit Information
+          </Typography>
+          <br/>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+                <TextField
+                  name="propertyName"
+                  label="Property Name"
+                  value={propertyName}
+                  onChange={(event) => setPropertyName(event.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                />
             </Grid>
             <Grid item xs={6}>
               <TextField
@@ -186,58 +313,25 @@ const AddUnitForm = () => {
                 required
               />
             </Grid>
-            <Grid item xs={6}>
-              <TextField
-                name="ownerFullName"
-                label="Owners Full Name"
-                value={ownerFullName}
-                onChange={(event) => setOwnerFullName(event.target.value)}
-                fullWidth
-                margin="normal"
-                required
-              />
-            </Grid>
-            {/* <Grid item xs={6}></Grid> */}
-            <Grid item xs={6}>
-              <FormControl required fullWidth style={{margingTop:"200px"}}>
-                <InputLabel id="occupied-by-label">Occupied By</InputLabel>
-                <Select
-                  labelId="occupied-by-label"
-                  id="occupied-by-select"
-                  value={occupiedBy}
-                  style={{margingTop:"200px"}}
-                  onChange={(event) => setOccupiedBy(event.target.value)}
-                >
-                  <MenuItem value="Owner">Owner</MenuItem>
-                  <MenuItem value="Tenant">Tenant</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            {occupiedBy === "Tenant" && (
-              <Grid item xs={6}>
-                <TextField
-                  name="tenantFullName"
-                  label="Tenant Full Name"
-                  value={tenantFullName}
-                  onChange={(event) => setTenantFullName(event.target.value)}
-                  fullWidth
-                  margin="normal"
-                  required
-                />
-              </Grid>
-            )}
 
             <Grid item xs={6}>
               <TextField
-                name="unitSize"
-                label="Unit Size"
-                value={unitSize}
-                onChange={(event) => setUnitSize(event.target.value)}
-                fullWidth
-                margin="normal"
                 required
+                name='unitSize'
+                type='text'
+                label='Size'
+                value={unitSize}
+                onChange={(event) => handleSizeChange(event.target.value)}
+                InputProps={{ 
+                    startAdornment: <InputAdornment position="start">sqft</InputAdornment>,
+                    inputMode: 'numeric',
+                    pattern: '[0-9]*', //Allow only numeric numbers
+                }}
+                margin="normal"
+                fullWidth
               />
             </Grid>
+
             <Grid item xs={6}>
               <TextField
                 name="parkingNumber"
@@ -249,6 +343,7 @@ const AddUnitForm = () => {
                 required
               />
             </Grid>
+
             <Grid item xs={6}>
               <TextField
                 name="lockerNumber"
@@ -260,10 +355,11 @@ const AddUnitForm = () => {
                 required
               />
             </Grid>
+
             <Grid item xs={6}>
               <TextField
                 name="condoFeeSqft"
-                label="Condo Fee Per sqft"
+                label="Condo Fee Per sqft (monthly)"
                 value={condoFeeSqft}
                 onChange={(event) => setcondoFeeSqft(event.target.value)}
                 fullWidth
@@ -274,7 +370,7 @@ const AddUnitForm = () => {
             <Grid item xs={6}>
               <TextField
                 name="condoFeeParking"
-                label="Condo Fee - Parking"
+                label="Condo Fee - Parking (monthly)"
                 value={condoFeeParking}
                 onChange={(event) => setCondoFeeParking(event.target.value)}
                 fullWidth
@@ -282,18 +378,88 @@ const AddUnitForm = () => {
                 required
               />
             </Grid>
+
+
+
+            <Grid item xs={6}>
+              <FormControl required fullWidth margin="normal">
+                <InputLabel>Occupied By</InputLabel>
+                <Select
+                  variant="outlined"
+                  labelId="occupied-by-label"
+                  id="occupied-by-select"
+                  label="Occupied By"
+                  value={occupiedBy}
+                  // margin="normal"
+                  // style={{margingTop:"200px"}}
+                  onChange={(event) => setOccupiedBy(event.target.value)}
+                >
+                  <MenuItem value="Owner">Owner</MenuItem>
+                  <MenuItem value="Tenant">Tenant</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            {occupiedBy === "Tenant" && (
+              <Grid container spacing={2} 
+                style={{margin: "0.2%"}}
+                >
+                <Grid item xs={6}>
+                  <TextField
+                    name="tenantFirstName"
+                    label="Tenants First Name"
+                    value={tenantFirstName}
+                    onChange={(event) => setTenantFirstName(event.target.value)}
+                    fullWidth
+                    margin="normal"
+                    required
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    name="tenantLastName"
+                    label="Tenants Last Name"
+                    value={tenantLastName}
+                    onChange={(event) => setTenantLastName(event.target.value)}
+                    fullWidth
+                    margin="normal"
+                    required
+                  />
+                </Grid>
+
+                <Grid item xs={6}>
+                  <TextField
+                    name="tenantEmail"
+                    label="Tenants Email"
+                    value={tenantEmail}
+                    onChange={(event) => setTenantEmail(event.target.value)}
+                    fullWidth
+                    margin="normal"
+                    required
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    name="tenantPhone"
+                    label="Tenants Phone"
+                    value={tenantPhone}
+                    onChange={handleTenantPhoneChange}
+                    fullWidth
+                    margin="normal"
+                    required
+                  />
+                </Grid>
+              </Grid>
+            )}
           </Grid>
           <Grid container justifyContent="center" style={{ marginTop: "20px" }}>
             <Button
               variant="contained"
               size="large"
               onClick={handleAdd}
-              // onClick={() => router.push("/units")}
             >
               Save
             </Button>
           </Grid>
-        {/* </form> */}
       </Container>
     </Box>
   );
