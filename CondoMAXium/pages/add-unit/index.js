@@ -135,6 +135,7 @@ const AddUnitForm = () => {
           locker_number: lockerNumber,
           condo_fee_total: ((condoFeeSqft*unitSize)+parseInt(condoFeeParking)),
           parking_fee: condoFeeParking,
+          emailUnit: ownerEmail,
           jan_fee: null,
           feb_fee: null,
           mar_fee: null,
@@ -149,36 +150,35 @@ const AddUnitForm = () => {
           dec_fee: null,
           //fky
           propertyFky: propertyFky,
-          ownerFky: null,
           tenantFky: null
         },
       ]);
 
       // Insert data into the "owner" table
-      const { data: ownerData, error: ownerError } = await supabase.from("owner").insert([
-        {
-          // Include owner data here
-          firstname: ownerFirstName,
-          lastName: ownerLastName, 
-          email: ownerEmail,
-          phoneNumber: ownerPhone
-        },
-      ]);
+      // const { data: ownerData, error: ownerError } = await supabase.from("owner").insert([
+      //   {
+      //     // Include owner data here
+      //     firstname: ownerFirstName,
+      //     lastName: ownerLastName, 
+      //     email: ownerEmail,
+      //     phoneNumber: ownerPhone
+      //   },
+      // ]);
 
       // Insert data into the "tenant" table
-      const { data: tenantData, error: tenantError } = await supabase.from("tenant").insert([
-        {
-          // Include tenant data here
-          firstName: tenantFirstName,
-          lastName: tenantLastName,
-          email: tenantEmail,
-          phoneNumber: tenantPhone
-        },
-      ]);
+      // const { data: tenantData, error: tenantError } = await supabase.from("tenant").insert([
+      //   {
+      //     // Include tenant data here
+      //     firstName: tenantFirstName,
+      //     lastName: tenantLastName,
+      //     email: tenantEmail,
+      //     phoneNumber: tenantPhone
+      //   },
+      // ]);
 
       console.log("Successfully added unit: ", unitData);
-      console.log("Successfully added owner: ", ownerData);
-      console.log("Successfully added tenant: ", tenantData);
+      //console.log("Successfully added owner: ", ownerData);
+      //console.log("Successfully added tenant: ", tenantData);
       router.push("/units");
     } catch (error) {
       console.error("Error adding data: ", error.message);
@@ -232,7 +232,6 @@ const formatPhoneNumber = (input) => {
           >
           Owner Information
         </Typography>
-
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <TextField
