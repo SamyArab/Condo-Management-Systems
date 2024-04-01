@@ -32,7 +32,8 @@ function VerifyOTP() {
     });
     if (error) {
       console.error("Error verifying OTP:", error.message);
-    } else {
+    } 
+    else {
       // Redirect to the form page after successful OTP verification
       router.push('/profile-form');
     }
