@@ -32,12 +32,13 @@ function VerifyOTP() {
     });
     if (error) {
       console.error("Error verifying OTP:", error.message);
+      router.push('/reset-password');
     } 
     else {
-      // Redirect to the form page after successful OTP verification
-      router.push('/profile-form');
+      const { data: resetData, error: resetError } = await supabase.auth.resetPasswordForEmail(email);
+      router.push('/reset-password');
     }
-  };
+  };    
 
   return (
     <div>
