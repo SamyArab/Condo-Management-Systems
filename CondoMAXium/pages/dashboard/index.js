@@ -24,24 +24,25 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import AddIcon from "@mui/icons-material/Add";
 import PropertyIcon from "@mui/icons-material/Category";
-// import { useNavigate } from "react-router-dom";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle"; // Added profile icon
+import supabase from "../../config/supabaseClient";
 import Image from "next/image";
 
 function Copyright(props) {
   return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        CondoMAXium
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
+      <Typography
+          variant="body2"
+          color="text.secondary"
+          align="center"
+          {...props}
+      >
+        {"Copyright © "}
+        <Link color="inherit" href="https://mui.com/">
+          CondoMAXium
+        </Link>{" "}
+        {new Date().getFullYear()}
+        {"."}
+      </Typography>
   );
 }
 
@@ -96,211 +97,245 @@ const defaultTheme = createTheme();
 
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
-  //   const navigate = useNavigate();
+  const [properties, setProperties] = React.useState([]);
+  const router = useRouter();
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  //   const routeChange = () => {
-  //     let path = "/addproperty";
-  //     navigate(path); // Navigate to the specified path
-  //   };
-  const router = useRouter();
+  React.useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        // Get the user's ID
+        const userId = user?.id;
+        if (!userId) {
+          throw new Error("User ID not found");
+        }
+
+        // Fetch properties associated with the user's ID
+        const { data, error } = await supabase
+            .from("properties")
+            .select("*")
+            .eq("profileFky", userId);
+        if (error) {
+          throw error;
+        }
+
+        setProperties(data);
+      } catch (error) {
+        console.error("Error fetching properties:", error.message);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
+  // Handler function to navigate to the profile page
+  const goToProfile = () => {
+    router.push("/profile");
+  };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar position="absolute" open={open}>
-          <Toolbar
-            sx={{
-              pr: "24px", // keep right padding when drawer closed
-            }}
-          >
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
+      <ThemeProvider theme={defaultTheme}>
+        <Box sx={{ display: "flex" }}>
+          <CssBaseline />
+          <AppBar position="absolute" open={open}>
+            <Toolbar
+                sx={{
+                  pr: "24px", // keep right padding when drawer closed
+                }}
+            >
+              <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="open drawer"
+                  onClick={toggleDrawer}
+                  sx={{
+                    marginRight: "36px",
+                    ...(open && { display: "none" }),
+                  }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography
+                  component="h1"
+                  variant="h6"
+                  color="inherit"
+                  noWrap
+                  sx={{ flexGrow: 1 }}
+              >
+                Dashboard
+              </Typography>
+              <IconButton color="inherit">
+                <Badge badgeContent={4} color="secondary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              {/* Profile Button */}
+              <IconButton color="inherit" onClick={goToProfile}>
+                <AccountCircleIcon />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
+          <Drawer variant="permanent" open={open}>
+            <Toolbar
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  px: [1],
+                }}
+            >
+              <IconButton aria-label="close drawer" onClick={toggleDrawer}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </Toolbar>
+            <Divider />
+            <List component="nav">
+              {/* Your existing list items */}
+              <Divider sx={{ my: 1 }} />
+              {/* New items for properties */}
+              {properties.map((property) => (
+                  <ListItem button key={property.id}>
+                    <ListItemIcon>
+                      <PropertyIcon /> {/* Icon for property */}
+                    </ListItemIcon>
+                    <ListItemText primary={property.buildingName} />
+                  </ListItem>
+              ))}
+              <Divider sx={{ my: 1 }} />
+              {/* Button to add property */}
+              <ListItem
+                  button
+                  aria-label="add property"
+                  onClick={() => router.push("/add-property")}
+              >
+                <ListItemIcon>
+                  <AddIcon /> {/* Icon for adding */}
+                </ListItemIcon>
+                <ListItemText primary="Add Property" />
+              </ListItem>
+            </List>
+          </Drawer>
+          <Box
+              component="main"
               sx={{
-                marginRight: "36px",
-                ...(open && { display: "none" }),
+                backgroundColor: (theme) =>
+                    theme.palette.mode === "light"
+                        ? theme.palette.grey[100]
+                        : theme.palette.grey[900],
+                flexGrow: 1,
+                height: "100vh",
+                overflow: "auto",
               }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
-              Dashboard
-            </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <Toolbar
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              px: [1],
-            }}
           >
-            <IconButton aria-label="close drawer" onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <List component="nav">
-            {/* Your existing list items */}
-            <Divider sx={{ my: 1 }} />
-            {/* New items for properties */}
-            <ListItem button>
-              <ListItemIcon>
-                <PropertyIcon /> {/* Icon for property */}
-              </ListItemIcon>
-              <ListItemText primary="Property 1" />
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <PropertyIcon /> {/* Icon for property */}
-              </ListItemIcon>
-              <ListItemText primary="Property 2" />
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <PropertyIcon /> {/* Icon for property */}
-              </ListItemIcon>
-              <ListItemText primary="Property 3" />
-            </ListItem>
-            <Divider sx={{ my: 1 }} />
-            {/* Button to add property */}
-            <ListItem
-              button
-              aria-label="add property"
-              onClick={() => router.push("/add-property")}
-            >
-              <ListItemIcon>
-                <AddIcon /> {/* Icon for adding */}
-              </ListItemIcon>
-              <ListItemText primary="Add Property" />
-            </ListItem>
-          </List>
-        </Drawer>
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  {/* Property Picture */}
-                  <img
-                    src="/property1.jpg"
-                    alt="property1"
-                    style={{ width: "100%", marginBottom: "1rem" }}
-                  />
+            <Toolbar />
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Grid container spacing={3}>
+                {/* Chart */}
+                <Grid item xs={12} md={8} lg={9}>
+                  <Paper
+                      sx={{
+                        p: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                  >
+                    {/* Property Picture */}
+                    {properties.map((property) => (
+                        <React.Fragment key={property.id}>
+                          <img
+                              src="/property1.jpg"
+                              alt="property1"
+                              style={{ width: "100%", marginBottom: "1rem" }}
+                          />
+                          {/* Property Details */}
+                          <Typography variant="h5" gutterBottom>
+                            Property Details
+                          </Typography>
+                          <Typography variant="body1">
+                            Address: {property.street}, {property.province},{" "}
+                            {property.postalCode}
+                          </Typography>
+                          <Typography variant="body1">
+                            Unit Number: {property.unitsCount}
+                          </Typography>
+                          <Typography variant="body1">
+                            Parking Number: {property.parkingCount}
+                          </Typography>
+                        </React.Fragment>
+                    ))}
+                  </Paper>
+                </Grid>
+                {/* Recent Deposits */}
+                <Grid item xs={12} md={4} lg={3}>
+                  <Paper
+                      sx={{
+                        p: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                  >
+                    {/* Financial Status */}
+                    <Typography variant="h5" gutterBottom>
+                      Financial Status
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                      Remaining Balance: $84,500
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                      Next Month's Payment: $2,347.22
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                      Will be taken on February 14th, 2023.
+                    </Typography>
 
-                  {/* Property Details */}
-                  <Typography variant="h5" gutterBottom>
-                    Property Details
-                  </Typography>
-                  <Typography variant="body1">
-                    Address: 123 Main Street
-                  </Typography>
-                  <Typography variant="body1">Unit Number: 101</Typography>
-                  <Typography variant="body1">Parking Number: A23</Typography>
-                </Paper>
-              </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  {/* Financial Status */}
-                  <Typography variant="h5" gutterBottom>
-                    Financial Status
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    Remaining Balance: $84,500
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    Next Month&apos;s Payment: $2,347.22
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    Will be taken on February 14th, 2023.
-                  </Typography>
-
-                  {/* Graph */}
-                  <div style={{ marginTop: "2rem" }}>
-                    {/* Your graph component */}
-                    {/* Replace this with your actual graph component */}
-                    <div>
-                      <img
-                        src="/payment_graph.png"
-                        alt="Payment Graph"
-                        style={{ width: "100%" }}
-                        fill
-                      />
+                    {/* Graph */}
+                    <div style={{ marginTop: "2rem" }}>
+                      {/* Your graph component */}
+                      {/* Replace this with your actual graph component */}
+                      <div>
+                        <img
+                            src="/payment_graph.png"
+                            alt="Payment Graph"
+                            style={{ width: "100%" }}
+                            fill
+                        />
+                      </div>
                     </div>
-                  </div>
-                </Paper>
+                  </Paper>
+                </Grid>
+                {/* Recent Orders */}
+                <Grid item xs={12}>
+                  <Paper
+                      sx={{
+                        p: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                  >
+                    {/* Request Status */}
+                    <Typography variant="h5" gutterBottom>
+                      Request Status
+                    </Typography>
+                    <ul>
+                      <li>Request 1</li>
+                      <li>Request 2</li>
+                      <li>Request 3</li>
+                      {/* Add more requests as needed */}
+                    </ul>
+                  </Paper>
+                </Grid>
               </Grid>
-              {/* Recent Orders */}
-              <Grid item xs={12}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  {/* Request Status */}
-                  <Typography variant="h5" gutterBottom>
-                    Request Status
-                  </Typography>
-                  <ul>
-                    <li>Request 1</li>
-                    <li>Request 2</li>
-                    <li>Request 3</li>
-                    {/* Add more requests as needed */}
-                  </ul>
-                </Paper>
-              </Grid>
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
+              <Copyright sx={{ pt: 4 }} />
+            </Container>
+          </Box>
         </Box>
-      </Box>
-    </ThemeProvider>
+      </ThemeProvider>
   );
 }

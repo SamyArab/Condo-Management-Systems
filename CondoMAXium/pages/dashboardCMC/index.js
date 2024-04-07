@@ -18,128 +18,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import Button from "@mui/material/Button";
 import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-
-// Sample data for properties
-const properties = [
-    {
-        id: 1,
-        name: "Seaside Condos",
-        description: "Luxurious beachfront condos with breathtaking ocean views.",
-        image: "/seasidecondos.jpg",
-        capacity: "50",
-        parking_spots: "40",
-        amenities: ["Swimming pool", "Fitness center", "Spa", "Tennis court"],
-        year_built: "2015",
-        lockers_storage: "Available upon request",
-        address: "123 Ocean Boulevard, Seaside City"
-    },
-    {
-        id: 2,
-        name: "Illumix Condos",
-        description: "Modern condominiums with stunning city views.",
-        image: "/property1.jpg",
-        capacity: "30",
-        parking_spots: "20",
-        amenities: ["Gym", "Rooftop pool", "Garden", "24/7 Security"],
-        year_built: "2018",
-        lockers_storage: "Available for residents",
-        address: "456 High Street, Urbanville"
-    }
-];
-
-// Function to render a single property
-function renderProperty(property) {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
-    // Handle click event for adding amenities
-    const handleAmenitiesClick = () => {
-        // Navigate to add amenities page
-        console.log(`Navigating to add amenities for ${property.name}`);
-    };
-
-    // Handle click event for maintenance
-    const handleMaintenanceClick = () => {
-        // Navigate to maintenance page
-        console.log(`Navigating to maintenance for ${property.name}`);
-    };
-
-    return (
-        <Grid item xs={12} key={property.id}>
-            <Paper
-                sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: isSmallScreen ? "column" : "row", // Adjust direction based on screen size
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "100%",
-                }}
-            >
-                <img
-                    src={property.image}
-                    alt={property.name}
-                    style={{
-                        width: isSmallScreen ? "100%" : "25%", // Adjust image width based on screen size
-                        borderRadius: "15px",
-                        marginBottom: isSmallScreen ? "10px" : "0", // Add margin to separate image from text/buttons on small screens
-                        marginRight: isSmallScreen ? "0" : "20px", // Add margin between image and text on larger screens
-                    }}
-                />
-                <div style={{ width: isSmallScreen ? "100%" : "65%" }}> {/* Adjust width based on screen size */}
-                    <Typography
-                        variant="h5"
-                        gutterBottom
-                        sx={{ textDecoration: "underline", marginBottom: '8px' }}
-                    >
-                        {property.name}
-                    </Typography>
-                    <Typography
-                        variant="body1"
-                        gutterBottom
-                        sx={{
-                            fontWeight: "bold",
-                            maxWidth: "500px",
-                            fontSize: "12px",
-                            marginBottom: '8px'
-                        }}
-                    >
-                        Capacity: {property.capacity} units
-                        <br />
-                        Parking Spots: {property.parking_spots}
-                        <br />
-                        Amenities: {property.amenities.join(", ")}
-                        <br />
-                        Year Built: {property.year_built}
-                        <br />
-                        Lockers/Storage: {property.lockers_storage}
-                        <br />
-                        Address: {property.address}
-                    </Typography>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleAmenitiesClick}
-                        sx={{ minWidth: 120, marginBottom: '8px', width: '100%' }}
-                    >
-                        Add Amenities
-                    </Button>
-                    <div style={{ marginBottom: '8px' }} /> {/* Add small margin between buttons */}
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleMaintenanceClick}
-                        sx={{ minWidth: 120, width: '100%' }}
-                    >
-                        Maintenance
-                    </Button>
-                </div>
-            </Paper>
-        </Grid>
-    );
-}
+import supabase from "@/config/supabaseClient";
 
 // Define width of drawer
 const drawerWidth = 240;
@@ -190,8 +69,137 @@ const Drawer = styled(MuiDrawer, {
 // PropertyList component
 export default function PropertyList() {
     const [open, setOpen] = React.useState(true);
+    const [properties, setProperties] = React.useState([]); // State to store fetched properties
+
+    // Fetch properties from the database on component mount
+    React.useEffect(() => {
+        const fetchProperties = async () => {
+            try {
+                const {
+                    data: { user },
+                } = await supabase.auth.getUser();
+
+                // Get the user's ID
+                const userId = user?.id;
+                if (!userId) {
+                    throw new Error("User ID not found");
+                }
+
+                // Fetch properties associated with the user's ID
+                const { data, error } = await supabase
+                    .from("properties")
+                    .select("*")
+                    .eq("profileFky", userId);
+                if (error) {
+                    throw error;
+                }
+
+                setProperties(data);
+            } catch (error) {
+                console.error("Error fetching properties:", error.message);
+            }
+        };
+
+        fetchProperties();
+    }, []);
+
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
     const toggleDrawer = () => {
         setOpen(!open);
+    };
+
+    // Function to render a single property
+    const renderProperty = (property) => {
+        // Handle click event for adding amenities
+        const handleAmenitiesClick = () => {
+            // Navigate to add amenities page
+            console.log(`Navigating to add amenities for ${property.name}`);
+        };
+
+        // Handle click event for maintenance
+        const handleMaintenanceClick = () => {
+            // Navigate to maintenance page
+            console.log(`Navigating to maintenance for ${property.name}`);
+        };
+
+        return (
+            <Grid item xs={12} key={property.id}>
+                <Paper
+                    sx={{
+                        p: 2,
+                        display: "flex",
+                        flexDirection: isSmallScreen ? "column" : "row", // Adjust direction based on screen size
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                    }}
+                >
+                    <img
+                        src="/seasidecondos.jpg"
+                        alt={property.buildingName}
+                        style={{
+                            width: isSmallScreen ? "100%" : "25%", // Adjust image width based on screen size
+                            borderRadius: "15px",
+                            marginBottom: isSmallScreen ? "10px" : "0", // Add margin to separate image from text/buttons on small screens
+                            marginRight: isSmallScreen ? "0" : "20px", // Add margin between image and text on larger screens
+                        }}
+                    />
+                    <div style={{ width: isSmallScreen ? "100%" : "65%" }}> {/* Adjust width based on screen size */}
+                        <Typography
+                            variant="h5"
+                            gutterBottom
+                            sx={{ textDecoration: "underline", marginBottom: '8px' }}
+                        >
+                            {property.buildingName}
+                        </Typography>
+                        <Typography
+                            variant="body1"
+                            gutterBottom
+                            sx={{
+                                fontWeight: "bold",
+                                maxWidth: "500px",
+                                fontSize: "12px",
+                                marginBottom: '8px'
+                            }}
+                        >
+                            Capacity: {property.unitsCount} units
+                            <br />
+                            Parking Spots: {property.parkingCount}
+                            <br />
+                            Amenities:
+                            <br />
+                            Year Built: {property.yearBuilt}
+                            <br />
+                            Lockers/Storage: {property.lockerCount}
+                            <br />
+                            Address: {property.street}, {property.province},{" "}
+                            {property.postalCode}
+                        </Typography>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleAmenitiesClick}
+                            sx={{ minWidth: 120, marginBottom: '8px', width: '100%' }}
+                        >
+                            Add Amenities
+                        </Button>
+                        <div style={{ marginBottom: '8px' }} /> {/* Add small margin between buttons */}
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={handleMaintenanceClick}
+                            sx={{ minWidth: 120, width: '100%' }}
+                        >
+                            Maintenance
+                        </Button>
+                    </div>
+                </Paper>
+            </Grid>
+        );
     };
 
     return (
@@ -264,9 +272,7 @@ export default function PropertyList() {
                     <Toolbar />
                     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                         <Grid container spacing={3}>
-                            {properties.map(property =>
-                                renderProperty(property)
-                            )}
+                            {properties.map(property => renderProperty(property))}
                         </Grid>
                     </Container>
                 </Box>
