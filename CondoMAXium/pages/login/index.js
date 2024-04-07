@@ -74,7 +74,7 @@ export default function SignInSide() {
       if (role === "owner") {
         router.push("/dashboard");
       } else if (role === "cmc") {
-        router.push("/dashboardcmc");
+        router.push("/dashboardCMC");
       } else {
         // Handle other roles if needed
       }
