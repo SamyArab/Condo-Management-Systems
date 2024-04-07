@@ -98,7 +98,14 @@ const defaultTheme = createTheme();
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
   const [properties, setProperties] = React.useState([]);
+  const [selectedProperty, setSelectedProperty] = React.useState(null); // State for selected property
   const router = useRouter();
+
+  // Define handleClick function
+  const handleClick = (property) => {
+    // Update the selected property
+    setSelectedProperty(property);
+  };
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -127,6 +134,11 @@ export default function Dashboard() {
         }
 
         setProperties(data);
+
+        // Select the first property if there are properties available
+        if (data.length > 0) {
+          setSelectedProperty(data[0]);
+        }
       } catch (error) {
         console.error("Error fetching properties:", error.message);
       }
@@ -201,7 +213,7 @@ export default function Dashboard() {
               <Divider sx={{ my: 1 }} />
               {/* New items for properties */}
               {properties.map((property) => (
-                  <ListItem button key={property.id}>
+                  <ListItem button key={property.id} onClick={() => handleClick(property)}>
                     <ListItemIcon>
                       <PropertyIcon /> {/* Icon for property */}
                     </ListItemIcon>
@@ -237,7 +249,7 @@ export default function Dashboard() {
             <Toolbar />
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
               <Grid container spacing={3}>
-                {/* Chart */}
+                {/* Property Details */}
                 <Grid item xs={12} md={8} lg={9}>
                   <Paper
                       sx={{
@@ -247,32 +259,37 @@ export default function Dashboard() {
                       }}
                   >
                     {/* Property Picture */}
-                    {properties.map((property) => (
-                        <React.Fragment key={property.id}>
+                    {selectedProperty && (
+                        <>
                           <img
-                              src="/property1.jpg"
+                              src={selectedProperty.picture} // Update the src attribute with property.picture
                               alt="property1"
-                              style={{ width: "100%", marginBottom: "1rem" }}
+                              style={{width: "100%", marginBottom: "1rem"}}
                           />
                           {/* Property Details */}
                           <Typography variant="h5" gutterBottom>
                             Property Details
                           </Typography>
                           <Typography variant="body1">
-                            Address: {property.street}, {property.province},{" "}
-                            {property.postalCode}
+                            Address: {selectedProperty.street}, {selectedProperty.province},{" "}
+                            {selectedProperty.postalCode}
                           </Typography>
                           <Typography variant="body1">
-                            Unit Number: {property.unitsCount}
+                            Unit Number: {selectedProperty.unitsCount}
                           </Typography>
                           <Typography variant="body1">
-                            Parking Number: {property.parkingCount}
+                            Parking Number: {selectedProperty.parkingCount}
                           </Typography>
-                        </React.Fragment>
-                    ))}
+                        </>
+                    )}
+                    {!selectedProperty && (
+                        <Typography variant="body1">
+                          Please add a property to view its details.
+                        </Typography>
+                    )}
                   </Paper>
                 </Grid>
-                {/* Recent Deposits */}
+                {/* Financial Status */}
                 <Grid item xs={12} md={4} lg={3}>
                   <Paper
                       sx={{
@@ -281,7 +298,6 @@ export default function Dashboard() {
                         flexDirection: "column",
                       }}
                   >
-                    {/* Financial Status */}
                     <Typography variant="h5" gutterBottom>
                       Financial Status
                     </Typography>
