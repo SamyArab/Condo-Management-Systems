@@ -26,7 +26,7 @@ import AddIcon from "@mui/icons-material/Add";
 import PropertyIcon from "@mui/icons-material/Category";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle"; // Added profile icon
 import supabase from "../../config/supabaseClient";
-import Image from "next/image";
+
 
 function Copyright(props) {
   return (
@@ -99,13 +99,22 @@ export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
   const [properties, setProperties] = React.useState([]);
   const [selectedProperty, setSelectedProperty] = React.useState(null); // State for selected property
+  const [showMoreInfo, setShowMoreInfo] = React.useState(false); // Define showMoreInfo state variable
   const router = useRouter();
+  const [units, setUnits] = React.useState([]);
+  const [selectedUnit, setSelectedUnit] = React.useState(null);
 
-  // Define handleClick function
-  const handleClick = (property) => {
-    // Update the selected property
-    setSelectedProperty(property);
+// Define a function to handle selecting a unit
+  const handleSelectUnit = (unit) => {
+    setSelectedUnit(unit);
   };
+
+
+  // Function to toggle showing more info
+  const toggleMoreInfo = () => {
+    setShowMoreInfo(!showMoreInfo);
+  };
+
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -114,38 +123,38 @@ export default function Dashboard() {
   React.useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        // Get the user object from Supabase auth
+        const user = supabase.auth.user();
 
-        // Get the user's ID
-        const userId = user?.id;
-        if (!userId) {
-          throw new Error("User ID not found");
+        // Extract user email
+        const userEmail = user?.emailProfile;
+        if (!userEmail) {
+          throw new Error("User email not found");
         }
 
-        // Fetch properties associated with the user's ID
+        // Fetch units associated with the user's email
         const { data, error } = await supabase
-            .from("properties")
+            .from("units")
             .select("*")
-            .eq("profileFky", userId);
+            .eq("emailUnit", userEmail); // Adjust the column name as per your database schema
         if (error) {
           throw error;
         }
 
-        setProperties(data);
+        setUnits(data);
 
-        // Select the first property if there are properties available
+        // Select the first unit if there are units available
         if (data.length > 0) {
-          setSelectedProperty(data[0]);
+          setSelectedUnit(data[0]);
         }
       } catch (error) {
-        console.error("Error fetching properties:", error.message);
+        console.error("Error fetching units:", error.message);
       }
     };
 
     fetchProperties();
   }, []);
+
 
   // Handler function to navigate to the profile page
   const goToProfile = () => {
@@ -217,7 +226,7 @@ export default function Dashboard() {
                     <ListItemIcon>
                       <PropertyIcon /> {/* Icon for property */}
                     </ListItemIcon>
-                    <ListItemText primary={property.buildingName} />
+                    <ListItemText primary={units.property_name} />
                   </ListItem>
               ))}
               <Divider sx={{ my: 1 }} />
@@ -248,106 +257,139 @@ export default function Dashboard() {
           >
             <Toolbar />
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-              <Grid container spacing={3}>
+              {/*<Grid container spacing={3}>*/}
                 {/* Property Details */}
-                <Grid item xs={12} md={8} lg={9}>
-                  <Paper
-                      sx={{
-                        p: 2,
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                  >
-                    {/* Property Picture */}
-                    {selectedProperty && (
+              <Grid item xs={12} md={8} lg={9}>
+                <Paper
+                    sx={{
+                      p: 2,
+                      display: 'flex',
+                      flexDirection: { xs: 'column', md: 'row' },
+                      alignItems: 'flex-start',
+                      width: "100%",
+                    }}
+                >
+                  {/* Unit Picture */}
+                  {selectedUnit && selectedUnit.picture && (
+                      <div style={{
+                        flex: { xs: 'none', md: '0 0 30%' },
+                        marginRight: { xs: 0, md: '1rem' },
+                        marginBottom: { xs: '1rem', md: 0 },
+                      }}>
+                        <img
+                            src={selectedUnit.picture}
+                            alt="unit"
+                            style={{
+                              width: "100%",
+                              maxWidth: "200px",
+                            }}
+                        />
+                      </div>
+                  )}
+                  {/* Unit Details */}
+                  <div style={{ flex: '1', paddingLeft: '1rem' }}>
+                    <Typography variant="h5" gutterBottom>
+                      Unit Details
+                    </Typography>
+                    <Typography variant="body1">
+                      Property: {selectedUnit?.property_name}
+                    </Typography>
+                    <Typography variant="body1">
+                      Unit Number: {selectedUnit?.unit_number}
+                    </Typography>
+                    <Typography
+                        variant="body1"
+                        color="primary"
+                        onClick={toggleMoreInfo}
+                        style={{ cursor: 'pointer', textDecoration: 'underline', marginTop: '1rem' }}
+                    >
+                      See More
+                    </Typography>
+                    {/* Additional Info */}
+                    {showMoreInfo && (
                         <>
-                          <img
-                              src={selectedProperty.picture} // Update the src attribute with property.picture
-                              alt="property1"
-                              style={{width: "100%", marginBottom: "1rem"}}
-                          />
-                          {/* Property Details */}
-                          <Typography variant="h5" gutterBottom>
-                            Property Details
+                          <Typography variant="body1">
+                            Unit Owner: {selectedUnit?.unit_owner}
                           </Typography>
                           <Typography variant="body1">
-                            Address: {selectedProperty.street}, {selectedProperty.province},{" "}
-                            {selectedProperty.postalCode}
+                            Occupied by: {selectedUnit?.occupied_by}
                           </Typography>
                           <Typography variant="body1">
-                            Unit Number: {selectedProperty.unitsCount}
+                            Size: {selectedUnit?.size}
                           </Typography>
                           <Typography variant="body1">
-                            Parking Number: {selectedProperty.parkingCount}
+                            Condo Fee per sqft: {selectedUnit?.condo_fee_sqft}
+                          </Typography>
+                          <Typography variant="body1">
+                            Parking Number: {selectedUnit?.parking_number}
                           </Typography>
                         </>
                     )}
-                    {!selectedProperty && (
-                        <Typography variant="body1">
-                          Please add a property to view its details.
-                        </Typography>
-                    )}
-                  </Paper>
-                </Grid>
-                {/* Financial Status */}
-                <Grid item xs={12} md={4} lg={3}>
-                  <Paper
-                      sx={{
-                        p: 2,
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                  >
-                    <Typography variant="h5" gutterBottom>
-                      Financial Status
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                      Remaining Balance: $84,500
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                      Next Month's Payment: $2,347.22
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                      Will be taken on February 14th, 2023.
-                    </Typography>
+                  </div>
+                </Paper>
 
-                    {/* Graph */}
-                    <div style={{ marginTop: "2rem" }}>
-                      {/* Your graph component */}
-                      {/* Replace this with your actual graph component */}
-                      <div>
-                        <img
-                            src="/payment_graph.png"
-                            alt="Payment Graph"
-                            style={{ width: "100%" }}
-                            fill
-                        />
-                      </div>
-                    </div>
-                  </Paper>
-                </Grid>
-                {/* Recent Orders */}
-                <Grid item xs={12}>
-                  <Paper
-                      sx={{
-                        p: 2,
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                  >
-                    {/* Request Status */}
-                    <Typography variant="h5" gutterBottom>
-                      Request Status
-                    </Typography>
-                    <ul>
-                      <li>Request 1</li>
-                      <li>Request 2</li>
-                      <li>Request 3</li>
-                      {/* Add more requests as needed */}
-                    </ul>
-                  </Paper>
-                </Grid>
               </Grid>
+
+
+              {/*/!* Financial Status *!/*/}
+              {/*<Grid item xs={12} md={4} lg={3}>*/}
+              {/*  <Paper*/}
+              {/*      sx={{*/}
+              {/*        p: 2,*/}
+                {/*        display: "flex",*/}
+                {/*        flexDirection: "column",*/}
+                {/*      }}*/}
+                {/*  >*/}
+                {/*    <Typography variant="h5" gutterBottom>*/}
+                {/*      Financial Status*/}
+                {/*    </Typography>*/}
+                {/*    <Typography variant="body1" gutterBottom>*/}
+                {/*      Remaining Balance: $84,500*/}
+                {/*    </Typography>*/}
+                {/*    <Typography variant="body1" gutterBottom>*/}
+                {/*      Next Month's Payment: $2,347.22*/}
+                {/*    </Typography>*/}
+                {/*    <Typography variant="body1" gutterBottom>*/}
+                {/*      Will be taken on February 14th, 2023.*/}
+                {/*    </Typography>*/}
+
+                {/*    /!* Graph *!/*/}
+                {/*    <div style={{ marginTop: "2rem" }}>*/}
+                {/*      /!* Your graph component *!/*/}
+                {/*      /!* Replace this with your actual graph component *!/*/}
+                {/*      <div>*/}
+                {/*        <img*/}
+                {/*            src="/payment_graph.png"*/}
+                {/*            alt="Payment Graph"*/}
+                {/*            style={{ width: "100%" }}*/}
+                {/*            fill*/}
+                {/*        />*/}
+                {/*      </div>*/}
+                {/*    </div>*/}
+                {/*  </Paper>*/}
+                {/*</Grid>*/}
+                {/*/!* Recent Requests *!/*/}
+                {/*<Grid item xs={12}>*/}
+                {/*  <Paper*/}
+                {/*      sx={{*/}
+                {/*        p: 2,*/}
+                {/*        display: "flex",*/}
+                {/*        flexDirection: "column",*/}
+                {/*      }}*/}
+                {/*  >*/}
+                {/*    /!* Request Status *!/*/}
+                {/*    <Typography variant="h5" gutterBottom>*/}
+                {/*      Request Status*/}
+                {/*    </Typography>*/}
+                {/*    <ul>*/}
+                {/*      <li>Request 1</li>*/}
+                {/*      <li>Request 2</li>*/}
+                {/*      <li>Request 3</li>*/}
+                {/*      /!* Add more requests as needed *!/*/}
+                {/*    </ul>*/}
+                {/*  </Paper>*/}
+                {/*</Grid>*/}
+              {/*</Grid>*/}
               <Copyright sx={{ pt: 4 }} />
             </Container>
           </Box>
