@@ -97,18 +97,15 @@ const defaultTheme = createTheme();
 
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
-  const [properties, setProperties] = React.useState([]);
-  const [selectedProperty, setSelectedProperty] = React.useState(null); // State for selected property
   const [showMoreInfo, setShowMoreInfo] = React.useState(false); // Define showMoreInfo state variable
   const router = useRouter();
   const [units, setUnits] = React.useState([]);
-  const [selectedUnit, setSelectedUnit] = React.useState(null);
+  const [selectedUnit, setSelectedUnit] = React.useState(null); // State to store selected unit
 
-// Define a function to handle selecting a unit
-  const handleSelectUnit = (unit) => {
-    setSelectedUnit(unit);
+// Handler function to handle clicks on property items
+  const handleClick = (unit) => {
+    setSelectedUnit(unit); // Update selected unit
   };
-
 
   // Function to toggle showing more info
   const toggleMoreInfo = () => {
@@ -121,13 +118,14 @@ export default function Dashboard() {
   };
 
   React.useEffect(() => {
-    const fetchProperties = async () => {
+    const fetchUnits = async () => {
       try {
-        // Get the user object from Supabase auth
-        const user = supabase.auth.user();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
         // Extract user email
-        const userEmail = user?.emailProfile;
+        const userEmail = user?.email;
         if (!userEmail) {
           throw new Error("User email not found");
         }
@@ -142,17 +140,15 @@ export default function Dashboard() {
         }
 
         setUnits(data);
-
-        // Select the first unit if there are units available
         if (data.length > 0) {
-          setSelectedUnit(data[0]);
+          setSelectedUnit(data[0]); // Initialize selectedUnit with the first unit
         }
       } catch (error) {
         console.error("Error fetching units:", error.message);
       }
     };
 
-    fetchProperties();
+    fetchUnits();
   }, []);
 
 
@@ -218,26 +214,25 @@ export default function Dashboard() {
             </Toolbar>
             <Divider />
             <List component="nav">
-              {/* Your existing list items */}
+              {/* Existing list items */}
               <Divider sx={{ my: 1 }} />
-              {/* New items for properties */}
-              {properties.map((property) => (
-                  <ListItem button key={property.id} onClick={() => handleClick(property)}>
+              {units.map((unit) => (
+                  <ListItem button key={unit.id} onClick={() => handleClick(unit)}>
                     <ListItemIcon>
-                      <PropertyIcon /> {/* Icon for property */}
+                      <PropertyIcon />
                     </ListItemIcon>
-                    <ListItemText primary={units.property_name} />
+                    <ListItemText primary={unit.property_name} />
                   </ListItem>
               ))}
               <Divider sx={{ my: 1 }} />
-              {/* Button to add property */}
+              {/* Add property button */}
               <ListItem
                   button
                   aria-label="add property"
                   onClick={() => router.push("/add-property")}
               >
                 <ListItemIcon>
-                  <AddIcon /> {/* Icon for adding */}
+                  <AddIcon />
                 </ListItemIcon>
                 <ListItemText primary="Add Property" />
               </ListItem>
@@ -257,140 +252,71 @@ export default function Dashboard() {
           >
             <Toolbar />
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-              {/*<Grid container spacing={3}>*/}
-                {/* Property Details */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                    sx={{
-                      p: 2,
-                      display: 'flex',
-                      flexDirection: { xs: 'column', md: 'row' },
-                      alignItems: 'flex-start',
-                      width: "100%",
-                    }}
-                >
-                  {/* Unit Picture */}
-                  {selectedUnit && selectedUnit.picture && (
-                      <div style={{
-                        flex: { xs: 'none', md: '0 0 30%' },
-                        marginRight: { xs: 0, md: '1rem' },
-                        marginBottom: { xs: '1rem', md: 0 },
-                      }}>
-                        <img
-                            src={selectedUnit.picture}
-                            alt="unit"
-                            style={{
-                              width: "100%",
-                              maxWidth: "200px",
-                            }}
-                        />
-                      </div>
+              <Paper
+                  sx={{
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: { xs: 'column', md: 'row' },
+                    alignItems: 'flex-start',
+                    width: '100%',
+                  }}
+              >
+                {/* Unit Picture */}
+                {selectedUnit && (
+                    <div style={{ flex: { xs: 'none', md: '0 0 30%' }, marginRight: { xs: 0, md: '1rem' }, marginBottom: { xs: '1rem', md: 0 } }}>
+                      {selectedUnit.picture && (
+                          <img
+                              src={selectedUnit.picture}
+                              alt="unit"
+                              style={{ width: '100%', maxWidth: '200px' }}
+                          />
+                      )}
+                    </div>
+                )}
+                {/* Unit Details */}
+                <div style={{ flex: '1', paddingLeft: '1rem' }}>
+                  <Typography variant="h5" gutterBottom>
+                    Unit Details
+                  </Typography>
+                  {selectedUnit && (
+                      <>
+                        <Typography variant="body1">
+                          Property: {selectedUnit.property_name}
+                        </Typography>
+                        <Typography variant="body1">
+                          Unit Number: {selectedUnit.unit_number}
+                        </Typography>
+                        <Typography
+                            variant="body1"
+                            color="primary"
+                            onClick={toggleMoreInfo}
+                            style={{ cursor: 'pointer', textDecoration: 'underline', marginTop: '1rem' }}
+                        >
+                          See More
+                        </Typography>
+                        {showMoreInfo && (
+                            <>
+                              <Typography variant="body1">
+                                Unit Owner: {selectedUnit.unit_owner}
+                              </Typography>
+                              <Typography variant="body1">
+                                Occupied by: {selectedUnit.occupied_by}
+                              </Typography>
+                              <Typography variant="body1">
+                                Size: {selectedUnit.size}
+                              </Typography>
+                              <Typography variant="body1">
+                                Condo Fee per sqft: {selectedUnit.condo_fee_sqft}
+                              </Typography>
+                              <Typography variant="body1">
+                                Parking Number: {selectedUnit.parking_number}
+                              </Typography>
+                            </>
+                        )}
+                      </>
                   )}
-                  {/* Unit Details */}
-                  <div style={{ flex: '1', paddingLeft: '1rem' }}>
-                    <Typography variant="h5" gutterBottom>
-                      Unit Details
-                    </Typography>
-                    <Typography variant="body1">
-                      Property: {selectedUnit?.property_name}
-                    </Typography>
-                    <Typography variant="body1">
-                      Unit Number: {selectedUnit?.unit_number}
-                    </Typography>
-                    <Typography
-                        variant="body1"
-                        color="primary"
-                        onClick={toggleMoreInfo}
-                        style={{ cursor: 'pointer', textDecoration: 'underline', marginTop: '1rem' }}
-                    >
-                      See More
-                    </Typography>
-                    {/* Additional Info */}
-                    {showMoreInfo && (
-                        <>
-                          <Typography variant="body1">
-                            Unit Owner: {selectedUnit?.unit_owner}
-                          </Typography>
-                          <Typography variant="body1">
-                            Occupied by: {selectedUnit?.occupied_by}
-                          </Typography>
-                          <Typography variant="body1">
-                            Size: {selectedUnit?.size}
-                          </Typography>
-                          <Typography variant="body1">
-                            Condo Fee per sqft: {selectedUnit?.condo_fee_sqft}
-                          </Typography>
-                          <Typography variant="body1">
-                            Parking Number: {selectedUnit?.parking_number}
-                          </Typography>
-                        </>
-                    )}
-                  </div>
-                </Paper>
-
-              </Grid>
-
-
-              {/*/!* Financial Status *!/*/}
-              {/*<Grid item xs={12} md={4} lg={3}>*/}
-              {/*  <Paper*/}
-              {/*      sx={{*/}
-              {/*        p: 2,*/}
-                {/*        display: "flex",*/}
-                {/*        flexDirection: "column",*/}
-                {/*      }}*/}
-                {/*  >*/}
-                {/*    <Typography variant="h5" gutterBottom>*/}
-                {/*      Financial Status*/}
-                {/*    </Typography>*/}
-                {/*    <Typography variant="body1" gutterBottom>*/}
-                {/*      Remaining Balance: $84,500*/}
-                {/*    </Typography>*/}
-                {/*    <Typography variant="body1" gutterBottom>*/}
-                {/*      Next Month's Payment: $2,347.22*/}
-                {/*    </Typography>*/}
-                {/*    <Typography variant="body1" gutterBottom>*/}
-                {/*      Will be taken on February 14th, 2023.*/}
-                {/*    </Typography>*/}
-
-                {/*    /!* Graph *!/*/}
-                {/*    <div style={{ marginTop: "2rem" }}>*/}
-                {/*      /!* Your graph component *!/*/}
-                {/*      /!* Replace this with your actual graph component *!/*/}
-                {/*      <div>*/}
-                {/*        <img*/}
-                {/*            src="/payment_graph.png"*/}
-                {/*            alt="Payment Graph"*/}
-                {/*            style={{ width: "100%" }}*/}
-                {/*            fill*/}
-                {/*        />*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*  </Paper>*/}
-                {/*</Grid>*/}
-                {/*/!* Recent Requests *!/*/}
-                {/*<Grid item xs={12}>*/}
-                {/*  <Paper*/}
-                {/*      sx={{*/}
-                {/*        p: 2,*/}
-                {/*        display: "flex",*/}
-                {/*        flexDirection: "column",*/}
-                {/*      }}*/}
-                {/*  >*/}
-                {/*    /!* Request Status *!/*/}
-                {/*    <Typography variant="h5" gutterBottom>*/}
-                {/*      Request Status*/}
-                {/*    </Typography>*/}
-                {/*    <ul>*/}
-                {/*      <li>Request 1</li>*/}
-                {/*      <li>Request 2</li>*/}
-                {/*      <li>Request 3</li>*/}
-                {/*      /!* Add more requests as needed *!/*/}
-                {/*    </ul>*/}
-                {/*  </Paper>*/}
-                {/*</Grid>*/}
-              {/*</Grid>*/}
-              <Copyright sx={{ pt: 4 }} />
+                </div>
+              </Paper>
             </Container>
           </Box>
         </Box>
