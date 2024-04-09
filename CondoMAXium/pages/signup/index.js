@@ -16,6 +16,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { WindowSharp } from "@mui/icons-material";
 
 const defaultTheme = createTheme();
 
@@ -71,41 +72,41 @@ const routeChange = () => {
 };
 */
 
-// Mark's new code, seems to be working
-const SignUp = () => {
+// Nicola's new code, seems to be working
+function SignUp() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  // Ricky: Added these variables to add to the user
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const [otp, setOtp] = useState("");
 
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        // Added additional info to sign up
-        options: {
-          data: {
-            first_name: first_name,
-            last_name: last_name,
-          },
-        },
-      });
-
-      if (error?.status === 429) {
-        alert("Error signing up: Email rate limit exceeded");
-        throw error;
-      }
-
-      console.log("User signed up successfully:", data);
-      <Link href="/"></Link>;
-      // routeChange();
-    } catch (error) {
+  const handleSignUp = async (event) => {
+    event.preventDefault(); // Prevent form from refreshing the page
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email: email,
+      options: {
+        shouldCreateUser: true,
+      },
+    });
+    if (error) {
       console.error("Error signing up:", error.message);
+    } else {
+      alert('OTP has been sent to your email');
     }
   };
+
+  const handleVerify = async () => {
+    
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: email,
+      token: otp,
+      type: 'email',
+    });
+    if (error) {
+      console.error("Error verifying OTP:", error.message);
+    } else {
+      // Redirect to the form page after successful OTP verification
+      Window.alert("YYYYESSSS");
+    }
+  };
+  
 
   // const routeChange = () => {
   //   let path = "/profile";
@@ -136,35 +137,10 @@ const SignUp = () => {
           <Box
             component="form"
             noValidate
-            onSubmit={handleSubmit}
+            onSubmit={handleSignUp}
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  value={first_name}
-                  onChange={(event) => setFirstName(event.target.value)}
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                  value={last_name}
-                  onChange={(event) => setLastName(event.target.value)}
-                />
-              </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
@@ -177,20 +153,18 @@ const SignUp = () => {
                   onChange={(event) => setEmail(event.target.value)}
                 />
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
-                  id="Password"
-                  label="Password"
-                  inputProps={{ "data-testid": "pwd"}}
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  id="otp"
+                  label="OTP"
+                  name="otp"
+                  autoComplete="otp"
+                  value={otp}
+                  onChange={(event) => setOtp(event.target.value)}
                 />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12}>
                 <FormControlLabel
                   control={
@@ -204,10 +178,10 @@ const SignUp = () => {
               type="submit"
               fullWidth
               variant="contained"
-              onClick={() => router.push("/profile")}
+              onClick={handleVerify}
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              Sign User Up
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
@@ -218,7 +192,6 @@ const SignUp = () => {
             </Grid>
           </Box>
         </Box>
-        {/* <Copyright sx={{ mt: 5 }} /> */}
       </Container>
     </ThemeProvider>
   );

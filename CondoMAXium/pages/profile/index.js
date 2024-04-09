@@ -35,13 +35,13 @@ const {
 } = await supabase.auth.getUser();
 
 // Get the user's ID
-const userId = user?.id;
-
+const userEmail = user?.email;
 // Fetch data from your_table where the user_id matches the current user's ID
 const { data, error } = await supabase
   .from("profiles")
   .select("*")
-  .eq("id", userId);
+  .eq("emailProfile", userEmail);
+
 
 if (error) {
   console.error("Error: ", error);
