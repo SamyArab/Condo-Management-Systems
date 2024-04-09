@@ -127,7 +127,7 @@ function StatusIndicator({ status }) {
 
 export default function Requests() {
     const [open, setOpen] = React.useState(true);
-    
+    const router = useRouter();
     const toggleDrawer = () => {
       setOpen(!open);
     };
