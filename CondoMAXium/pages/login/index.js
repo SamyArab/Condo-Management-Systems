@@ -57,7 +57,27 @@ export default function SignInSide() {
       }
       console.log("User logged in succesfully:", data);
       // routeChange();
-      () => router.push("/profile");
+      // Fetch the user's role from the profiles table
+      const { data: profiles, error: profileError } = await supabase
+          .from("profiles")
+          .select("roleOfUser")
+          .eq("emailProfile", email)
+          .single();
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      const role = profiles.roleOfUser;
+
+      // Redirect user based on their role
+      if (role === "owner") {
+        router.push("/dashboard");
+      } else if (role === "cmc") {
+        router.push("/dashboardCMC");
+      } else {
+        // Handle other roles if needed
+      }
     } catch (error) {
       // Old code from before
       //   const data = new FormData(event.currentTarget);
@@ -66,7 +86,7 @@ export default function SignInSide() {
       //     password: data.get("password"),
       //   });
       console.error("Error logging in:", error.message);
-      alert(error);
+      alert(error.message);
     }
   };
 
@@ -152,7 +172,7 @@ export default function SignInSide() {
                 type="submit"
                 fullWidth
                 variant="contained"
-                onClick={() => router.push("/profile")}
+                onClick={handleSubmit}
                 sx={{ mt: 3, mb: 2 }}
               >
                 Sign In
