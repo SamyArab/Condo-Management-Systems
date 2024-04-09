@@ -30,60 +30,6 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import supabase from "../../config/supabaseClient";
 import styles from "../../styles/units.module.css";
 
-//mockup list of units, to be changed when adding backend
-// const unitsList = {
-//   units: [
-//     {
-//       propertyName: "Mason Building",
-//       unitNumber: "101",
-//       unitOwner: "Maurine Thatcher",
-//       occupied: "Owner",
-//       unitSize: "900sqft",
-//     },
-//     {
-//       propertyName: "Mason Building",
-//       unitNumber: "102",
-//       unitOwner: "Maurine Thatcher",
-//       occupied: "Tenant",
-//       unitSize: "800sqft",
-//     },
-//     {
-//       propertyName: "Mason Building",
-//       unitNumber: "103",
-//       unitOwner: "Jack Brown",
-//       occupied: "Owner",
-//       unitSize: "830sqft",
-//     },
-//     {
-//       propertyName: "Mason Building",
-//       unitNumber: "104",
-//       unitOwner: "Lily Aldrin",
-//       occupied: "Tenant",
-//       unitSize: "800sqft",
-//     },
-//     {
-//       propertyName: "Write Building",
-//       unitNumber: "101",
-//       unitOwner: "Ted Mosby",
-//       occupied: "Owner",
-//       unitSize: "850sqft",
-//     },
-//     {
-//       propertyName: "Write Building",
-//       unitNumber: "102",
-//       unitOwner: "Marshall Ericson",
-//       occupied: "Tenant",
-//       unitSize: "850sqft",
-//     },
-//     {
-//       propertyName: "Write Building",
-//       unitNumber: "103",
-//       unitOwner: "Barney Stinson",
-//       occupied: "Tenant",
-//       unitSize: "850sqft",
-//     },
-//   ],
-// };
 
 const CMCUnits = () => {
   const [units, setUnits] = useState([]);
@@ -96,8 +42,6 @@ const CMCUnits = () => {
       try {
         const { data: unitData, error: unitError } = await supabase.from('units').select('*');
         setUnits(unitData); 
-        // const { data: ownerData, error: ownerError } = await supabase.from('owner').select('*');
-        // setOwner(ownerData); 
         if (unitError) {
           throw error;
         }
@@ -201,6 +145,15 @@ const CMCUnits = () => {
     });
   }
 
+  //route to the view-unit page
+  const handleViewClick = (unitid) => {
+    console.log('viewing unit with index :', unitid);
+    router.push({
+      pathname: '/view-unit',
+      query: {unitid:unitid}
+    });
+  }
+
   //route to add a new unit page
   const handleAddUnitClick = (unitId) => {
     const result = router.push("/add-unit");
@@ -214,7 +167,7 @@ const CMCUnits = () => {
     let textColor = 'inherit'; // Default color
   
     if (unit[currentMonth] !== null && unit[currentMonth] !== undefined) {
-      currentFee = unit[currentMonth] ? 'Payed' : 'Not Payed';
+      currentFee = unit[currentMonth] ? 'Paid' : 'Not Paid';
       textColor = unit[currentMonth] ? 'green' : 'red'; // Set color to green if payed
     }
   
@@ -429,12 +382,6 @@ const CMCUnits = () => {
                         <TableCell>
                           <b>Unit Size</b>
                         </TableCell>
-                        {/* <TableCell>
-                          <b>Parking Number</b>
-                        </TableCell>
-                        <TableCell>
-                          <b>Locker Number</b>
-                        </TableCell> */}
                         <TableCell>
                           <b>Condo Fee Status</b>
                         </TableCell>
@@ -450,12 +397,9 @@ const CMCUnits = () => {
                       <TableRow key={index}>
                         <TableCell>{unit.property_name}</TableCell>
                         <TableCell>{unit.unit_number}</TableCell>
-                        <TableCell>{unit.first_name_owner}</TableCell>
+                        <TableCell>{unit.first_name_owner}<br/>{unit.last_name_owner}</TableCell>
                         <TableCell>{unit.occupied_by}</TableCell>
                         <TableCell>{unit.size}</TableCell>
-                        {/* <TableCell>{unit.parking_number}</TableCell>
-                        <TableCell>{unit.locker_number}</TableCell> */}
-                        {/* <TableCell>{unit.condo_fee_total}</TableCell> */}
                         <TableCell><CurrentMonthFees unit={unit} currentMonth={currentMonth} /></TableCell>
                         <TableCell>
                           <Button 
@@ -466,13 +410,11 @@ const CMCUnits = () => {
                             onClick={() => handleEditClick(unit.id)}
                           >Edit</Button>
                           <br/>
-                        {/* </TableCell>
-                        <TableCell> */}
                           <Button 
                             variant="contained" 
                             size="small"
                             startIcon={<VisibilityIcon />} 
-                            // onClick={() => handleEditClick(unit.id)}
+                            onClick={() => handleViewClick(unit.id)}
                           >View</Button>
                         </TableCell>
                       </TableRow>
