@@ -26,6 +26,7 @@ import {
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import supabase from "../../config/supabaseClient";
 import styles from "../../styles/units.module.css";
 
@@ -86,15 +87,18 @@ import styles from "../../styles/units.module.css";
 
 const CMCUnits = () => {
   const [units, setUnits] = useState([]);
+  // const [owner, setOwner] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   //fetching units from database
   useEffect(() => {
     async function fetchUnits() {
       try {
-        const { data, error } = await supabase.from('units').select('*');
-        setUnits(data); 
-        if (error) {
+        const { data: unitData, error: unitError } = await supabase.from('units').select('*');
+        setUnits(unitData); 
+        // const { data: ownerData, error: ownerError } = await supabase.from('owner').select('*');
+        // setOwner(ownerData); 
+        if (unitError) {
           throw error;
         }
       } catch (error) {
@@ -185,6 +189,7 @@ const CMCUnits = () => {
         // || String(unit.unit_size).includes(searchTerm)
         ) 
   );
+
   const router = useRouter();
 
   //route to the edit-unit page
@@ -203,6 +208,40 @@ const CMCUnits = () => {
       console.log('adding new unit');
     // }
   }
+
+  const CurrentMonthFees = ({ unit, currentMonth }) => {
+    let currentFee = 'N/A';
+    let textColor = 'inherit'; // Default color
+  
+    if (unit[currentMonth] !== null && unit[currentMonth] !== undefined) {
+      currentFee = unit[currentMonth] ? 'Payed' : 'Not Payed';
+      textColor = unit[currentMonth] ? 'green' : 'red'; // Set color to green if payed
+    }
+  
+    return <span style={{ color: textColor }}>{currentFee}</span>;
+  };
+
+  const [currentMonth, setCurrentMonth] = useState('');
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const monthIndex = currentDate.getMonth(); // Month index (0-11)
+    const months = [
+      "jan_fee",
+      "feb_fee",
+      "mar_fee",
+      "apr_fee",
+      "may_fee",
+      "jun_fee",
+      "jul_fee",
+      "aug_fee",
+      "sep_fee",
+      "oct_fee",
+      "nov_fee",
+      "dec_fee"
+    ];
+    setCurrentMonth(months[monthIndex]); // Get the fee property based on the current month
+  }, []);
 
   return (
     <>
@@ -388,16 +427,19 @@ const CMCUnits = () => {
                           <b>Occupied By</b>
                         </TableCell>
                         <TableCell>
-                          <b>Size</b>
+                          <b>Unit Size</b>
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           <b>Parking Number</b>
                         </TableCell>
                         <TableCell>
                           <b>Locker Number</b>
+                        </TableCell> */}
+                        <TableCell>
+                          <b>Condo Fee Status</b>
                         </TableCell>
                         <TableCell>
-                          <b>Condo Fee</b>
+                          <b>Actions</b>
                         </TableCell>
 
                       </TableRow>
@@ -405,25 +447,36 @@ const CMCUnits = () => {
                     <TableBody>
                     {/* print values from the DB */}
                     {filteredUnits.map((unit, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{unit.property_name}</TableCell>
-                            <TableCell>{unit.unit_number}</TableCell>
-                            <TableCell>{unit.unit_owner}</TableCell>
-                            <TableCell>{unit.occupied_by}</TableCell>
-                            <TableCell>{unit.size}</TableCell>
-                            <TableCell>{unit.parking_number}</TableCell>
-                            <TableCell>{unit.locker_number}</TableCell>
-                            <TableCell>{unit.condo_fee}</TableCell>
-                            <TableCell>
-                              <Button 
-                                variant="contained" 
-                                size="small"
-                                startIcon={<EditIcon />} 
-                                onClick={() => handleEditClick(unit.id)}
-                              >Edit</Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                      <TableRow key={index}>
+                        <TableCell>{unit.property_name}</TableCell>
+                        <TableCell>{unit.unit_number}</TableCell>
+                        <TableCell>{unit.first_name_owner}</TableCell>
+                        <TableCell>{unit.occupied_by}</TableCell>
+                        <TableCell>{unit.size}</TableCell>
+                        {/* <TableCell>{unit.parking_number}</TableCell>
+                        <TableCell>{unit.locker_number}</TableCell> */}
+                        {/* <TableCell>{unit.condo_fee_total}</TableCell> */}
+                        <TableCell><CurrentMonthFees unit={unit} currentMonth={currentMonth} /></TableCell>
+                        <TableCell>
+                          <Button 
+                            variant="contained" 
+                            size="small"
+                            startIcon={<EditIcon />}
+                            style={{ marginBottom: '8px' }} 
+                            onClick={() => handleEditClick(unit.id)}
+                          >Edit</Button>
+                          <br/>
+                        {/* </TableCell>
+                        <TableCell> */}
+                          <Button 
+                            variant="contained" 
+                            size="small"
+                            startIcon={<VisibilityIcon />} 
+                            // onClick={() => handleEditClick(unit.id)}
+                          >View</Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                     </TableBody> 
                   </Table>
                 </TableContainer>
