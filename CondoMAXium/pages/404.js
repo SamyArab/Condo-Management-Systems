@@ -1,9 +1,7 @@
-const Error = () => {
-   return (
-      <div>
-         <h1>404</h1>
-      </div>
-   )
+export default function Custom404() {
+  return (
+    <div>
+      <h1>404 - Page Not Found</h1>
+    </div>
+  );
 }
-
-export default Error
