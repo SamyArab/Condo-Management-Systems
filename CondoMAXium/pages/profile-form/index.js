@@ -22,12 +22,12 @@ import {
 } from "@mui/material";
 import styles from "../../styles/profileForm.module.css";
 
-const profileForm = () => {
+const ProfileForm = () => {
   //All initialized values for the needed fields (in order)
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [cmc, setCMC] = useState("");
+  const [CMC, setCMC] = useState("");
   const [profileType, setProfileType] = useState("");
   const [inputFields, setInputFields] = useState([
     { name: "", unitId: "", owner: "", occupant: "", unitSize: "" },
@@ -150,7 +150,7 @@ const profileForm = () => {
       firstName &&
       lastName &&
       phoneNumber &&
-      cmc &&
+      CMC &&
       profileType &&
       inputFields.every(
         (field) =>
@@ -257,7 +257,7 @@ const profileForm = () => {
                     <Select
                       inputProps={{ "data-testid": "CMC-select" }}
                       name="CMC"
-                      value={cmc}
+                      value={CMC}
                       onChange={handleCMCChange}
                     >
                       <MenuItem value="">
@@ -492,4 +492,4 @@ const profileForm = () => {
   );
 };
 
-export default profileForm;
+export default ProfileForm;
