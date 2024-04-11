@@ -98,7 +98,7 @@ const EditUnitPage = () => {
             locker_number: fetchedUnit.locker_number || '',
           });
           
-          console.log("property name is ", property_name)
+          console.log("property name is ", unit.property_name);
         } else {
           console.log('Unit not found');
         }
@@ -125,7 +125,19 @@ const EditUnitPage = () => {
   
     // If the field should only have numeric values, remove all non-numeric characters
     if (numericFields.includes(name)) {
-      processedValue = value.replace(/\D/g, '');
+      // Regular expression to remove any non-numeric characters from the input
+      processedValue = value.replace(/[^\d.]/g, '');
+
+      // You might also want to handle cases where there are multiple decimal points
+      // This part ensures there's only one decimal point in the number
+      const parts = processedValue.split('.');
+      let decimalValue;
+      if (parts.length > 2) {
+        // Join the first part with the second part, discarding additional decimal points
+        decimalValue = parts[0] + '.' + parts.slice(1).join('');
+      } else {
+        decimalValue = processedValue;
+      }
     }
 
     // Apply phone number formatting for phone fields
@@ -161,6 +173,8 @@ const EditUnitPage = () => {
       last_name_tenant: unit.occupied_by === "Owner" ? '' : unit.last_name_tenant,
       tenant_email: unit.occupied_by === "Owner" ? '' : unit.tenant_email,
       tenant_phone: unit.occupied_by === "Owner" ? '' : unit.tenant_phone,
+      // Calculate condo_fee_total based on the provided formula
+      condo_fee_total: (parseFloat(unit.condo_fee_sqft) * parseFloat(unit.size)) + parseFloat(unit.parking_fee, 10),
     };
   
     // Initialize an array with fields that are always required
@@ -453,7 +467,7 @@ const EditUnitPage = () => {
                   />
                 </Grid>
               </Grid>
-            )}
+            )} 
           </Grid>
           <Grid container justifyContent="center" style={{ marginTop: "20px" }}>
             <Button
@@ -466,7 +480,7 @@ const EditUnitPage = () => {
             {isIncompleteForm && (
               <Dialog
                 open={isIncompleteForm}
-                onClose={() => setIsIncompleteForm(false)}
+                // onClose={() => setIsIncompleteForm(false)}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
               >

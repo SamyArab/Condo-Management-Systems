@@ -45,7 +45,8 @@ const CMCUnits = () => {
         if (unitError) {
           throw error;
         }
-      } catch (error) {
+      } 
+      catch (error) {
         console.log("Error fetching units", error.message);
       }
     }
@@ -128,7 +129,8 @@ const CMCUnits = () => {
       // (selectedSizes.length === 0 || selectedSizes.includes(unit.unitSize)) &&
       (unit.property_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         String(unit.unit_number).includes(searchTerm) ||
-        unit.unit_owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        unit.first_name_owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        unit.last_name_owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
         unit.occupied_by.toLowerCase().includes(searchTerm.toLowerCase()) 
         // || String(unit.unit_size).includes(searchTerm)
         ) 
@@ -156,10 +158,8 @@ const CMCUnits = () => {
 
   //route to add a new unit page
   const handleAddUnitClick = (unitId) => {
-    const result = router.push("/add-unit");
-    // if (result) {
-      console.log('adding new unit');
-    // }
+    router.push("/add-unit");
+    console.log('adding new unit');
   }
 
   const CurrentMonthFees = ({ unit, currentMonth }) => {
@@ -383,7 +383,10 @@ const CMCUnits = () => {
                           <b>Unit Size</b>
                         </TableCell>
                         <TableCell>
-                          <b>Condo Fee Status</b>
+                          <b>Monthly Fee</b>
+                        </TableCell>
+                        <TableCell>
+                          <b>Fee Status</b>
                         </TableCell>
                         <TableCell>
                           <b>Actions</b>
@@ -399,7 +402,8 @@ const CMCUnits = () => {
                         <TableCell>{unit.unit_number}</TableCell>
                         <TableCell>{unit.first_name_owner}<br/>{unit.last_name_owner}</TableCell>
                         <TableCell>{unit.occupied_by}</TableCell>
-                        <TableCell>{unit.size}</TableCell>
+                        <TableCell>{unit.size} sqft</TableCell>
+                        <TableCell>{unit.condo_fee_total}$</TableCell>
                         <TableCell><CurrentMonthFees unit={unit} currentMonth={currentMonth} /></TableCell>
                         <TableCell>
                           <Button 

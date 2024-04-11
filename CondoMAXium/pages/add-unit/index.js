@@ -23,9 +23,9 @@ import styles from "../../styles/units.module.css";
 import {v4 as uuidv4} from 'uuid';
 
 
-const {
-  data: { user },
-} = await supabase.auth.getUser();
+// const {
+//   data: { user },
+// } = await supabase.auth.getUser();
 
 //not sure
 // // Get the user's ID
@@ -54,6 +54,16 @@ const AddUnitForm = () => {
 
   const [isIncompleteForm, setIsIncompleteForm] = useState(false);
 
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    fetchUser();
+  }, []);
 
   // property ID for propertFky
   useEffect(() => {
@@ -124,17 +134,42 @@ const AddUnitForm = () => {
     const numericValue = value.replace(/\D/g, '');
     setUnitSize(numericValue);
   };
+
   //handle method for condo fee sqft input to only accept numbers
   const handleCondoFeeSQFTChange = (value) => {
-    // Regular expression to remove any non-numeric characters from the input
-    const numericValue = value.replace(/\D/g, '');
-    setcondoFeeSqft(numericValue);
+    // Regular expression to remove any non-numeric characters except decimal points from the input
+    const numericValue = value.replace(/[^\d.]/g, '');
+  
+    // You might also want to handle cases where there are multiple decimal points
+    // This part ensures there's only one decimal point in the number
+    const parts = numericValue.split('.');
+    let decimalValue;
+    if (parts.length > 2) {
+      // Join the first part with the second part, discarding additional decimal points
+      decimalValue = parts[0] + '.' + parts.slice(1).join('');
+    } else {
+      decimalValue = numericValue;
+    }
+  
+    setcondoFeeSqft(decimalValue);
   };
 
   //handle method for parking fee input to only accept numbers
   const handleParkingFeeChange = (value) => {
     // Regular expression to remove any non-numeric characters from the input
-    const numericValue = value.replace(/\D/g, '');
+    const numericValue = value.replace(/[^\d.]/g, '');
+
+    // You might also want to handle cases where there are multiple decimal points
+    // This part ensures there's only one decimal point in the number
+    const parts = numericValue.split('.');
+    let decimalValue;
+    if (parts.length > 2) {
+      // Join the first part with the second part, discarding additional decimal points
+      decimalValue = parts[0] + '.' + parts.slice(1).join('');
+    } else {
+      decimalValue = numericValue;
+    }
+
     setCondoFeeParking(numericValue);
   };
 
@@ -204,6 +239,38 @@ const AddUnitForm = () => {
     }
 
     try {
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth(); // getMonth() returns 0-11 for Jan-Dec
+      const currentDay = currentDate.getDate();
+
+      // Initialize the monthly fees object with false values
+      const monthlyFees = {
+        jan_fee: false,
+        feb_fee: false,
+        mar_fee: false,
+        apr_fee: false,
+        may_fee: false,
+        jun_fee: false,
+        jul_fee: false,
+        aug_fee: false,
+        sep_fee: false,
+        oct_fee: false,
+        nov_fee: false,
+        dec_fee: false,
+      };
+
+      // Update the values based on the current date
+      Object.keys(monthlyFees).forEach((key, index) => {
+        if (index < currentMonth) {
+          monthlyFees[key] = null; // Past months get null
+        } else if (index > currentMonth) {
+          monthlyFees[key] = false; // Future months get false
+        } else if (index === currentMonth) {
+          // For the current month, check the day
+          monthlyFees[key] = currentDay <= 15 ? false : null;
+        }
+      });
+
       // Insert data into the "units" table
       const { data: unitData, error: unitError } = await supabase
       .from("units")
@@ -223,21 +290,21 @@ const AddUnitForm = () => {
           size: unitSize,
           condo_fee_sqft: condoFeeSqft,
           parking_fee: condoFeeParking,
-          condo_fee_total: ((condoFeeSqft * unitSize) + parseInt(condoFeeParking, 10)),
+          condo_fee_total: ((condoFeeSqft * unitSize) + parseFloat(condoFeeParking, 10)),
           parking_number: parkingNumber,
           locker_number: lockerNumber,
-          jan_fee: false,
-          feb_fee: false,
-          mar_fee: false,
-          apr_fee: false,
-          may_fee: false,
-          jun_fee: false,
-          jul_fee: false,
-          aug_fee: false,
-          sep_fee: false,
-          oct_fee: false,
-          nov_fee: false,
-          dec_fee: false,
+          jan_fee: monthlyFees.jan_fee,
+          feb_fee: monthlyFees.feb_fee,
+          mar_fee: monthlyFees.mar_fee,
+          apr_fee: monthlyFees.apr_fee,
+          may_fee: monthlyFees.may_fee,
+          jun_fee: monthlyFees.jun_fee,
+          jul_fee: monthlyFees.jul_fee,
+          aug_fee: monthlyFees.aug_fee,
+          sep_fee: monthlyFees.sep_fee,
+          oct_fee: monthlyFees.oct_fee,
+          nov_fee: monthlyFees.nov_fee,
+          dec_fee: monthlyFees.dec_fee,
           //fky
           propertyFky: propertyFky,
           // picture: null
@@ -260,59 +327,116 @@ const AddUnitForm = () => {
 
     ///////////////////////////////////////////
 
-    // Check if the email already exists in the "units" table
-    const { data: units, error: unitsError } = await supabase
+    // Check if the owner email already exists in the "units" table
+    const { data: unitsOwner, error: unitsErrorOwner } = await supabase
       .from('units')
       .select('emailUnit')
       .eq('emailUnit', ownerEmail);
 
-    if (unitsError) {
-      console.error("Error fetching units:", unitsError.message);
+    if (unitsErrorOwner) {
+      console.error("Error fetching units for owner:", unitsErrorOwner.message);
       return;
     }
 
-    if (units.length > 1) {
-      console.error("Email already exists in the units table");
+    if (unitsOwner.length > 1) {
+      console.error("Email already exists in the units table for owner");
       return;
     }
 
     // If the email doesn't exist in the "units" table, send the OTP
-    const { data, error } = await supabase.auth.signInWithOtp({
+    const { dataO, errorO } = await supabase.auth.signInWithOtp({
       email: ownerEmail,
       options: {
         shouldCreateUser: true,
       },
     });
-    if (error) {
-      console.error("Error signing up:", error.message);
+    if (errorO) {
+      console.error("Error signing up:", errorO.message);
     } else {
       alert('OTP has been sent to your email');
     }
 
-    // Check profile
-    const { data: existingProfile, error: profileerror } = await supabase
+    // Check profile for owner
+    const { data: existingProfileOwner, error: profileErrorOwner } = await supabase
     .from('profiles')
     .select('*')
     .eq('emailProfile', ownerEmail)
     .single();
 
-    if (existingProfile) {
-      console.error('Error fetching existing profile:', profileerror);
-    } else if (!existingProfile) {
+    if (existingProfileOwner) {
+      console.error('Error fetching existing profile:', profileErrorOwner);
+    } else if (!existingProfileOwner) {
       const { data: newProfile, error: insertError } = await supabase
         .from('profiles')
         .insert([
-          { first_name: ownerFirstName, last_name: ownerLastName, emailProfile: ownerEmail, id: uuidv4() }
+          { first_name: ownerFirstName, last_name: ownerLastName, roleOfUser: 'owner', emailProfile: ownerEmail, id: uuidv4() }
         ]);
 
       if (insertError) {
-        console.error('Error inserting new profile:', insertError);
+        console.error('Error inserting new profile for owner:', insertError);
       } else {
-        console.log('Inserted new profile:', newProfile);
+        console.log('Inserted new profile for owner:', newProfile);
       }
     } else {
-      console.log('Profile with this email already exists:', existingProfile);
+      console.log('Profile with this email already exists:', existingProfileOwner);
     }
+
+
+    if (occupiedBy === 'Tenant'){
+      // Check if the tenant email already exists in the "units" table
+      const { data: unitsTenant, error: unitsErrorTenant } = await supabase
+        .from('units')
+        .select('tenant_email')
+        .eq('tenant_email', tenantEmail);
+
+      if (unitsErrorTenant) {
+        console.error("Error fetching units for tenant:", unitsErrorTenant.message);
+        return;
+      }
+
+      if (unitsTenant.length > 1) {
+        console.error("Email already exists in the units table for tenant");
+        return;
+      }
+
+      const { dataT, errorT } = await supabase.auth.signInWithOtp({
+        email: tenantEmail,
+        options: {
+          shouldCreateUser: true,
+        },
+      });
+      if (errorT) {
+        console.error("Error signing up:", errorT.message);
+      } else {
+        alert('OTP has been sent to your email');
+      }
+
+      // Check profile for tenant
+      const { data: existingProfileTenant, error: profileErrorTenant } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('emailProfile', tenantEmail)
+      .single();
+
+      if (existingProfileTenant) {
+        console.error('Error fetching existing profile:', profileErrorTenant);
+      } else if (!existingProfileTenant) {
+        const { data: newProfile, error: insertError } = await supabase
+          .from('profiles')
+          .insert([
+            { first_name: tenantFirstName, last_name: tenantLastName, roleOfUser: 'tenant', emailProfile: tenantEmail, id: uuidv4() }
+          ]);
+
+        if (insertError) {
+          console.error('Error inserting new profile for tenant:', insertError);
+        } else {
+          console.log('Inserted new profile for tenant:', newProfile);
+        }
+      } else {
+        console.log('Profile with this email already exists:', existingProfileOwner);
+      }
+    }
+
   }; // end of handleAdd
 
   //const [open, setOpen] = useState(false); // State for controlling dialog visibility
