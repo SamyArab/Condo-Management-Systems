@@ -25,11 +25,11 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 const ViewProperty = () => {
   //A copy of unit used for comparing changes
-  const [propertyCopy, setUnitCopy] = useState({...property});
+  const [propertyCopy, setPropertyCopy] = useState({...property});
 
   const router = useRouter();
 
-  const [month, setMonth] = useState('');
+  // const [month, setMonth] = useState('');
 
   const handleChange = (event) => {
     setMonth(event.target.value);
@@ -70,13 +70,13 @@ const ViewProperty = () => {
   useEffect(() => {
     async function fetchProperty() {
       try {
-        const { data, error } = await supabase.from('properties').select('*').eq('id', propertyid);
+        const { data, error } = await supabase.from('properties').select('*').eq('propertyId', propertyid);
         if (error) {
           throw error;
         }
         if (data && data.length > 0) {
           const fetchedProperty = data[0];
-          setUnit({
+          setProperty({
             property_name: fetchedProperty.buildingName || '',
             units_count: fetchedProperty.unitsCount || '',
             parking_count: fetchedProperty.parkingCount || '',
@@ -102,7 +102,7 @@ const ViewProperty = () => {
             // nov_fee: fetchedProperty.nov_fee ,
             // dec_fee: fetchedProperty.dec_fee ,
           });
-          setUnitCopy({
+          setPropertyCopy({
             jan_fee: fetchedProperty.jan_fee ,
             feb_fee: fetchedProperty.feb_fee ,
             mar_fee: fetchedProperty.mar_fee ,
@@ -151,13 +151,13 @@ const ViewProperty = () => {
 //       const updatedStatus = unit[selectedMonthKey] ? false : true;
   
 //       // Update local state
-//       setUnit({
+//       setProperty({
 //         ...unit,
 //         [selectedMonthKey]: updatedStatus,
 //       });
   
 //       // If necessary, update unitCopy state as well
-//       setUnitCopy({
+//       setPropertyCopy({
 //         ...unitCopy,
 //         [selectedMonthKey]: updatedStatus,
 //       });

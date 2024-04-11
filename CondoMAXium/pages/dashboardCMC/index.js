@@ -111,7 +111,6 @@ export default function PropertyList() {
         setOpen(!open);
     };
 
-
     const router = useRouter();
 
     // Function to render a single property
@@ -128,9 +127,13 @@ export default function PropertyList() {
             console.log(`Navigating to maintenance for ${property.name}`);
         };
 
-        const handlePropertyClick = () => {
-            router.push("/view-property");
-        }
+        const handlePropertyClick = (propertyid) => {
+            console.log('viewing property with index :', propertyid);
+            router.push({
+              pathname: '/view-property',
+              query: {propertyid:propertyid}
+            });
+          }
 
         return (
             <Grid item xs={12} key={property.id}>
@@ -146,7 +149,7 @@ export default function PropertyList() {
                 >
                     <img
                         src="/seasidecondos.jpg"
-                        onClick={handlePropertyClick}
+                        onClick={() => handlePropertyClick(property.propertyId)}
                         alt={property.buildingName}
                         style={{
                             width: isSmallScreen ? "100%" : "25%", // Adjust image width based on screen size
@@ -160,7 +163,7 @@ export default function PropertyList() {
                             variant="h5"
                             gutterBottom
                             sx={{ textDecoration: "underline", marginBottom: '8px' }}
-                            onClick={handlePropertyClick}
+                            onClick={() => handlePropertyClick(property.propertyId)}
                         >
                             {property.buildingName}
                         </Typography>
