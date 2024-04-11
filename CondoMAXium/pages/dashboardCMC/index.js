@@ -19,6 +19,7 @@ import Button from "@mui/material/Button";
 import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import supabase from "@/config/supabaseClient";
+import { useRouter } from "next/router";
 
 // Define width of drawer
 const drawerWidth = 240;
@@ -110,6 +111,9 @@ export default function PropertyList() {
         setOpen(!open);
     };
 
+
+    const router = useRouter();
+
     // Function to render a single property
     const renderProperty = (property) => {
         // Handle click event for adding amenities
@@ -123,6 +127,10 @@ export default function PropertyList() {
             // Navigate to maintenance page
             console.log(`Navigating to maintenance for ${property.name}`);
         };
+
+        const handlePropertyClick = () => {
+            router.push("/view-property");
+        }
 
         return (
             <Grid item xs={12} key={property.id}>
@@ -138,6 +146,7 @@ export default function PropertyList() {
                 >
                     <img
                         src="/seasidecondos.jpg"
+                        onClick={handlePropertyClick}
                         alt={property.buildingName}
                         style={{
                             width: isSmallScreen ? "100%" : "25%", // Adjust image width based on screen size
@@ -151,6 +160,7 @@ export default function PropertyList() {
                             variant="h5"
                             gutterBottom
                             sx={{ textDecoration: "underline", marginBottom: '8px' }}
+                            onClick={handlePropertyClick}
                         >
                             {property.buildingName}
                         </Typography>
