@@ -102,6 +102,9 @@ const Drawer = styled(MuiDrawer, {
   }
 }));
 
+const { data: { user } } = await supabase.auth.getUser();
+const user_email = user?.email;
+console.log(user_email);
 
 const userRequests = () => {
   
@@ -139,16 +142,10 @@ const userRequests = () => {
   //fetching units from database
   useEffect(() => {
     async function fetchRequests() {
-      // const {
-      //   data: { user },
-      // } = await supabase.auth.getUser();
-      
-      // // Get the user's ID
-      // const userId = user?.id;
 
       try {
-        //const { data, error } = await supabase.from('requests').select('*').eq("id", userId);
-        const { data, error } = await supabase.from('requests').select('*');
+        const { data, error } = await supabase.from('requests').select('*').eq("user", user_email);
+        //const { data, error } = await supabase.from('requests').select('*');
         setRequests(data);
         if (error) {
           throw error;
