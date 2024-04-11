@@ -16,9 +16,9 @@ import {
   import supabase from "../../config/supabaseClient";
   import styles from "../../styles/units.module.css";
 
-  const {
-    data:{user}
-  }=await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+  const user_email = user?.email;
+  console.log(user_email);
 
   const AddRequestForm = () => {
     const router = useRouter();
@@ -26,7 +26,7 @@ import {
     const [requestSubject, setRequestSubject] = useState("");
     const [requestType, setRequestType] = useState("");
     const [requestDescription, setRequestDescription] = useState("");
-    const [userr, setUser] = useState("kAR");
+    //const [userr, setUser] = useState(user_email);
     //const [statuss, setStatus] = useState("");
     //const [assign, setAssign] = useState("");
 
@@ -39,12 +39,11 @@ import {
             subject: requestSubject,
             type: requestType,
             description: requestDescription,
-            user: userr,
+            user: user_email,
             //status: statuss,
             //assigned_to: assign,
           },
         ]);
-        console.log(requestSubject, requestType, requestDescription);
         console.log(requestSubject, requestType, requestDescription);
   
         console.log("Successfully added request: ", data);
