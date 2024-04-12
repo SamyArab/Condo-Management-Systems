@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
@@ -18,8 +19,11 @@ import HomeIcon from "@mui/icons-material/Home";
 import Button from "@mui/material/Button";
 import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import supabase from "@/config/supabaseClient";
+import supabase from "../../config/supabaseClient";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
 import { useRouter } from "next/router";
+
 
 // Define width of drawer
 const drawerWidth = 240;
@@ -71,6 +75,7 @@ const Drawer = styled(MuiDrawer, {
 export default function PropertyList() {
     const [open, setOpen] = React.useState(true);
     const [properties, setProperties] = React.useState([]); // State to store fetched properties
+    const router = useRouter();
 
     // Fetch properties from the database on component mount
     React.useEffect(() => {
@@ -103,6 +108,10 @@ export default function PropertyList() {
 
         fetchProperties();
     }, []);
+
+    const goToProfile = () => {
+        router.push("/profile");
+    };
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -195,6 +204,7 @@ export default function PropertyList() {
                         <Button
                             variant="contained"
                             color="primary"
+                            aria-label="Add Amenities"
                             onClick={handleAmenitiesClick}
                             sx={{ minWidth: 120, marginBottom: '8px', width: '100%' }}
                         >
@@ -245,12 +255,15 @@ export default function PropertyList() {
                             noWrap
                             sx={{ flexGrow: 1 }}
                         >
-                            Property Listings
+                            Dashboard CMC
                         </Typography>
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
                                 <NotificationsIcon />
                             </Badge>
+                        </IconButton>
+                        <IconButton color="inherit" onClick={goToProfile}>
+                            <AccountCircleIcon />
                         </IconButton>
                     </Toolbar>
                 </AppBar>

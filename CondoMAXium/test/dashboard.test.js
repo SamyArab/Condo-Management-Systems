@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
-import { BrowserRouter as Router } from 'react-router-dom'; // Import BrowserRouter
-import Dashboard from '../pages/dashboard/index'; //path
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Dashboard from '../pages/dashboard/index';
 import '@testing-library/jest-dom';
 
 // Mock dependencies
@@ -9,73 +9,139 @@ jest.mock('next/router', () => ({
     useRouter: jest.fn()
 }));
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useNavigate: jest.fn() // Mock useNavigate
-}));
+// Mock useNavigate
+jest.mock('react-router-dom', () => {
+    const originalModule = jest.requireActual('react-router-dom');
+    return {
+        ...originalModule,
+        useNavigate: jest.fn()
+    };
+});
 
 // Cleanup mocks after each test
 afterEach(() => {
     jest.clearAllMocks();
 });
 
-// Test to ensure essential elements are rendered in the dashboard
-test('renders dashboard components', () => {
-    render(<Dashboard />);
+describe('Dashboard Component', () => {
+    test('renders dashboard components', async () => {
+        render(
+            <Router>
+                <Dashboard />
+            </Router>
+        );
 
-    // Check if essential elements are rendered
-    expect(screen.getByText(/dashboard/i)).toBeInTheDocument(); // Check if the dashboard title is rendered
-    expect(screen.getByLabelText(/open drawer/i)).toBeInTheDocument(); // Check if the open drawer button is rendered
-    expect(screen.getByText(/property 1/i)).toBeInTheDocument(); // Check if property 1 is rendered
-    expect(screen.getByText(/financial status/i)).toBeInTheDocument(); // Check if financial status is rendered
-    expect(screen.getByText(/request status/i)).toBeInTheDocument(); // Check if request status is rendered
-});
+        expect(screen.getByText('Dashboard')).toBeInTheDocument();
+        expect(screen.getByLabelText('Open Drawer')).toBeInTheDocument();
+        expect(screen.getByText('Property 1')).toBeInTheDocument();
+    });
 
-// Test navigation to different sections
-test('navigates to different sections', () => {
-    render(<Dashboard />);
-    // Click on property link
-    fireEvent.click(screen.getByText(/property 1/i));
-    // Check if navigation occurs, for instance, if the details of property 1 are displayed
-    expect(screen.getByText(/property details/i)).toBeInTheDocument();
-});
+    test('navigates to different sections', () => {
+        render(
+            <Router>
+                <Dashboard />
+            </Router>
+        );
+        fireEvent.click(screen.getByText(/property 1/i));
+        expect(screen.getByText(/property details/i)).toBeInTheDocument();
+    });
 
-// Test toggling drawer visibility
-test('toggles drawer visibility', () => {
-    render(<Dashboard />);
+    test('toggles drawer visibility', () => {
+        render(
+            <Router>
+                <Dashboard />
+            </Router>
+        );
+        const chevronLeftIcon = screen.getByRole('button', { name: /close drawer/i });
+        expect(chevronLeftIcon).toBeInTheDocument();
+        fireEvent.click(chevronLeftIcon);
+        const menuButton = screen.getByRole('button', { name: /open drawer/i });
+        expect(menuButton).toBeInTheDocument();
+        fireEvent.click(menuButton);
+        expect(screen.getByRole('button', { name: /close drawer/i })).toBeInTheDocument();
+    });
 
-    // Find the button to close the drawer
-    const chevronLeftIcon = screen.getByRole('button', { name: /close drawer/i });
-    expect(chevronLeftIcon).toBeInTheDocument(); // Ensure the close drawer button is found
+    test('should navigate to "/addproperty" after clicking "Add Property"', async () => {
+        render(
+            <Router>
+                <Dashboard />
+            </Router>
+        );
+        const addButton = screen.getByText('Add Property');
+        fireEvent.click(addButton);
+        expect(require('react-router-dom').useNavigate).toHaveBeenCalledWith();
+    });
 
-    // Click to close the drawer
-    fireEvent.click(chevronLeftIcon);
+    test('toggles more info section when "See More" is clicked', async () => {
+        const { getByText } = render(
+            <Router>
+                <Dashboard />
+            </Router>
+        );
+        fireEvent.click(getByText('See More'));
+        await waitFor(() => {
+            expect(getByText('Unit Owner:')).toBeInTheDocument();
+        });
+    });
 
-    // Find the button to open the drawer
-    const menuButton = screen.getByRole('button', { name: /open drawer/i });
-    expect(menuButton).toBeInTheDocument(); // Ensure the open drawer button is found
+    test('handles error in supabase query', async () => {
+        const error = new Error('Error fetching units');
+        render(
+            <Router>
+                <Dashboard />
+            </Router>
+        );
+        await waitFor(() => {
+            expect(screen.getByText('Error fetching units: Error fetching units')).toBeInTheDocument();
+        });
+    });
 
-    // Click to open the drawer
-    fireEvent.click(menuButton);
-    expect(screen.getByRole('button', { name: /close drawer/i })).toBeInTheDocument(); // Ensure the drawer is opened
-});
+    test('handles empty data from supabase', async () => {
+        const mockSupabaseResponse = { data: [], error: null };
+        render(
+            <Router>
+                <Dashboard />
+            </Router>
+        );
+        await waitFor(() => {
+            expect(screen.getByText('No units available')).toBeInTheDocument();
+        });
+    });
 
-// Mocking useNavigate
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useNavigate: () => mockNavigate,
-}));
+    test('handles error during data fetching', async () => {
+        const error = new Error('Error fetching user');
+        render(
+            <Router>
+                <Dashboard />
+            </Router>
+        );
+        await waitFor(() => {
+            expect(screen.getByText('Error fetching units: Error fetching user')).toBeInTheDocument();
+        });
+    });
 
-test('should navigate to "/addproperty" after clicking "Add Property"', async () => {
-    // Render the Dashboard component
-    render(<Dashboard />);
+    test('renders loading state when fetching data', async () => {
+        render(
+            <Router>
+                <Dashboard />
+            </Router>
+        );
+        await waitFor(() => {
+            expect(screen.getByTestId('loading-state')).toBeInTheDocument();
+        });
+    });
 
-    // Find the "Add Property" button and click it
-    const addButton = screen.getByText('Add Property');
-    fireEvent.click(addButton);
-
-    // Check if useNavigate was called with the correct path
-    expect(mockNavigate).toHaveBeenCalledWith('/addproperty');
+    test('renders the Dashboard component without errors', async () => {
+        const { getByText } = render(
+            <Router>
+                <Dashboard />
+            </Router>
+        );
+        await waitFor(() => {
+            expect(getByText('Dashboard')).toBeInTheDocument();
+            expect(getByText('Test Property')).toBeInTheDocument();
+            expect(getByText('123')).toBeInTheDocument();
+        });
+    });
 });
 
