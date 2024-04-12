@@ -297,10 +297,22 @@ export default function Dashboard() {
                         {showMoreInfo && (
                             <>
                               <Typography variant="body1">
-                                Unit Owner: {selectedUnit.unit_owner}
+                                Unit Owner: {selectedUnit.first_name_owner} {selectedUnit.last_name_owner}
                               </Typography>
                               <Typography variant="body1">
                                 Occupied by: {selectedUnit.occupied_by}
+                                {selectedUnit.occupied_by === "Tenant" && <br />}
+                                {selectedUnit.occupied_by === "Tenant" &&
+                                    `Tenant Name: ${selectedUnit.first_name_tenant} ${selectedUnit.last_name_tenant}`
+                                }
+                                {selectedUnit.occupied_by === "Tenant" && <br />}
+                                {selectedUnit.occupied_by === "Tenant" &&
+                                    `Tenant Email: ${selectedUnit.tenant_email}`
+                                }
+                                {selectedUnit.occupied_by === "Tenant" && <br />}
+                                {selectedUnit.occupied_by === "Tenant" &&
+                                    `Tenant Phone: ${selectedUnit.tenant_phone}`
+                                }
                               </Typography>
                               <Typography variant="body1">
                                 Size: {selectedUnit.size}
