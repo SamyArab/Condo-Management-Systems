@@ -24,16 +24,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 const ViewProperty = () => {
-  //A copy of unit used for comparing changes
-  const [propertyCopy, setPropertyCopy] = useState({...property});
 
   const router = useRouter();
-
-  // const [month, setMonth] = useState('');
-
-  const handleChange = (event) => {
-    setMonth(event.target.value);
-  };
 
   const { propertyid } = router.query;
   console.log("we're workig on propertyid: ", propertyid)
@@ -48,20 +40,9 @@ const ViewProperty = () => {
     province: '',
     postal_code: '',
     street_address: '',
-
-    // jan_fee: '',
-    // feb_fee: '',
-    // mar_fee: '',
-    // apr_fee: '',
-    // may_fee: '',
-    // jun_fee: '',
-    // jul_fee: '',
-    // aug_fee: '',
-    // sep_fee: '',
-    // oct_fee: '',
-    // nov_fee: '',
-    // dec_fee: '',
   });
+
+  const [units, setUnits] = useState([]);
 
   //fetch data from DB
   useEffect(() => {
@@ -82,34 +63,8 @@ const ViewProperty = () => {
             province: fetchedProperty.province || '',
             postal_code: fetchedProperty.postalCode || '',
             street_address: fetchedProperty.street || '',
-
-            // jan_fee: fetchedProperty.jan_fee ,
-            // feb_fee: fetchedProperty.feb_fee ,
-            // mar_fee: fetchedProperty.mar_fee ,
-            // apr_fee: fetchedProperty.apr_fee ,
-            // may_fee: fetchedProperty.may_fee ,
-            // jun_fee: fetchedProperty.jun_fee ,
-            // jul_fee: fetchedProperty.jul_fee ,
-            // aug_fee: fetchedProperty.aug_fee ,
-            // sep_fee: fetchedProperty.sep_fee ,
-            // oct_fee: fetchedProperty.oct_fee ,
-            // nov_fee: fetchedProperty.nov_fee ,
-            // dec_fee: fetchedProperty.dec_fee ,
           });
-          setPropertyCopy({
-            jan_fee: fetchedProperty.jan_fee ,
-            feb_fee: fetchedProperty.feb_fee ,
-            mar_fee: fetchedProperty.mar_fee ,
-            apr_fee: fetchedProperty.apr_fee ,
-            may_fee: fetchedProperty.may_fee ,
-            jun_fee: fetchedProperty.jun_fee ,
-            jul_fee: fetchedProperty.jul_fee ,
-            aug_fee: fetchedProperty.aug_fee ,
-            sep_fee: fetchedProperty.sep_fee ,
-            oct_fee: fetchedProperty.oct_fee ,
-            nov_fee: fetchedProperty.nov_fee ,
-            dec_fee: fetchedProperty.dec_fee ,
-          });
+          fetchUnits(propertyid);
         } 
         else {
           console.log('Unit not found');
@@ -118,7 +73,20 @@ const ViewProperty = () => {
         console.error('Error fetching unit', error.message);
       }
     }
-  
+    const fetchUnits = async (propertyId) => {
+      const { data: unitsData, error } = await supabase
+        .from('units')
+        .select('*')
+        .eq('propertyFky', propertyId);
+
+      if (error) {
+        console.error('Error fetching units', error);
+        return;
+      }
+      
+      setUnits(unitsData);
+    };
+
     if (propertyid) {
       fetchProperty();
     }
@@ -132,34 +100,47 @@ const ViewProperty = () => {
       query: {propertyid:propertyid}
     });
   }
-
+  
   const handleViewClick = (propertyId) => {
     // Navigate to the edit page
     router.push('/units');
   };
 
-  async function fetchTotalFees(propertyId){
-    // Fetch units for the property
-    const { data: units, error } = await supabase
-      .from('units')
-      .select('*')
-      .eq('propertyFky', propertyid);
-
-    console.log('units:', units);
-    if (error) {
-      console.error('Error fetching units:', error);
-      return;
-    }
-
-    // Calculate total condo fees
-    let totalCondoFees = 0;
-    units.forEach(unit => {
-      totalCondoFees += unit.condo_fee_total;
+  const totalMonthlyFees = units.reduce((acc, unit) => {
+    Object.keys(unit).forEach(key => {
+      if (key.includes('_fee__')) {
+        if (unit[key] == null) {
+          acc[key] = 0;
+        }
+        if (unit[key] !== null) {
+          acc[key] = (acc[key] || 0) + (unit.condo_fee_total);
+        }
+      }
     });
+    return acc;
+  }, {});
 
-    console.log('Total condo fees:', totalCondoFees);
-  }
+  const sumOfTotalMonthlyFees = Object.values(totalMonthlyFees).reduce((acc, fee) => acc + fee, 0);
 
+  const paidMonthlyFees = units.reduce((acc, unit) => {
+    Object.keys(unit).forEach(key => {
+      if (key.includes('_fee__')) {
+      if (unit.condo_fee_total === 0) {
+        acc[key] = NaN;
+      } else {
+        acc[key] = (acc[key] || 0) + (unit[key]*unit.condo_fee_total);
+      }
+      }
+    });
+    return acc;
+  }, {});
+
+  const sumOfPaidMonthlyFees = Object.values(paidMonthlyFees).reduce((acc, fee) => acc + fee, 0);
+
+  const percentPaidFees = Object.keys(totalMonthlyFees).reduce((acc, key) => {
+    acc[key] = ((paidMonthlyFees[key] / totalMonthlyFees[key]) * 100.0).toFixed(2);
+    return acc;
+  } , {});
 
   return (
     <Box className={styles.outsideContainer}>
@@ -204,7 +185,7 @@ const ViewProperty = () => {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <b></b>
+                  <b>Month</b>
                 </TableCell>
                 <TableCell>
                   <b>Jan</b>
@@ -249,131 +230,32 @@ const ViewProperty = () => {
                 <TableCell>
                   <b>Total Property Fees</b>
                 </TableCell>
-                <TableCell>
-                  <b>Jan</b>
-                </TableCell>
-                <TableCell>
-                  <b>Feb</b>
-                </TableCell>
-                <TableCell>
-                  <b>Mar</b>
-                </TableCell>
-                <TableCell>
-                  <b>Apr</b>
-                </TableCell>
-                <TableCell>
-                  <b>May</b>
-                </TableCell>
-                <TableCell>
-                  <b>Jun</b>
-                </TableCell>
-                <TableCell>
-                  <b>Jul</b>
-                </TableCell>
-                <TableCell>
-                  <b>Aug</b>
-                </TableCell>
-                <TableCell>
-                  <b>Sep</b>
-                </TableCell>
-                <TableCell>
-                  <b>Oct</b>
-                </TableCell>
-                <TableCell>
-                  <b>Nov</b>
-                </TableCell>
-                <TableCell>
-                  <b>Dec</b>
-                </TableCell>
+                {Object.values(totalMonthlyFees).map((total, index) => (
+                  <TableCell key={index}>{total}</TableCell>
+                ))}
               </TableRow>
               <TableRow>
                 <TableCell>
                   <b>Total Paid Fees</b>
                 </TableCell>
-                <TableCell>
-                  <b>Jan</b>
-                </TableCell>
-                <TableCell>
-                  <b>Feb</b>
-                </TableCell>
-                <TableCell>
-                  <b>Mar</b>
-                </TableCell>
-                <TableCell>
-                  <b>Apr</b>
-                </TableCell>
-                <TableCell>
-                  <b>May</b>
-                </TableCell>
-                <TableCell>
-                  <b>Jun</b>
-                </TableCell>
-                <TableCell>
-                  <b>Jul</b>
-                </TableCell>
-                <TableCell>
-                  <b>Aug</b>
-                </TableCell>
-                <TableCell>
-                  <b>Sep</b>
-                </TableCell>
-                <TableCell>
-                  <b>Oct</b>
-                </TableCell>
-                <TableCell>
-                  <b>Nov</b>
-                </TableCell>
-                <TableCell>
-                  <b>Dec</b>
-                </TableCell>
+                {Object.values(paidMonthlyFees).map((total, index) => (
+                  <TableCell key={index}>{total}</TableCell>
+                ))}
               </TableRow>
               <TableRow>
                 <TableCell>
                   <b>Percent Paid Fees</b>
                 </TableCell>
-                <TableCell>
-                  <b>Jan</b>
-                </TableCell>
-                <TableCell>
-                  <b>Feb</b>
-                </TableCell>
-                <TableCell>
-                  <b>Mar</b>
-                </TableCell>
-                <TableCell>
-                  <b>Apr</b>
-                </TableCell>
-                <TableCell>
-                  <b>May</b>
-                </TableCell>
-                <TableCell>
-                  <b>Jun</b>
-                </TableCell>
-                <TableCell>
-                  <b>Jul</b>
-                </TableCell>
-                <TableCell>
-                  <b>Aug</b>
-                </TableCell>
-                <TableCell>
-                  <b>Sep</b>
-                </TableCell>
-                <TableCell>
-                  <b>Oct</b>
-                </TableCell>
-                <TableCell>
-                  <b>Nov</b>
-                </TableCell>
-                <TableCell>
-                  <b>Dec</b>
-                </TableCell>
+                {Object.values(percentPaidFees).map((total, index) => (
+                  <TableCell key={index}>{total}</TableCell>
+                ))}
               </TableRow>
             </TableBody>
           </Table>
         </TableContainer>
         <br/><br/>
-        <Typography sx={{color: 'grey', fontSize: 18}} display="inline">Total Yearly Condo Fees: </Typography>total<br/>
-        <Typography sx={{color: 'grey', fontSize: 18}} display="inline">Total Yearly Paid Fees: </Typography>paid<br/>
+        <Typography sx={{color: 'grey', fontSize: 18}} display="inline">Total Yearly Condo Fees: </Typography>{sumOfTotalMonthlyFees}<br/>
+        <Typography sx={{color: 'grey', fontSize: 18}} display="inline">Total Yearly Paid Fees: </Typography>{sumOfPaidMonthlyFees}<br/>
         <br/><br/>
         <Typography 
           variant="h5" 
