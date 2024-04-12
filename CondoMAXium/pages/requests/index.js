@@ -256,13 +256,14 @@ function UserRequests (){
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={1}>
-              <         Grid item xs={12}>
+              <Grid item xs={12}>
                 <Box
                   sx={{
                     p: 2,
                     display: "flex",
                     justifyContent: "space-between",
                     flexDirection: "row",
+                    alignItems: "center",
                   }}
                 >
                   <Typography variant="subtitle1">Subject</Typography>
