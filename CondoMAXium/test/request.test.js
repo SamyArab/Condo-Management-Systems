@@ -19,25 +19,22 @@ jest.mock('next/router', () => ({
 
 
 jest.mock('../config/supabaseClient', () => ({
-    __esModule: true,
-    default: {
-      from: jest.fn().mockReturnValue({
-        select: jest.fn().mockResolvedValue({
-          data: [
-            { subject: 'Subject 1', type: 'Type 1', assigned_to: 'User 1', status: 'Resolved' },
-            // Add more mock request data as needed
-          ],
-          error: null
-        }),
-      }),
+  __esModule: true,
+  default: {
       auth: {
-        getUser: jest.fn().mockResolvedValue({
-          data: { user: { id: 1 } },
-          error: null
-        }),
+          getUser: jest.fn().mockResolvedValue({
+              data: { user: { email: 'test@example.com' } },
+              error: null
+          })
       },
-    },
-  }));
+      from: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({
+          data: [{ subject: 'Subject 1', type: 'Type 1', assigned_to: 'User 1', status: 'Resolved' }],
+          error: null
+      })
+  }
+}));
 
 // Cleanup mocks after each test
 afterEach(() => {

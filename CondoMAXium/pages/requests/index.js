@@ -102,13 +102,14 @@ const Drawer = styled(MuiDrawer, {
   }
 }));
 
-const { data: { user } } = await supabase.auth.getUser();
-const user_email = user?.email;
-console.log(user_email);
 
-const userRequests = () => {
+
+function UserRequests (){
   
   const [requests, setRequests] = useState([]);
+  const [open, setOpen] = React.useState(true);
+  const [userEmail, setUserEmail]= useState("");
+  const router = useRouter();
 
   function StatusIndicator({ status }) {
     const paddingHorizontal = 2;
@@ -139,12 +140,26 @@ const userRequests = () => {
   //const [requests, setRequests] = useState([]);
   //const [searchTerm, setSearchTerm] = useState("");
 
-  //fetching units from database
   useEffect(() => {
-    async function fetchRequests() {
+    async function fetchUserData() {
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error) throw error;
+        setUserEmail(data.user.email); // Assuming the user object has an email
+        fetchRequests(data.user.email); // Fetch requests based on the user's email
+      } catch (error) {
+        console.error("Error fetching user data:", error.message);
+      }
+    }
+
+    fetchUserData();
+  }, []);
+  
+  //fetching units from database
+    async function fetchRequests(user_email) {
 
       try {
-        const { data, error } = await supabase.from('requests').select('*').eq("user", user_email);
+        const { data, error } = await supabase.from('requests').select('*').eq("user_email", user_email);
         //const { data, error } = await supabase.from('requests').select('*');
         setRequests(data);
         if (error) {
@@ -155,11 +170,6 @@ const userRequests = () => {
       }
     }
 
-    fetchRequests();
-  }, []);
-
-  const [open, setOpen] = React.useState(true);
-  const router = useRouter();
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -299,4 +309,4 @@ const userRequests = () => {
 
 
 
-export default userRequests;
+export default UserRequests;
