@@ -102,13 +102,10 @@ const Drawer = styled(MuiDrawer, {
   }
 }));
 
-
-
-function UserRequests (){
-  
+function UserRequests() {
   const [requests, setRequests] = useState([]);
   const [open, setOpen] = React.useState(true);
-  const [userEmail, setUserEmail]= useState("");
+  const [userEmail, setUserEmail] = useState("");
   const router = useRouter();
 
   function StatusIndicator({ status }) {
@@ -136,16 +133,11 @@ function UserRequests (){
     );
   }
 
-
-  //const [requests, setRequests] = useState([]);
-  //const [searchTerm, setSearchTerm] = useState("");
-
   useEffect(() => {
     async function fetchUserData() {
       try {
         const { data, error } = await supabase.auth.getUser();
         if (error) throw error;
-        console.log(data.user.email);
         setUserEmail(data.user.email); // Assuming the user object has an email
         fetchRequests(data.user.email); // Fetch requests based on the user's email
       } catch (error) {
@@ -155,27 +147,23 @@ function UserRequests (){
 
     fetchUserData();
   }, []);
-  
-  //fetching units from database
-    async function fetchRequests(user_email) {
 
-      try {
-        const { data, error } = await supabase.from('requests').select('*').eq('user', user_email);
-        //const { data, error } = await supabase.from('requests').select('*');
-        setRequests(data);
+  async function fetchRequests(user_email) {
+    try {
+      const { data, error } = await supabase.from('requests').select('*').eq('user', user_email);
+      setRequests(data);
 
-        if (error) {
-          throw error;
-        }
-      } catch (error) {
-        console.log("Error fetching requests", error.message);
+      if (error) {
+        throw error;
       }
+    } catch (error) {
+      console.log("Error fetching requests", error.message);
     }
+  }
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -257,27 +245,62 @@ function UserRequests (){
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={1}>
-              <Grid item xs={12}>
+            <Grid container spacing={0.5}>
+              <Grid item xs={3}>
                 <Box
                   sx={{
                     p: 2,
                     display: "flex",
-                    justifyContent: "space-between",
-                    flexDirection: "row",
+                    justifyContent: "flex-start",
                     alignItems: "center",
                   }}
                 >
                   <Typography variant="subtitle1">Subject</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={3}>
+                <Box
+                  sx={{
+                    p: 2,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
                   <Typography variant="subtitle1">Type</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={3}>
+                <Box
+                  sx={{
+                    p: 2,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
                   <Typography variant="subtitle1">Assigned To</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={3}>
+                <Box
+                  sx={{
+                    p: 2,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                  }}
+                >
                   <Typography variant="subtitle1">Status</Typography>
                 </Box>
               </Grid>
             </Grid>
+
+
+
+
             <Divider />
             <Grid container spacing={2}>
-              {/* Chart */}
               <Grid item xs={12}>
                 <Box
                   sx={{
@@ -289,26 +312,27 @@ function UserRequests (){
                   {requests && requests.map((request, index) => (
                     <React.Fragment key={index}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 1 }}>
-                        <Typography>{request.subject}</Typography>
-                        <Typography>{request.type}</Typography>
-                        <Typography>{request.assigned_to}</Typography>
+                        <Typography sx={{ flexBasis: '20%' }}>{request.subject}</Typography>
+                        <Typography sx={{ flexBasis: '20%' }}>{request.type}</Typography>
+                        <Typography sx={{ flexBasis: '20%' }}>{request.assigned_to}</Typography>
                         <StatusIndicator status={request.status} />
                       </Box>
-                      {/* Adding a Divider except after the last row */}
                       {index < requests.length - 1 && <Divider />}
                     </React.Fragment>
                   ))}
-
                 </Box>
               </Grid>
             </Grid>
-            <Copyright sx={{ pt: 4 }} />
           </Container>
+          <container>
+            <Box>
+              <Copyright sx={{ pt: 4 }} />
+            </Box>
+          </container>
         </Box>
       </Box>
     </ThemeProvider>
   );
 };
-
 
 export default UserRequests;
