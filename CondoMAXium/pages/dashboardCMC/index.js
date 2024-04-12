@@ -22,6 +22,9 @@ import { useTheme } from '@mui/material/styles';
 import supabase from "../../config/supabaseClient";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
+import { useRouter } from "next/router";
+
+
 // Define width of drawer
 const drawerWidth = 240;
 
@@ -117,6 +120,8 @@ export default function PropertyList() {
         setOpen(!open);
     };
 
+    const router = useRouter();
+
     // Function to render a single property
     const renderProperty = (property) => {
         // Handle click event for adding amenities
@@ -130,6 +135,14 @@ export default function PropertyList() {
             // Navigate to maintenance page
             console.log(`Navigating to maintenance for ${property.name}`);
         };
+
+        const handlePropertyClick = (propertyid) => {
+            console.log('viewing property with index :', propertyid);
+            router.push({
+              pathname: '/view-property',
+              query: {propertyid:propertyid}
+            });
+          }
 
         return (
             <Grid item xs={12} key={property.id}>
@@ -145,6 +158,7 @@ export default function PropertyList() {
                 >
                     <img
                         src="/seasidecondos.jpg"
+                        onClick={() => handlePropertyClick(property.propertyId)}
                         alt={property.buildingName}
                         style={{
                             width: isSmallScreen ? "100%" : "25%", // Adjust image width based on screen size
@@ -158,6 +172,7 @@ export default function PropertyList() {
                             variant="h5"
                             gutterBottom
                             sx={{ textDecoration: "underline", marginBottom: '8px' }}
+                            onClick={() => handlePropertyClick(property.propertyId)}
                         >
                             {property.buildingName}
                         </Typography>
