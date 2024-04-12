@@ -162,11 +162,35 @@ const CMCUnits = () => {
     console.log('adding new unit');
   }
 
+  const [currentMonth, setCurrentMonth] = useState('');
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const monthIndex = currentDate.getMonth(); // Month index (0-11)
+    const months = [
+      "jan_fee__",
+      "feb_fee__",
+      "mar_fee__",
+      "apr_fee__",
+      "may_fee__",
+      "jun_fee__",
+      "jul_fee__",
+      "aug_fee__",
+      "sep_fee__",
+      "oct_fee__",
+      "nov_fee__",
+      "dec_fee__"
+    ];
+    setCurrentMonth(months[monthIndex]); // Get the fee property based on the current month
+  }, []);
+  
   const CurrentMonthFees = ({ unit, currentMonth }) => {
     let currentFee = 'N/A';
     let textColor = 'inherit'; // Default color
-  
+
+    
     if (unit[currentMonth] !== null && unit[currentMonth] !== undefined) {
+      console.log('stuff');
       currentFee = unit[currentMonth] ? 'Paid' : 'Not Paid';
       textColor = unit[currentMonth] ? 'green' : 'red'; // Set color to green if payed
     }
@@ -174,27 +198,6 @@ const CMCUnits = () => {
     return <span style={{ color: textColor }}>{currentFee}</span>;
   };
 
-  const [currentMonth, setCurrentMonth] = useState('');
-
-  useEffect(() => {
-    const currentDate = new Date();
-    const monthIndex = currentDate.getMonth(); // Month index (0-11)
-    const months = [
-      "jan_fee",
-      "feb_fee",
-      "mar_fee",
-      "apr_fee",
-      "may_fee",
-      "jun_fee",
-      "jul_fee",
-      "aug_fee",
-      "sep_fee",
-      "oct_fee",
-      "nov_fee",
-      "dec_fee"
-    ];
-    setCurrentMonth(months[monthIndex]); // Get the fee property based on the current month
-  }, []);
 
   return (
     <>

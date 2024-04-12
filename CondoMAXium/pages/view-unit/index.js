@@ -56,18 +56,18 @@ const ViewUnit = () => {
     condo_fee_total: '',
     parking_number: '',
     locker_number: '',
-    jan_fee: '',
-    feb_fee: '',
-    mar_fee: '',
-    apr_fee: '',
-    may_fee: '',
-    jun_fee: '',
-    jul_fee: '',
-    aug_fee: '',
-    sep_fee: '',
-    oct_fee: '',
-    nov_fee: '',
-    dec_fee: '',
+    jan_fee__: '',
+    feb_fee__: '',
+    mar_fee__: '',
+    apr_fee__: '',
+    may_fee__: '',
+    jun_fee__: '',
+    jul_fee__: '',
+    aug_fee__: '',
+    sep_fee__: '',
+    oct_fee__: '',
+    nov_fee__: '',
+    dec_fee__: '',
   });
 
   //fetch data from DB
@@ -98,32 +98,32 @@ const ViewUnit = () => {
             condo_fee_total: fetchedUnit.condo_fee_total || '',         
             parking_number: fetchedUnit.parking_number || '',
             locker_number: fetchedUnit.locker_number || '',
-            jan_fee: fetchedUnit.jan_fee ,
-            feb_fee: fetchedUnit.feb_fee ,
-            mar_fee: fetchedUnit.mar_fee ,
-            apr_fee: fetchedUnit.apr_fee ,
-            may_fee: fetchedUnit.may_fee ,
-            jun_fee: fetchedUnit.jun_fee ,
-            jul_fee: fetchedUnit.jul_fee ,
-            aug_fee: fetchedUnit.aug_fee ,
-            sep_fee: fetchedUnit.sep_fee ,
-            oct_fee: fetchedUnit.oct_fee ,
-            nov_fee: fetchedUnit.nov_fee ,
-            dec_fee: fetchedUnit.dec_fee ,
+            jan_fee__: fetchedUnit.jan_fee__ ,
+            feb_fee__: fetchedUnit.feb_fee__ ,
+            mar_fee__: fetchedUnit.mar_fee__ ,
+            apr_fee__: fetchedUnit.apr_fee__ ,
+            may_fee__: fetchedUnit.may_fee__ ,
+            jun_fee__: fetchedUnit.jun_fee__ ,
+            jul_fee__: fetchedUnit.jul_fee__ ,
+            aug_fee__: fetchedUnit.aug_fee__ ,
+            sep_fee__: fetchedUnit.sep_fee__ ,
+            oct_fee__: fetchedUnit.oct_fee__ ,
+            nov_fee__: fetchedUnit.nov_fee__ ,
+            dec_fee__: fetchedUnit.dec_fee__ ,
           });
           setUnitCopy({
-            jan_fee: fetchedUnit.jan_fee ,
-            feb_fee: fetchedUnit.feb_fee ,
-            mar_fee: fetchedUnit.mar_fee ,
-            apr_fee: fetchedUnit.apr_fee ,
-            may_fee: fetchedUnit.may_fee ,
-            jun_fee: fetchedUnit.jun_fee ,
-            jul_fee: fetchedUnit.jul_fee ,
-            aug_fee: fetchedUnit.aug_fee ,
-            sep_fee: fetchedUnit.sep_fee ,
-            oct_fee: fetchedUnit.oct_fee ,
-            nov_fee: fetchedUnit.nov_fee ,
-            dec_fee: fetchedUnit.dec_fee ,
+            jan_fee__: fetchedUnit.jan_fee__ ,
+            feb_fee__: fetchedUnit.feb_fee__ ,
+            mar_fee__: fetchedUnit.mar_fee__ ,
+            apr_fee__: fetchedUnit.apr_fee__ ,
+            may_fee__: fetchedUnit.may_fee__ ,
+            jun_fee__: fetchedUnit.jun_fee__ ,
+            jul_fee__: fetchedUnit.jul_fee__ ,
+            aug_fee__: fetchedUnit.aug_fee__ ,
+            sep_fee__: fetchedUnit.sep_fee__ ,
+            oct_fee__: fetchedUnit.oct_fee__ ,
+            nov_fee__: fetchedUnit.nov_fee__ ,
+            dec_fee__: fetchedUnit.dec_fee__ ,
           });
         } 
         else {
@@ -141,18 +141,18 @@ const ViewUnit = () => {
 
   const handlePaymentChange = async () => {
     const monthMap = {
-      1: 'jan_fee',
-      2: 'feb_fee',
-      3: 'mar_fee',
-      4: 'apr_fee',
-      5: 'may_fee',
-      6: 'jun_fee',
-      7: 'jul_fee',
-      8: 'aug_fee',
-      9: 'sep_fee',
-      10: 'oct_fee',
-      11: 'nov_fee',
-      12: 'dec_fee',
+      1: 'jan_fee__',
+      2: 'feb_fee__',
+      3: 'mar_fee__',
+      4: 'apr_fee__',
+      5: 'may_fee__',
+      6: 'jun_fee__',
+      7: 'jul_fee__',
+      8: 'aug_fee__',
+      9: 'sep_fee__',
+      10: 'oct_fee__',
+      11: 'nov_fee__',
+      12: 'dec_fee__',
     };
   
     const selectedMonthKey = monthMap[month];
@@ -332,41 +332,41 @@ const ViewUnit = () => {
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell style={{ color: unit.jan_fee === null ? 'inherit' : (unit.jan_fee ? 'green' : 'red') }}>
-                    {unit.jan_fee === null ? 'N/A' : (unit.jan_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.jan_fee__ === null ? 'inherit' : (unit.jan_fee__ ? 'green' : 'red') }}>
+                    {unit.jan_fee__ === null ? 'N/A' : (unit.jan_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
-                  <TableCell style={{ color: unit.feb_fee === null ? 'inherit' : (unit.feb_fee ? 'green' : 'red') }}>
-                    {unit.feb_fee === null ? 'N/A' : (unit.feb_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.feb_fee__ === null ? 'inherit' : (unit.feb_fee__ ? 'green' : 'red') }}>
+                    {unit.feb_fee__ === null ? 'N/A' : (unit.feb_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
-                  <TableCell style={{ color: unit.mar_fee === null ? 'inherit' : (unit.mar_fee ? 'green' : 'red') }}>
-                    {unit.mar_fee === null ? 'N/A' : (unit.mar_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.mar_fee__ === null ? 'inherit' : (unit.mar_fee__ ? 'green' : 'red') }}>
+                    {unit.mar_fee__ === null ? 'N/A' : (unit.mar_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
-                  <TableCell style={{ color: unit.apr_fee === null ? 'inherit' : (unit.apr_fee ? 'green' : 'red') }}>
-                    {unit.apr_fee === null ? 'N/A' : (unit.apr_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.apr_fee__ === null ? 'inherit' : (unit.apr_fee__ ? 'green' : 'red') }}>
+                    {unit.apr_fee__ === null ? 'N/A' : (unit.apr_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
-                  <TableCell style={{ color: unit.may_fee === null ? 'inherit' : (unit.may_fee ? 'green' : 'red') }}>
-                    {unit.may_fee === null ? 'N/A' : (unit.may_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.may_fee__ === null ? 'inherit' : (unit.may_fee__ ? 'green' : 'red') }}>
+                    {unit.may_fee__ === null ? 'N/A' : (unit.may_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
-                  <TableCell style={{ color: unit.jun_fee === null ? 'inherit' : (unit.jun_fee ? 'green' : 'red') }}>
-                    {unit.jun_fee === null ? 'N/A' : (unit.jun_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.jun_fee__ === null ? 'inherit' : (unit.jun_fee__ ? 'green' : 'red') }}>
+                    {unit.jun_fee__ === null ? 'N/A' : (unit.jun_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
-                  <TableCell style={{ color: unit.jul_fee === null ? 'inherit' : (unit.jul_fee ? 'green' : 'red') }}>
-                    {unit.jul_fee === null ? 'N/A' : (unit.jul_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.jul_fee__ === null ? 'inherit' : (unit.jul_fee__ ? 'green' : 'red') }}>
+                    {unit.jul_fee__ === null ? 'N/A' : (unit.jul_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
-                  <TableCell style={{ color: unit.aug_fee === null ? 'inherit' : (unit.aug_fee ? 'green' : 'red') }}>
-                    {unit.aug_fee === null ? 'N/A' : (unit.aug_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.aug_fee__ === null ? 'inherit' : (unit.aug_fee__ ? 'green' : 'red') }}>
+                    {unit.aug_fee__ === null ? 'N/A' : (unit.aug_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
-                  <TableCell style={{ color: unit.sep_fee === null ? 'inherit' : (unit.sep_fee ? 'green' : 'red') }}>
-                    {unit.sep_fee === null ? 'N/A' : (unit.sep_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.sep_fee__ === null ? 'inherit' : (unit.sep_fee__ ? 'green' : 'red') }}>
+                    {unit.sep_fee__ === null ? 'N/A' : (unit.sep_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
-                  <TableCell style={{ color: unit.oct_fee === null ? 'inherit' : (unit.oct_fee ? 'green' : 'red') }}>
-                    {unit.oct_fee === null ? 'N/A' : (unit.oct_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.oct_fee__ === null ? 'inherit' : (unit.oct_fee__ ? 'green' : 'red') }}>
+                    {unit.oct_fee__ === null ? 'N/A' : (unit.oct_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
-                  <TableCell style={{ color: unit.nov_fee === null ? 'inherit' : (unit.nov_fee ? 'green' : 'red') }}>
-                    {unit.nov_fee === null ? 'N/A' : (unit.nov_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.nov_fee__ === null ? 'inherit' : (unit.nov_fee__ ? 'green' : 'red') }}>
+                    {unit.nov_fee__ === null ? 'N/A' : (unit.nov_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
-                  <TableCell style={{ color: unit.dec_fee === null ? 'inherit' : (unit.dec_fee ? 'green' : 'red') }}>
-                    {unit.dec_fee === null ? 'N/A' : (unit.dec_fee ? 'Paid' : 'Not Paid')}
+                  <TableCell style={{ color: unit.dec_fee__ === null ? 'inherit' : (unit.dec_fee__ ? 'green' : 'red') }}>
+                    {unit.dec_fee__ === null ? 'N/A' : (unit.dec_fee__ ? 'Paid' : 'Not Paid')}
                   </TableCell>
                 </TableRow>
               </TableBody> 
@@ -434,7 +434,7 @@ const ViewUnit = () => {
                 size="large"
                 sx={{ my: 1, ml: 5 }} 
                 onClick={handlePaymentChange}
-              >
+              > 
                 Save
               </Button>
             </Grid>
