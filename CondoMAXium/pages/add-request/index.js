@@ -12,23 +12,34 @@ import {
   } from "@mui/material";
   
   import { useRouter } from "next/router";
-  import React, { useState } from "react";
+  import React, { useState, useEffect } from "react";
   import supabase from "../../config/supabaseClient";
   import styles from "../../styles/units.module.css";
 
-  const { data: { user } } = await supabase.auth.getUser();
-  const user_email = user?.email;
-  console.log(user_email);
 
   const AddRequestForm = () => {
     const router = useRouter();
-
+    const [userEmail, setUserEmail] = useState("");
     const [requestSubject, setRequestSubject] = useState("");
     const [requestType, setRequestType] = useState("");
     const [requestDescription, setRequestDescription] = useState("");
     //const [userr, setUser] = useState(user_email);
     //const [statuss, setStatus] = useState("");
     //const [assign, setAssign] = useState("");
+
+    useEffect(() => {
+      const fetchUser = async () => {
+          try {
+              const { data: { user }, error } = await supabase.auth.getUser();
+              if (error) throw error;
+              setUserEmail(user?.email);
+          } catch (error) {
+              console.error('Error fetching user data:', error.message);
+          }
+      };
+
+      fetchUser();
+  }, []);
 
     const handleSubmit = async (event) => {
       event.preventDefault();
@@ -79,6 +90,7 @@ import {
                     <FormControl required fullWidth variant="outlined" margin="normal">
                       <InputLabel id="request-type-label">Request Type</InputLabel>
                       <Select
+                        data-testid="request-type-select"
                         labelId="request-type-label"
                         id="request-type-select"
                         value={requestType}
@@ -113,7 +125,7 @@ import {
                     variant="contained" 
                     size="large"
                     onClick={handleSubmit}
-                    // onClick={() => router.push("/units")}
+
                   >
                     Submit
                   </Button>
