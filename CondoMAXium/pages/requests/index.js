@@ -145,6 +145,7 @@ function UserRequests (){
       try {
         const { data, error } = await supabase.auth.getUser();
         if (error) throw error;
+        console.log(data.user.email);
         setUserEmail(data.user.email); // Assuming the user object has an email
         fetchRequests(data.user.email); // Fetch requests based on the user's email
       } catch (error) {
@@ -159,9 +160,10 @@ function UserRequests (){
     async function fetchRequests(user_email) {
 
       try {
-        const { data, error } = await supabase.from('requests').select('*').eq("user_email", user_email);
+        const { data, error } = await supabase.from('requests').select('*').eq('user', user_email);
         //const { data, error } = await supabase.from('requests').select('*');
         setRequests(data);
+
         if (error) {
           throw error;
         }
@@ -284,7 +286,7 @@ function UserRequests (){
                     flexDirection: "column",
                   }}
                 >
-                  {requests.map((request, index) => (
+                  {requests && requests.map((request, index) => (
                     <React.Fragment key={index}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 1 }}>
                         <Typography>{request.subject}</Typography>
@@ -307,7 +309,6 @@ function UserRequests (){
     </ThemeProvider>
   );
 };
-
 
 
 export default UserRequests;

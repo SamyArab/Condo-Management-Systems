@@ -6,66 +6,55 @@ import supabase from "../../config/supabaseClient";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
-import Box from "@mui/material/Box";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import TableContainer from "@mui/material/TableContainer";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableBody from "@mui/material/TableBody";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import Button from "@mui/material/Button";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import TextField from "@mui/material/TextField";
+import Collapse from "@mui/material/Collapse";
+import EditIcon from '@mui/icons-material/Edit';
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import AddIcon from "@mui/icons-material/Add";
-import EditIcon from '@mui/icons-material/Edit';
-import Link from "@mui/material/Link";
-import Button from "@mui/material/Button";
-import Collapse from "@mui/material/Collapse";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import TableCell from "@mui/material/TableCell";
-import TableRow from "@mui/material/TableRow";
-import Table from "@mui/material/Table";
-import TableHead from "@mui/material/TableHead";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
 
 const drawerWidth = 240;
 const defaultTheme = createTheme();
+
 function Copyright(props) {
     return (
-        <Box
-            component="footer"
-            sx={{
-                py: 3,
-                px: 2,
-                mt: "auto",
-                backgroundColor: (theme) =>
-                    theme.palette.mode === "light"
-                        ? theme.palette.grey[200]
-                        : theme.palette.grey[800],
-            }}
+        <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
             {...props}
         >
-            <Container maxWidth="lg">
-                <Typography variant="body2" align="center">
-                    {"Copyright © "}
-                    <Link color="inherit" href="https://mui.com/">
-                        CondoMAXium
-                    </Link>{" "}
-                    {new Date().getFullYear()}
-                    {"."}
-                </Typography>
-            </Container>
-        </Box>
+            {"Copyright © "}
+            <Link color="inherit" href="https://mui.com/">
+                CondoMAXium
+            </Link>{" "}
+            {new Date().getFullYear()}
+            {"."}
+        </Typography>
     );
 }
 
@@ -102,33 +91,83 @@ const AppBar = styled(MuiAppBar, {
     })
 }));
 
-const { data: { user } } = await supabase.auth.getUser();
-const user_email = user?.email;
-console.log(user_email);
+// Custom styled Drawer component
+const Drawer = styled(MuiDrawer, {
+    shouldForwardProp: prop => prop !== "open"
+})(({ theme, open }) => ({
+    "& .MuiDrawer-paper": {
+        position: "relative",
+        whiteSpace: "nowrap",
+        width: open ? drawerWidth : 0, // Adjust width based on open state
+        transition: theme.transitions.create("width", {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen
+        }),
+        boxSizing: "border-box",
+        overflowX: "hidden", // Hide content overflow when closed
+        ...(open && {
+            // Ensure drawer remains open on larger screens
+            [theme.breakpoints.up("sm")]: {
+                width: drawerWidth,
+                position: "relative"
+            }
+        })
+    }
+}));
 
-const userRequests = () => {
-    const [updatedStatus, setUpdatedStatus] = useState('');
-    const [updatedAssignedTo, setUpdatedAssignedTo] = useState('');
-    const [assignedTo, setAssignedTo] = useState("");
+const UserRequests = () => {
+
     const [requests, setRequests] = useState([]);
     const [openRequestId, setOpenRequestId] = useState(null);
-    const [selectedRequestStatus, setSelectedRequestStatus] = useState("");
-    const handleStatusChange = (event) => {
-        setSelectedRequestStatus(event.target.value);
+    const [formStatus, setFormStatus] = useState({});
+    const [formAssignedTo, setFormAssignedTo] = useState({});
+    const router = useRouter();
+    const [open, setOpen] = useState(false);
+
+    function StatusIndicator({ status }) {
+        const paddingHorizontal = 2;
+        const paddingVertical = 1;
+        const minWidth = 100;
+
+        return (
+            <Box
+                sx={{
+                    ...statusStyles[status],
+                    borderRadius: '20px', // Rounded corners
+                    alignItems: "center",
+                    justifyContent: "center",
+                    pX: paddingHorizontal,
+                    pY: paddingVertical,
+                    minWidth: minWidth,
+                    display: 'inline-flex', // Make the box wrap its content
+                }}
+            >
+                <Typography variant="body2" sx={{ color: 'white' }}>
+                    {status}
+                </Typography>
+            </Box>
+        );
+    }
+
+    const toggleDrawer = () => {
+        setOpen(!open);
     };
 
+    const handleStatusChange = (event, requestId) => {
+        setFormStatus({ ...formStatus, [requestId]: event.target.value });
+    };
 
-    const handleRequestUpdate = async () => {
+    const handleAssignedToChange = (event, requestId) => {
+        setFormAssignedTo({ ...formAssignedTo, [requestId]: event.target.value });
+    };
+
+    const handleRequestUpdate = async (requestId) => {
         try {
-            // Update the respective fields in the database for the specific request
-            const { data, error } = await supabase
+            await supabase
                 .from('requests')
-                .update({ status: updatedStatus, assigned_to: updatedAssignedTo })
-                .eq('id', openRequestId);
+                .update({ status: formStatus[requestId], assigned_to: formAssignedTo[requestId] })
+                .eq('id', requestId);
 
-            if (error) {
-                throw error;
-            } 
             router.reload();
         } catch (error) {
             console.error("Error updating request:", error.message);
@@ -150,12 +189,6 @@ const userRequests = () => {
         fetchRequests();
     }, []);
 
-    const [open, setOpen] = React.useState(true);
-    const router = useRouter();
-    const toggleDrawer = () => {
-        setOpen(!open);
-    };
-
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{ display: "flex" }}>
@@ -167,12 +200,15 @@ const userRequests = () => {
                             color="inherit"
                             aria-label="open drawer"
                             onClick={toggleDrawer}
-                            sx={{ marginRight: "36px", ...(open && { display: "none" }) }}
+                            sx={{
+                                marginRight: "36px",
+                                ...(open && { display: "none" }),
+                              }}
                         >
                             <MenuIcon />
                         </IconButton>
                         <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-                            My Requests
+                            All Requests
                         </Typography>
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
@@ -181,6 +217,34 @@ const userRequests = () => {
                         </IconButton>
                     </Toolbar>
                 </AppBar>
+                <Drawer variant="permanent" open={open}>
+                    <Toolbar
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "flex-end",
+                            px: [1],
+                        }}
+                    >
+                        <IconButton aria-label="close drawer" onClick={toggleDrawer}>
+                            <ChevronLeftIcon />
+                        </IconButton>
+                    </Toolbar>
+                    <Divider />
+                    <List component="nav">
+                        {/* Your existing list items */}
+                        <ListItem
+                            button
+                            aria-label="add request"
+                            onClick={() => router.push("/add-request")}
+                        >
+                            <ListItemIcon>
+                                <AddIcon /> {/* Icon for adding */}
+                            </ListItemIcon>
+                            <ListItemText primary="Add Request" />
+                        </ListItem>
+                    </List>
+                </Drawer>
                 <Box component="main" sx={{ flexGrow: 1, height: "100vh", overflow: "auto" }}>
                     <Toolbar />
                     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -236,21 +300,30 @@ const userRequests = () => {
                                                                 <Collapse in={openRequestId === request.id}>
                                                                     <Box sx={{ display: "flex", padding: 1 }}>
                                                                         <Box sx={{ flex: 1 }}>
-                                                                            {/* <Typography variant="subtitle2">Description:</Typography> */}
+                                                                            <Typography variant="subtitle2">Description:</Typography>
                                                                             <TextField
                                                                                 multiline
-                                                                                rows={8} // Increase the number of rows for a larger height
+                                                                                rows={8}
                                                                                 value={request.description}
-                                                                                disabled // Disable editing
-                                                                                sx={{ marginTop: 2, width: "100%" }} // Set width to 100%
+                                                                                InputProps={{
+                                                                                    readOnly: true,
+                                                                                    style: {
+                                                                                        color: 'rgba(0, 0, 0, 0.87)',
+                                                                                        cursor: 'default',
+                                                                                        userSelect: 'none',
+                                                                                        pointerEvents: 'none',
+                                                                                        borderColor: 'transparent',
+                                                                                    }
+                                                                                }}
+                                                                                sx={{ marginTop: 0, width: "100%" }}
                                                                             />
                                                                         </Box>
                                                                         <Box sx={{ flex: 1, marginLeft: 2 }}>
                                                                             <Typography variant="subtitle2">Edit Status:</Typography>
                                                                             <Select
-                                                                                value={updatedStatus}
-                                                                                onChange={(event) => setUpdatedStatus(event.target.value)}
-                                                                                sx={{ width: "100%", marginBottom: 1 }} // Adjust the width and spacing as needed
+                                                                                value={formStatus[request.id] || request.status}
+                                                                                onChange={(event) => handleStatusChange(event, request.id)}
+                                                                                sx={{ width: "100%", marginBottom: 1 }}
                                                                             >
                                                                                 <MenuItem value="Open">Open</MenuItem>
                                                                                 <MenuItem value="In Progress">In Progress</MenuItem>
@@ -259,39 +332,33 @@ const userRequests = () => {
                                                                             <TextField
                                                                                 name="assignedTo"
                                                                                 label="Edit Assigned To"
-                                                                                value={updatedAssignedTo}
-                                                                                onChange={(event) => setUpdatedAssignedTo(event.target.value)}
+                                                                                value={formAssignedTo[request.id] || request.assigned_to}
+                                                                                onChange={(event) => handleAssignedToChange(event, request.id)}
                                                                                 fullWidth
                                                                                 margin="normal"
-                                                                                sx={{ marginBottom: 1 }} // Adjust the spacing as needed
+                                                                                sx={{ marginBottom: 1 }}
                                                                             />
-
-
-                                                                            <Button variant="contained" onClick={handleRequestUpdate} sx={{ marginTop: 1 }}>
+                                                                            <Button variant="contained" onClick={() => handleRequestUpdate(request.id)} sx={{ marginTop: 1 }}>
                                                                                 Update
                                                                             </Button>
                                                                         </Box>
                                                                     </Box>
                                                                 </Collapse>
-
-
                                                             </TableCell>
                                                         </TableRow>
                                                     )}
                                                 </React.Fragment>
                                             ))}
-
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
                             </Grid>
                         </Grid>
                     </Container>
-                    <Copyright />
                 </Box>
             </Box>
         </ThemeProvider>
     );
 };
 
-export default userRequests;
+export default UserRequests;
