@@ -22,10 +22,6 @@ import { useTheme } from "@mui/material/styles";
 import supabase from "../../config/supabaseClient";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-import { useRouter } from "next/router";
-
-const router = useRouter();
-
 // Define width of drawer
 const drawerWidth = 240;
 
@@ -76,6 +72,7 @@ const Drawer = styled(MuiDrawer, {
 export default function PropertyList() {
   const [open, setOpen] = React.useState(true);
   const [properties, setProperties] = React.useState([]); // State to store fetched properties
+  const router = useRouter();
 
   // Fetch properties from the database on component mount
   React.useEffect(() => {
