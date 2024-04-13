@@ -14,8 +14,25 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
+
 const defaultTheme = createTheme();
 
+/**
+ * This function is used to verify the OTP (One-Time Password) for a given email.
+ * It first verifies the OTP using the Supabase auth service. If the OTP is valid,
+ * it then initiates a password reset for the email. If any error occurs during this process,
+ * it logs the error message and redirects the user to the reset password page.
+ *
+ * @example
+ * // Assuming the function is invoked somewhere in a form submit event
+ * <form onSubmit={VerifyOTP}>
+ *   <input type="email" onChange={e => setEmail(e.target.value)} />
+ *   <input type="text" onChange={e => setOtp(e.target.value)} />
+ *   <button type="submit">Verify OTP</button>
+ * </form>
+ *
+ * @returns {void} This function does not return anything.
+ */
 function VerifyOTP() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
