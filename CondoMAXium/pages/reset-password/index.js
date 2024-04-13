@@ -12,6 +12,8 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
+
+
 const defaultTheme = createTheme();
 
 function ResetPassword() {
@@ -21,16 +23,18 @@ function ResetPassword() {
 
   const handleResetPassword = async (event) => {
     event.preventDefault();
-    const { data, error } = await supabase.auth.updateUser({
-      password: newPassword,
-    });
-    if (error) {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+    } catch (error) {
       console.error("Error resetting password:", error.message);
       return;
     }
-    alert("Password reset succeeeded!");
+    alert("Password reset succeeded!");
     router.push('/');
   };
+  
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -58,6 +62,7 @@ function ResetPassword() {
                     type="password"
                     value={newPassword}
                     label="New Password"
+                    placeholder="New Password" 
                     onChange = {(e) => setNewPassword(e.target.value)} />
                 </Grid>
               </Grid>
