@@ -16,7 +16,17 @@ import React, { useEffect, useState } from "react";
 import supabase from "../../config/supabaseClient";
 import styles from "../../styles/units.module.css";
 import {v4 as uuidv4} from 'uuid';
-  
+
+// Function to generate a random password of length between 8 and 10 characters
+const generatePassword = () => {
+    const length = Math.floor(Math.random() * 3) + 8; // Random length between 8 and 10
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let retVal = "";
+    for (let i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    return retVal;
+};
   
 const {
     data: { user },
@@ -54,43 +64,66 @@ const AddEmployeeForm = () => {
   
     const handleAdd = async (event) => {
         event.preventDefault();
+        const password = generatePassword(); // Generate a random password
     
         try {
-            // Check if the email already exists
-            const { data: existingEmployee, error: checkError } = await supabase
+            // Check if the email already exists in the employees table
+            const { data: existingEmployee, error: employeeError } = await supabase
                 .from('employees')
                 .select('email')
                 .eq('email', email)
                 .maybeSingle();
     
-            if (checkError) throw checkError;
+            if (employeeError) throw employeeError;
     
-            if (existingEmployee) {
-                alert('An employee with this email already exists.');
+            // Check if the email already exists in the profiles table
+            const { data: existingProfile, error: profileError } = await supabase
+                .from('profiles')
+                .select('emailProfile')
+                .eq('emailProfile', email)
+                .maybeSingle();
+    
+            if (profileError) throw profileError;
+    
+            if (existingEmployee || existingProfile) {
+                alert('An employee or profile with this email already exists.');
                 return;
             }
     
             // Insert new employee
-            const { data: employeeData, error: insertError } = await supabase.from("employees").insert([
+            const { data: employeeData, error: insertEmployeeError } = await supabase.from("employees").insert([
                 {
                     first_name: first_name,
                     last_name: last_name,
                     email: email,
                     position: position, // Ensure this matches the enum values in the database
                     phone_number: phone_number,
+                    password: password,
                 }
             ]);
     
-            if (insertError) throw insertError;
+            if (insertEmployeeError) throw insertEmployeeError;
     
-            console.log("Successfully added employee: ", employeeData);
-            alert('Employee added successfully!');
+            // If the employee was successfully added, add the profile
+            const { data: profileData, error: insertProfileError } = await supabase.from("profiles").insert([
+                {
+                    first_name: first_name,
+                    last_name: last_name,
+                    emailProfile: email,
+                    roleOfUser: "employee",
+                }
+            ]);
+    
+            if (insertProfileError) throw insertProfileError;
+    
+            console.log("Successfully added employee and profile: ", employeeData, profileData);
+            alert('Employee and profile added successfully!');
             router.push("/manage-employees");
         } catch (error) {
             console.error("Error in operation: ", error.message);
-            alert('Failed to add employee: ' + error.message);
+            alert('Failed to add employee and profile: ' + error.message);
         }
-    };
+    };        
     
     const router = useRouter();
   
