@@ -102,12 +102,34 @@ const Drawer = styled(MuiDrawer, {
   }
 }));
 
+
 function UserRequests() {
   const [requests, setRequests] = useState([]);
   const [open, setOpen] = React.useState(true);
   const [userEmail, setUserEmail] = useState("");
   const router = useRouter();
-
+  
+  //const [requests, setRequests] = useState([
+    //{
+      //subject: 'Leaky Faucet',
+      //type: 'Maintenance',
+      //assigned_to: 'John Doe',
+      //status: 'In Progress'
+    //},
+    //{
+      //subject: 'Parking Dispute',
+      //type: 'Complaint',
+      //assigned_to: 'Jane Smith',
+      //status: 'Open'
+    //},
+    //{
+      //subject: 'Renovation Request',
+      //type: 'Permission',
+      //assigned_to: 'Alice Johnson',
+      //status: 'Resolved'
+    //}
+  //]);
+  
   function StatusIndicator({ status }) {
     const paddingHorizontal = 2;
     const paddingVertical = 1;
@@ -245,7 +267,7 @@ function UserRequests() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={0.5}>
+            <Grid container spacing={2}>
               <Grid item xs={3}>
                 <Box
                   sx={{
@@ -296,33 +318,34 @@ function UserRequests() {
               </Grid>
             </Grid>
 
-
-
-
             <Divider />
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Box
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  {requests && requests.map((request, index) => (
-                    <React.Fragment key={index}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 1 }}>
-                        <Typography sx={{ flexBasis: '20%' }}>{request.subject}</Typography>
-                        <Typography sx={{ flexBasis: '20%' }}>{request.type}</Typography>
-                        <Typography sx={{ flexBasis: '20%' }}>{request.assigned_to}</Typography>
-                        <StatusIndicator status={request.status} />
-                      </Box>
-                      {index < requests.length - 1 && <Divider />}
-                    </React.Fragment>
-                  ))}
-                </Box>
-              </Grid>
-            </Grid>
+            {requests.map((request, index) => (
+    <React.Fragment key={index}>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={3}>
+          {/* Subject */}
+          <Typography>{request.subject}</Typography>
+        </Grid>
+        <Grid item xs={3} style={{ textAlign: 'center' }}>
+          {/* Type */}
+          <Typography>{request.type}</Typography>
+        </Grid>
+        <Grid item xs={3} style={{ textAlign: 'center' }}>
+          {/* Assigned To */}
+          <Typography>{request.assigned_to}</Typography>
+        </Grid>
+        <Grid item xs={3} style={{ textAlign: 'right' }}>
+          {/* Status */}
+          <StatusIndicator status={request.status} />
+        </Grid>
+      </Grid>
+      
+      {/* Divider for each content row */}
+      {index < requests.length - 1 && (
+        <Divider sx={{ my: 2 }} />
+      )}
+    </React.Fragment>
+  ))}
           </Container>
           <container>
             <Box>
