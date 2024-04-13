@@ -23,21 +23,20 @@ function VerifyOTP() {
 
   const handleVerify = async (event) => {
     event.preventDefault();
-    const { data, error } = await supabase.auth.verifyOtp({
-      email: email,
-      token: otp,
-      type: 'email',
-    });
-    if (error) {
-      console.error("Error verifying OTP:", error.message);
+    try {
+      const { data } = await supabase.auth.verifyOtp({
+        email: email,
+        token: otp,
+        type: 'email',
+      });
+      const { data: resetData } = await supabase.auth.resetPasswordForEmail(email);
       router.push('/reset-password');
-    } 
-    else {
-      const { data: resetData, error: resetError } = await supabase.auth.resetPasswordForEmail(email);
+    } catch (error) {
+      console.error("An error occurred:", error.message);
       router.push('/reset-password');
     }
-  };    
-
+  };
+  
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth ="xs">
@@ -63,6 +62,7 @@ function VerifyOTP() {
                     fullWidth
                     type='email'
                     label='Email Address'
+                    placeholder='Enter your email'
                     value={email}
                     onChange={(e) => setEmail(e.target.value)} />
                 </Grid>
@@ -72,6 +72,7 @@ function VerifyOTP() {
                     fullWidth
                     type="text"
                     label="One Time Password"
+                    placeholder='Enter your OTP'
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)} />
                 </Grid>
