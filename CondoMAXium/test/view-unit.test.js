@@ -5,11 +5,16 @@ import ViewUnit from '../pages/view-unit/index'; // Adjust the import path based
 import supabase from "../config/supabaseClient"; // Adjust the import path based on your file structure
 import { useRouter } from 'next/router';
 
-// Mocks
 jest.mock('../config/supabaseClient', () => ({
   from: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
-  eq: jest.fn().mockResolvedValue({ data: [/* Mocked unit data */], error: null }),
+  eq: jest.fn().mockResolvedValue({
+    data: [{ /* mock data relevant to the unit */ }],
+    error: null
+  }),
+  update: jest.fn().mockResolvedValue({
+    error: null
+  })
 }));
 
 jest.mock('next/router', () => ({
@@ -126,6 +131,12 @@ describe('<ViewUnit />', () => {
     fireEvent.click(screen.getByText("Save"));
 
   }, 10000);
+
+  it('handles month selection and updates state', () => {
+    render(<ViewUnit />);
+    fireEvent.change(screen.getByLabelText('Month'), { target: { value: '3' } });
+    expect(screen.getByDisplayValue('March')).toBeInTheDocument();
+  });
 
 });
 

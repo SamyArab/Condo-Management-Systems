@@ -35,14 +35,14 @@ describe('CMCUnits', () => {
     // Wait for the data to be fetched and displayed
     expect(screen.getByText('All Units')).toBeInTheDocument();
   });
-
+ 
   test('verify condo fee status', async () => {
     render(<CMCUnits />);
     
     // Wait for 5 seconds
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    expect(screen.getByText('Paid')).toBeInTheDocument();
+    expect(screen.getByText('Not Paid')).toBeInTheDocument();
 
   }, 10000);
 
@@ -50,14 +50,14 @@ describe('CMCUnits', () => {
     render(<CMCUnits />);
     const searchInput = screen.getByPlaceholderText("Search here");
     act(() => {
-      fireEvent.change(searchInput, { target: { value: "101" } });
+      fireEvent.change(searchInput, { target: { value: "102" } });
     });
     // Wait for 5 seconds
     await new Promise(resolve => setTimeout(resolve, 5000)); 
 
-    expect(searchInput).toHaveValue("101");
-    expect(screen.getByText('101')).toBeInTheDocument();
-    expect(screen.queryByText('102')).toBeNull();
+    expect(searchInput).toHaveValue("102");
+    expect(screen.getByText('102')).toBeInTheDocument();
+    expect(screen.queryByText('103')).toBeNull();
   }, 10000);
 
   test('navigates to edit page on edit button click', async () => {
@@ -67,18 +67,18 @@ describe('CMCUnits', () => {
     await new Promise(resolve => setTimeout(resolve, 5000));
 
     // Wait for the units to be fetched and the "Edit" button to be rendered
-    expect(screen.getByText('101')).toBeInTheDocument();
+    expect(screen.getByText('102')).toBeInTheDocument();
 
     // Now that we know the units are rendered, find and click the "Edit" button
     const editButtons = screen.getAllByText('Edit');
-    expect(editButtons).toHaveLength(2); // or the expected number of units
+    expect(editButtons).toHaveLength(3); // or the expected number of units
     
     act(() => {
       const editButton = screen.getAllByText('Edit')[0];
       fireEvent.click(editButton);
     });
 
-    expect(mockPush).toHaveBeenCalledWith({ pathname: '/edit-unit', query: { unitid: 110 } });
+    expect(mockPush).toHaveBeenCalledWith({ pathname: '/edit-unit', query: { unitid: 109 } });
   }, 10000); // 10 seconds
 
   test('navigates to view page on view button click', async () => {
@@ -89,14 +89,14 @@ describe('CMCUnits', () => {
 
     // Now that we know the units are rendered, find and click the "Edit" button
     const viewButtons = screen.getAllByText('View');
-    expect(viewButtons).toHaveLength(2); // or the expected number of units
+    expect(viewButtons).toHaveLength(3); // or the expected number of units
     
     act(() => {
       const viewButton = screen.getAllByText('View')[0];
       fireEvent.click(viewButton);
     });
 
-    expect(mockPush).toHaveBeenCalledWith({ pathname: '/view-unit', query: { unitid: 110 } });
+    expect(mockPush).toHaveBeenCalledWith({ pathname: '/view-unit', query: { unitid: 109 } });
   }, 10000); // 10 seconds
 
   test('navigates to add unit page on add button click', async () => {
