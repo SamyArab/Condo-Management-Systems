@@ -1,6 +1,17 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { Container, Typography, Grid, TextField, Button } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Grid,
+  TextField,
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Checkbox,
+} from "@mui/material";
 
 const AddAmenityForm = () => {
   const [amenityName, setAmenityName] = useState("");
@@ -34,6 +45,14 @@ const AddAmenityForm = () => {
     ).length < 2;
 
   const router = useRouter();
+
+  const handleDayChange = (event) => {
+    setDays({
+      ...days,
+      [event.target.name]: event.target.checked,
+    });
+    console.log("day has been checked: ", event.target.name);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -79,6 +98,89 @@ const AddAmenityForm = () => {
                 fullWidth
                 margin="normal"
               />
+            </Grid>
+            <Grid item xs={9}>
+              <FormControl
+                required
+                error={error}
+                component="fieldset"
+                sx={{ m: 3 }}
+                variant="standard"
+              >
+                <FormLabel>Days Open (at least 2)</FormLabel>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={monday}
+                        onChange={handleDayChange}
+                        name="monday"
+                      />
+                    }
+                    label="Monday"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={tuesday}
+                        onChange={handleDayChange}
+                        name="tuesday"
+                      />
+                    }
+                    label="Tuesday"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={wednesday}
+                        onChange={handleDayChange}
+                        name="wednesday"
+                      />
+                    }
+                    label="Wednesday"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={thursday}
+                        onChange={handleDayChange}
+                        name="thursday"
+                      />
+                    }
+                    label="Thursday"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={friday}
+                        onChange={handleDayChange}
+                        name="friday"
+                      />
+                    }
+                    label="Friday"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={saturday}
+                        onChange={handleDayChange}
+                        name="saturday"
+                      />
+                    }
+                    label="Saturday"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={sunday}
+                        onChange={handleDayChange}
+                        name="sunday"
+                      />
+                    }
+                    label="Sunday"
+                  />
+                </FormGroup>
+              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <TextField
