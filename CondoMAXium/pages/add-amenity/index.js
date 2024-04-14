@@ -11,6 +11,8 @@ import {
   FormGroup,
   FormLabel,
   Checkbox,
+  Select,
+  MenuItem,
 } from "@mui/material";
 
 const AddAmenityForm = () => {
@@ -52,6 +54,14 @@ const AddAmenityForm = () => {
       [event.target.name]: event.target.checked,
     });
     console.log("day has been checked: ", event.target.name);
+  };
+
+  const handleHourChange = (event) => {
+    const { name, value } = event.target;
+    setHours({
+      ...hours,
+      [name]: value,
+    });
   };
 
   const handleSubmit = async (event) => {
@@ -180,6 +190,54 @@ const AddAmenityForm = () => {
                     label="Sunday"
                   />
                 </FormGroup>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{ padding: "10px" }}>Hours</Typography>
+              <FormControl sx={{ padding: "10px" }}>
+                <Select
+                  value={hours.from}
+                  onChange={handleHourChange}
+                  name="from"
+                  displayEmpty
+                >
+                  <MenuItem value="" disabled>
+                    Select start time
+                  </MenuItem>
+                  <MenuItem value="10">10AM</MenuItem>
+                  <MenuItem value="11">11AM</MenuItem>
+                  <MenuItem value="12">12PM</MenuItem>
+                  <MenuItem value="13">1PM</MenuItem>
+                  <MenuItem value="14">2PM</MenuItem>
+                  <MenuItem value="15">3PM</MenuItem>
+                  <MenuItem value="16">4PM</MenuItem>
+                  <MenuItem value="17">5PM</MenuItem>
+                  <MenuItem value="18">6PM</MenuItem>
+                  <MenuItem value="19">7PM</MenuItem>
+                  {/* Add your time options here */}
+                </Select>
+              </FormControl>
+              <FormControl sx={{ padding: "10px" }}>
+                <Select
+                  value={hours.to}
+                  onChange={handleHourChange}
+                  name="to"
+                  displayEmpty
+                >
+                  <MenuItem value="" disabled>
+                    Select end time
+                  </MenuItem>
+                  <MenuItem value="14">2PM</MenuItem>
+                  <MenuItem value="15">3PM</MenuItem>
+                  <MenuItem value="16">4PM</MenuItem>
+                  <MenuItem value="17">5PM</MenuItem>
+                  <MenuItem value="18">6PM</MenuItem>
+                  <MenuItem value="19">7PM</MenuItem>
+                  <MenuItem value="20">8PM</MenuItem>
+                  <MenuItem value="21">9PM</MenuItem>
+                  <MenuItem value="22">10PM</MenuItem>
+                  <MenuItem value="23">11PM</MenuItem>
+                </Select>
               </FormControl>
             </Grid>
             <Grid item xs={12}>
