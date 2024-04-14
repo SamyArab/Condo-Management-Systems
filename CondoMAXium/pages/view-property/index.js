@@ -92,14 +92,14 @@ const ViewProperty = () => {
     }
   }, [propertyid]);
 
-  //route to the edit-unit page
-  const handleEditClick = (propertyid) => {
-    console.log('editing unit with index :', propertyid);
-    router.push({
-      // pathname: '/edit-property',
-      query: {propertyid:propertyid}
-    });
-  }
+  // //route to the edit-unit page
+  // const handleEditClick = (propertyid) => {
+  //   console.log('editing unit with index :', propertyid);
+  //   router.push({
+  //     // pathname: '/edit-property',
+  //     query: {propertyid:propertyid}
+  //   });
+  // }
   
   const handleViewClick = (propertyId) => {
     // Navigate to the edit page

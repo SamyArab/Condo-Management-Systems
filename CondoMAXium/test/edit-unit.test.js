@@ -99,7 +99,7 @@ describe('EditUnitPage', () => {
 
 
   test('validates tenant information when unit is occupied by a tenant', async () => {
-    render(<EditUnitPage />);
+    render(<EditUnitPage />); 
     const input1 = await screen.findByDisplayValue('Tenant');
     const input2 = await screen.findByDisplayValue('');
     const input3 = await screen.findByDisplayValue('2.5');
