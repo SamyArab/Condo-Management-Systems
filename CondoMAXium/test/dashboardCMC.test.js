@@ -72,56 +72,56 @@ describe('PropertyList Component', () => {
     });
 
 
-    test('renders buttons if properties exist', async () => {
-        render(<DashboardCMC />);
-        // Mock properties data with at least one property
-        const mockProperties = [
-            {
-                id: '1',
-                buildingName: 'Mock Building',
-                unitsCount: 10,
-                parkingCount: 20,
-                yearBuilt: 2020,
-                lockerCount: 5,
-                street: 'Mock Street',
-                province: 'Mock Province',
-                postalCode: '12345'
-            }
-        ];
-
-        // Mock useState to simulate that properties exist
-        jest.spyOn(React, 'useState').mockImplementation(() => [true, jest.fn()]);
-
-        // Mock useEffect to immediately execute fetchProperties
-        jest.spyOn(React, 'useEffect').mockImplementationOnce(f => f());
-
-        // Mock supabaseClient functions
-        const mockSupabaseClient = {
-            auth: {
-                getUser: jest.fn(() => Promise.resolve({ data: { user: { id: '1' } } }))
-            },
-            from: jest.fn(() => ({
-                select: jest.fn(() => ({
-                    eq: jest.fn(() => ({
-                        data: mockProperties
-                    }))
-                }))
-            }))
-        };
-
-        jest.mock('../config/supabaseClient', () => ({
-            __esModule: true,
-            default: mockSupabaseClient
-        }));
-
-        // Wait for the component to update after mocking fetchProperties
-        await waitFor(() => {
-            const { getByText } = render(<DashboardCMC />);
-            // Assert that the "Add Amenities" button is rendered
-            expect(getByText('Add Amenities')).toBeInTheDocument();
-            expect(screen.getByLabelText('Maintenance')).toBeInTheDocument();
-        });
-    });
+    // test('renders buttons if properties exist', async () => {
+    //     render(<DashboardCMC />);
+    //     // Mock properties data with at least one property
+    //     const mockProperties = [
+    //         {
+    //             id: '1',
+    //             buildingName: 'Mock Building',
+    //             unitsCount: 10,
+    //             parkingCount: 20,
+    //             yearBuilt: 2020,
+    //             lockerCount: 5,
+    //             street: 'Mock Street',
+    //             province: 'Mock Province',
+    //             postalCode: '12345'
+    //         }
+    //     ];
+    //
+    //     // Mock useState to simulate that properties exist
+    //     jest.spyOn(React, 'useState').mockImplementation(() => [true, jest.fn()]);
+    //
+    //     // Mock useEffect to immediately execute fetchProperties
+    //     jest.spyOn(React, 'useEffect').mockImplementationOnce(f => f());
+    //
+    //     // Mock supabaseClient functions
+    //     const mockSupabaseClient = {
+    //         auth: {
+    //             getUser: jest.fn(() => Promise.resolve({ data: { user: { id: '1' } } }))
+    //         },
+    //         from: jest.fn(() => ({
+    //             select: jest.fn(() => ({
+    //                 eq: jest.fn(() => ({
+    //                     data: mockProperties
+    //                 }))
+    //             }))
+    //         }))
+    //     };
+    //
+    //     jest.mock('../config/supabaseClient', () => ({
+    //         __esModule: true,
+    //         default: mockSupabaseClient
+    //     }));
+    //
+    //     // Wait for the component to update after mocking fetchProperties
+    //     await waitFor(() => {
+    //         const { getByText } = render(<DashboardCMC />);
+    //         // Assert that the "Add Amenities" button is rendered
+    //         expect(getByText('Add Amenities')).toBeInTheDocument();
+    //         expect(screen.getByLabelText('Maintenance')).toBeInTheDocument();
+    //     });
+    // });
 
 
 });

@@ -22,7 +22,7 @@ import { useTheme } from '@mui/material/styles';
 import supabase from "../../config/supabaseClient";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-import { useRouter } from "next/router";
+
 
 
 // Define width of drawer
@@ -120,7 +120,7 @@ export default function PropertyList() {
         setOpen(!open);
     };
 
-    const router = useRouter();
+
 
     // Function to render a single property
     const renderProperty = (property) => {
