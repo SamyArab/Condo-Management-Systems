@@ -14,8 +14,25 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
+
 const defaultTheme = createTheme();
 
+/**
+ * This function is used to verify the OTP (One-Time Password) for a given email.
+ * It first verifies the OTP using the Supabase auth service. If the OTP is valid,
+ * it then initiates a password reset for the email. If any error occurs during this process,
+ * it logs the error message and redirects the user to the reset password page.
+ *
+ * @example
+ * // Assuming the function is invoked somewhere in a form submit event
+ * <form onSubmit={VerifyOTP}>
+ *   <input type="email" onChange={e => setEmail(e.target.value)} />
+ *   <input type="text" onChange={e => setOtp(e.target.value)} />
+ *   <button type="submit">Verify OTP</button>
+ * </form>
+ *
+ * @returns {void} This function does not return anything.
+ */
 function VerifyOTP() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -23,21 +40,20 @@ function VerifyOTP() {
 
   const handleVerify = async (event) => {
     event.preventDefault();
-    const { data, error } = await supabase.auth.verifyOtp({
-      email: email,
-      token: otp,
-      type: 'email',
-    });
-    if (error) {
-      console.error("Error verifying OTP:", error.message);
+    try {
+      const { data } = await supabase.auth.verifyOtp({
+        email: email,
+        token: otp,
+        type: 'email',
+      });
+      const { data: resetData } = await supabase.auth.resetPasswordForEmail(email);
       router.push('/reset-password');
-    } 
-    else {
-      const { data: resetData, error: resetError } = await supabase.auth.resetPasswordForEmail(email);
+    } catch (error) {
+      console.error("An error occurred:", error.message);
       router.push('/reset-password');
     }
-  };    
-
+  };
+  
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth ="xs">
@@ -63,6 +79,7 @@ function VerifyOTP() {
                     fullWidth
                     type='email'
                     label='Email Address'
+                    placeholder='Enter your email'
                     value={email}
                     onChange={(e) => setEmail(e.target.value)} />
                 </Grid>
@@ -72,6 +89,7 @@ function VerifyOTP() {
                     fullWidth
                     type="text"
                     label="One Time Password"
+                    placeholder='Enter your OTP'
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)} />
                 </Grid>

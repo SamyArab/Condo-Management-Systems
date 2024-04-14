@@ -12,8 +12,25 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
+
 const defaultTheme = createTheme();
 
+/**
+ * This function is used to reset the password for a given email.
+ * It updates the user's password using the Supabase auth service. If the password update is successful,
+ * it alerts the user and redirects them to the home page. If any error occurs during this process,
+ * it logs the error message.
+ *
+ * @example
+ * // Assuming the function is invoked somewhere in a form submit event
+ * <form onSubmit={ResetPassword}>
+ *   <input type="email" onChange={e => setEmail(e.target.value)} />
+ *   <input type="password" onChange={e => setNewPassword(e.target.value)} />
+ *   <button type="submit">Reset Password</button>
+ * </form>
+ *
+ * @returns {void} This function does not return anything.
+ */
 function ResetPassword() {
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -21,16 +38,18 @@ function ResetPassword() {
 
   const handleResetPassword = async (event) => {
     event.preventDefault();
-    const { data, error } = await supabase.auth.updateUser({
-      password: newPassword,
-    });
-    if (error) {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+    } catch (error) {
       console.error("Error resetting password:", error.message);
       return;
     }
-    alert("Password reset succeeeded!");
+    alert("Password reset succeeded!");
     router.push('/');
   };
+  
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -58,6 +77,7 @@ function ResetPassword() {
                     type="password"
                     value={newPassword}
                     label="New Password"
+                    placeholder="New Password" 
                     onChange = {(e) => setNewPassword(e.target.value)} />
                 </Grid>
               </Grid>
