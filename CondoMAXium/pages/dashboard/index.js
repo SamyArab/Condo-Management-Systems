@@ -13,7 +13,6 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -22,11 +21,9 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import AddIcon from "@mui/icons-material/Add";
 import PropertyIcon from "@mui/icons-material/Category";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle"; // Added profile icon
 import supabase from "../../config/supabaseClient";
-
 
 function Copyright(props) {
   return (
@@ -101,8 +98,9 @@ export default function Dashboard() {
   const router = useRouter();
   const [units, setUnits] = React.useState([]);
   const [selectedUnit, setSelectedUnit] = React.useState(null); // State to store selected unit
+  const [fetchingError, setFetchingError] = React.useState(null); // State to track fetching error
 
-// Handler function to handle clicks on property items
+  // Handler function to handle clicks on property items
   const handleClick = (unit) => {
     setSelectedUnit(unit); // Update selected unit
   };
@@ -111,7 +109,6 @@ export default function Dashboard() {
   const toggleMoreInfo = () => {
     setShowMoreInfo(!showMoreInfo);
   };
-
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -145,12 +142,12 @@ export default function Dashboard() {
         }
       } catch (error) {
         console.error("Error fetching units:", error.message);
+        setFetchingError(error.message); // Set fetching error message
       }
     };
 
     fetchUnits();
   }, []);
-
 
   // Handler function to navigate to the profile page
   const goToProfile = () => {
@@ -225,17 +222,6 @@ export default function Dashboard() {
                   </ListItem>
               ))}
               <Divider sx={{ my: 1 }} />
-              {/* Add property button */}
-              <ListItem
-                  button
-                  aria-label="add property"
-                  onClick={() => router.push("/add-property")}
-              >
-                <ListItemIcon>
-                  <AddIcon />
-                </ListItemIcon>
-                <ListItemText primary="Add Property" />
-              </ListItem>
             </List>
           </Drawer>
           <Box
@@ -252,83 +238,97 @@ export default function Dashboard() {
           >
             <Toolbar />
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-              <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: { xs: 'column', md: 'row' },
-                    alignItems: 'flex-start',
-                    width: '100%',
-                  }}
-              >
-                {/* Unit Picture */}
-                {selectedUnit && (
-                    <div style={{ flex: { xs: 'none', md: '0 0 30%' }, marginRight: { xs: 0, md: '1rem' }, marginBottom: { xs: '1rem', md: 0 } }}>
+              {!fetchingError && selectedUnit && ( // Conditionally render unit details if there is no fetching error and selectedUnit is not null
+                  <Paper
+                      sx={{
+                        p: 2,
+                        display: "flex",
+                        flexDirection: { xs: "column", md: "row" },
+                        alignItems: "flex-start",
+                        width: "100%",
+                      }}
+                  >
+                    {/* Unit Picture */}
+                    <div
+                        style={{
+                          flex: { xs: "none", md: "0 0 30%" },
+                          marginRight: { xs: 0, md: "1rem" },
+                          marginBottom: { xs: "1rem", md: 0 },
+                        }}
+                    >
                       {selectedUnit.picture && (
                           <img
                               src={selectedUnit.picture}
                               alt="unit"
-                              style={{ width: '100%', maxWidth: '200px' }}
+                              style={{ width: "100%", maxWidth: "200px" }}
                           />
                       )}
                     </div>
-                )}
-                {/* Unit Details */}
-                <div style={{ flex: '1', paddingLeft: '1rem' }}>
-                  <Typography variant="h5" gutterBottom>
-                    Unit Details
+                    {/* Unit Details */}
+                    <div style={{ flex: "1", paddingLeft: "1rem" }}>
+                      <Typography variant="h5" gutterBottom>
+                        Unit Details
+                      </Typography>
+                      <Typography variant="body1">
+                        Property: {selectedUnit.property_name}
+                      </Typography>
+                      <Typography variant="body1">
+                        Unit Number: {selectedUnit.unit_number}
+                      </Typography>
+                      <Typography
+                          variant="body1"
+                          color="primary"
+                          onClick={toggleMoreInfo}
+                          style={{
+                            cursor: "pointer",
+                            textDecoration: "underline",
+                            marginTop: "1rem",
+                          }}
+                      >
+                        See More
+                      </Typography>
+                      {showMoreInfo && (
+                          <>
+                            <Typography variant="body1">
+                              Unit Owner: {selectedUnit.first_name_owner}{" "}
+                              {selectedUnit.last_name_owner}
+                            </Typography>
+                            <Typography variant="body1">
+                              Occupied by: {selectedUnit.occupied_by}
+                              {selectedUnit.occupied_by === "Tenant" && <br />}
+                              {selectedUnit.occupied_by === "Tenant" &&
+                                  `Tenant Name: ${selectedUnit.first_name_tenant} ${selectedUnit.last_name_tenant}`}
+                              {selectedUnit.occupied_by === "Tenant" && <br />}
+                              {selectedUnit.occupied_by === "Tenant" &&
+                                  `Tenant Email: ${selectedUnit.tenant_email}`}
+                              {selectedUnit.occupied_by === "Tenant" && <br />}
+                              {selectedUnit.occupied_by === "Tenant" &&
+                                  `Tenant Phone: ${selectedUnit.tenant_phone}`}
+                            </Typography>
+                            <Typography variant="body1">
+                              Size: {selectedUnit.size}
+                            </Typography>
+                            <Typography variant="body1">
+                              Condo Fee per sqft: {selectedUnit.condo_fee_sqft}
+                            </Typography>
+                            <Typography variant="body1">
+                              Parking Number: {selectedUnit.parking_number}
+                            </Typography>
+                          </>
+                      )}
+                    </div>
+                  </Paper>
+              )}
+              {/* Placeholder for fetching error */}
+              {fetchingError && (
+                  <Typography variant="body1" color="error">
+                    Error fetching units: {fetchingError}
                   </Typography>
-                  {selectedUnit && (
-                      <>
-                        <Typography variant="body1">
-                          Property: {selectedUnit.property_name}
-                        </Typography>
-                        <Typography variant="body1">
-                          Unit Number: {selectedUnit.unit_number}
-                        </Typography>
-                        <Typography
-                            variant="body1"
-                            color="primary"
-                            onClick={toggleMoreInfo}
-                            style={{ cursor: 'pointer', textDecoration: 'underline', marginTop: '1rem' }}
-                        >
-                          See More
-                        </Typography>
-                        {showMoreInfo && (
-                            <>
-                              <Typography variant="body1">
-                                Unit Owner: {selectedUnit.first_name_owner} {selectedUnit.last_name_owner}
-                              </Typography>
-                              <Typography variant="body1">
-                                Occupied by: {selectedUnit.occupied_by}
-                                {selectedUnit.occupied_by === "Tenant" && <br />}
-                                {selectedUnit.occupied_by === "Tenant" &&
-                                    `Tenant Name: ${selectedUnit.first_name_tenant} ${selectedUnit.last_name_tenant}`
-                                }
-                                {selectedUnit.occupied_by === "Tenant" && <br />}
-                                {selectedUnit.occupied_by === "Tenant" &&
-                                    `Tenant Email: ${selectedUnit.tenant_email}`
-                                }
-                                {selectedUnit.occupied_by === "Tenant" && <br />}
-                                {selectedUnit.occupied_by === "Tenant" &&
-                                    `Tenant Phone: ${selectedUnit.tenant_phone}`
-                                }
-                              </Typography>
-                              <Typography variant="body1">
-                                Size: {selectedUnit.size}
-                              </Typography>
-                              <Typography variant="body1">
-                                Condo Fee per sqft: {selectedUnit.condo_fee_sqft}
-                              </Typography>
-                              <Typography variant="body1">
-                                Parking Number: {selectedUnit.parking_number}
-                              </Typography>
-                            </>
-                        )}
-                      </>
-                  )}
-                </div>
-              </Paper>
+              )}
+              {/* Footer */}
+              <Box sx={{ mt: 2 }}>
+                <Copyright />
+              </Box>
             </Container>
           </Box>
         </Box>
