@@ -22,6 +22,7 @@ import { useTheme } from '@mui/material/styles';
 import supabase from "../../config/supabaseClient";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
+
 // Define width of drawer
 const drawerWidth = 240;
 
@@ -107,7 +108,7 @@ export default function PropertyList() {
     }, []);
 
     const goToProfile = () => {
-        router.push("/profile");
+        router.push("/profile-employee");
     };
 
     const theme = useTheme();
@@ -250,7 +251,7 @@ export default function PropertyList() {
                             noWrap
                             sx={{ flexGrow: 1 }}
                         >
-                            Dashboard CMC
+                            Dashboard Employee
                         </Typography>
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
