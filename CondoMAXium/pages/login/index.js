@@ -44,63 +44,50 @@ export default function SignInSide() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-        // Check if the user is an employee before trying to sign them in with Supabase Auth
-        const { data: profile, error: profileError } = await supabase
-            .from("profiles")
-            .select("roleOfUser")
-            .eq("emailProfile", email)
-            .single();
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+      if (error) {
+        router.push("/");
+        throw error;
+      }
+      console.log("User logged in succesfully:", data);
+      // routeChange();
+      // Fetch the user's role from the profiles table
+      const { data: profiles, error: profileError } = await supabase
+          .from("profiles")
+          .select("roleOfUser")
+          .eq("emailProfile", email)
 
-        if (profileError) throw profileError;
+      if (profileError) {
+        throw profileError;
+      }
 
-        if (profile && profile.roleOfUser === "employee") {
-            // Employee-specific login check against the employees table
-            const { data: employeeData, error: employeeError } = await supabase
-                .from('employees')
-                .select('*')
-                .eq('email', email)
-                .eq('password', password)
-                .single();
+      const role = profiles.roleOfUser;
 
-            if (employeeError || !employeeData) {
-                throw new Error("Invalid credentials for employee.");
-            }
-
-            console.log("Employee logged in successfully:", employeeData);
-            router.push("/dashboardEmployee");
-            return;
-        }
-
-        // If the role is not "employee", try standard Supabase auth for other user types
-        const { user, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        });
-
-        if (error) throw error;
-
-        // Redirect user based on their role
-        switch (profile.roleOfUser) {
-            case "owner":
-                router.push("/dashboard");
-                break;
-            case "cmc":
-                router.push("/dashboardCMC");
-                break;
-            default:
-                console.log("Role does not have a specific dashboard:", profile.roleOfUser);
-                break;
-        }
+      // Redirect user based on their role
+      if (role === "owner") {
+        router.push("/dashboard");
+      } else if (role === "cmc") {
+        router.push("/dashboardCMC");
+      } else {
+        router.push("/dashboardEmployee");
+      }
     } catch (error) {
-        console.error("Error logging in:", error.message);
-        alert(error.message);
+      // Old code from before
+      //   const data = new FormData(event.currentTarget);
+      //   console.log({
+      //     email: data.get("email"),
+      //     password: data.get("password"),
+      //   });
+      console.error("Error logging in:", error.message);
+      alert(error.message);
     }
   };
-
 
   //!!!!!!!!!!! find another way to change pages
   // let navigate = useNavigate();
