@@ -107,9 +107,9 @@ export default function PropertyList() {
         fetchProperties();
     }, []);
 
-    const goToProfile = () => {
-        router.push("/profile-employee");
-    };
+    // const goToProfile = () => {
+    //     router.push("/profile-employee");
+    // };
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -258,8 +258,8 @@ export default function PropertyList() {
                                 <NotificationsIcon />
                             </Badge>
                         </IconButton>
-                        <IconButton color="inherit" onClick={goToProfile}>
-                            <AccountCircleIcon />
+                        <IconButton color="inherit">
+                            {/* <AccountCircleIcon /> */}
                         </IconButton>
                     </Toolbar>
                 </AppBar>
