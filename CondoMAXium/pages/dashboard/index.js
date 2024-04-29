@@ -124,6 +124,19 @@ export default function Dashboard() {
           data: { user },
         } = await supabase.auth.getUser();
 
+        const { data: RequestData, error:RequestError } = await supabase
+        .from('requests')
+        .select('status')
+        .eq('user', user.email)
+        .eq('status', 'Open');
+
+        if (error) {
+          console.log('Error: ', RequestError);
+        } else {
+          console.log('Returned data: ', RequestData);
+          console.log(`The email ${user.email} exists in ${RequestData.length} row(s) with status 'Open'.`);
+        }
+
         // Extract user email
         const userEmail = user?.email;
         if (!userEmail) {
