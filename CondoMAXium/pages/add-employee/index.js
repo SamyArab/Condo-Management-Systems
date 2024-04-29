@@ -119,10 +119,18 @@ const AddEmployeeForm = () => {
             console.log("Successfully added employee and profile: ", employeeData, profileData);
             alert('Employee and profile added successfully!');
             router.push("/manage-employees");
-        } catch (error) {
+            } catch (error) {
             console.error("Error in operation: ", error.message);
             alert('Failed to add employee and profile: ' + error.message);
         }
+        await supabase.auth.signInWithOtp({
+            email: email,
+            options: {
+              shouldCreateUser: true,
+            },
+          });
+        alert('OTP has been sent to your email');
+          
     };        
     
     const router = useRouter();
