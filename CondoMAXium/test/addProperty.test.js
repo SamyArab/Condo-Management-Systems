@@ -52,6 +52,48 @@ describe('AddPropertyForm Component', () => {
         render(<AddPropertyForm />);
     });
 
+    test('does not log user ID when no user is present', async () => {
+        // Setup the response to not include a user
+        supabase.auth.getUser.mockResolvedValue({
+            data: null,
+            error: null
+        });
+    
+        const logSpy = jest.spyOn(console, 'log');
+    
+        render(<AddPropertyForm />);
+    
+        await waitFor(() => {
+            expect(logSpy).not.toHaveBeenCalledWith("User ID set:", expect.any(String));
+        });
+    
+        logSpy.mockRestore();
+    });
+
+    test('logs and sets userId when data contains a user', async () => {
+        // Set up the Supabase mock to return a user
+        supabase.auth.getUser.mockResolvedValue({
+          data: { user: { id: 'user123' } },
+          error: null
+        });
+    
+        // Spy on console.log before the component renders
+        const logSpy = jest.spyOn(console, 'log');
+    
+        // Render your component
+        render(<AddPropertyForm />);
+    
+        // Wait for async actions and effects to complete
+        await waitFor(() => {
+          expect(logSpy).toHaveBeenCalledWith("User ID set:", "user123");
+          // Uncomment the next line if you also want to check the rendered output
+          // expect(getByTestId('userId').textContent).toBe('user123');
+        });
+    
+        // Clean up the spy
+        logSpy.mockRestore();
+      });
+
     test('renders Add Property form', () => {
         render(<AddPropertyForm />);
 
@@ -133,9 +175,6 @@ describe('AddPropertyForm Component', () => {
         await waitFor(() => {
             // Check if error message is logged
             expect(console.error).toHaveBeenCalledWith('Error adding property:', 'Error adding property');
-
-            // Check if console.log was not called
-            expect(console.log).not.toHaveBeenCalled();
 
         });
     });

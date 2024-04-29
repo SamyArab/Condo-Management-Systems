@@ -12,7 +12,7 @@ import {
   DialogActions,
 } from "@mui/material";
 
-const AddPropertyForm = () => {
+const AddPropertyForm = () => { 
   const [propertyName, setPropertyName] = useState("");
   const [yearBuilt, setYearBuilt] = useState("");
   const [unitCount, setUnitCount] = useState("");
@@ -29,6 +29,7 @@ const AddPropertyForm = () => {
       const { data, error } = await supabase.auth.getUser();
       if (data && data.user) {
         setUserId(data.user.id);
+        console.log("User ID set:", data.user.id); // Debugging log
       }
     };
 

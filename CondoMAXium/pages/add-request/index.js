@@ -31,7 +31,7 @@ import {
       const fetchUser = async () => {
           try {
               const { data: { user }, error } = await supabase.auth.getUser();
-              if (error) throw error;
+              // if (error) throw error; //this is not needed
               setUserEmail(user?.email);
           } catch (error) {
               console.error('Error fetching user data:', error.message);
