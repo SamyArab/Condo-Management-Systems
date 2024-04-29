@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, IconButton, Badge, Typography, Box, List, ListItem, ListItemText } from '@mui/material';
 import { Notifications as NotificationsIcon, subject } from '@mui/icons-material';
+import supabase from "../../config/supabaseClient";
+
 
 const notificationsData = [
   { id: 1, subject: "An update on your request has been made",from:"CMC", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit..." },
@@ -9,12 +11,32 @@ const notificationsData = [
   // REPLACE WITH ACTUAL BACKEND
 ];
 
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+
 const NotificationsPage = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [notificationsData, setNotificationsData] = useState([]);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    let { data: notifications, error } = await supabase
+      .from('requests')
+      .select('*')
+      .eq('user', user.email);
+
+    if (error) console.error('Error fetching notifications:', error);
+    else setNotificationsData(notifications);
+  };
 
   const handleNotificationSelect = (notification) => {
     setSelectedNotification(notification);
   };
+
 
   return (
     <div>
