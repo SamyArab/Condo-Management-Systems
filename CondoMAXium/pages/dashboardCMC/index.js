@@ -131,7 +131,6 @@ export default function PropertyList() {
       // Navigate to maintenance page
       console.log(`Navigating to maintenance for ${property.name}`);
     };
-
     const handlePropertyClick = (propertyid) => {
       console.log("viewing property with index :", propertyid);
       router.push({
