@@ -131,7 +131,7 @@ const isTimeReserved = async (time) => {
 
 const defaultTheme = createTheme();
 
-export default FormGym = () => {
+export default function FormGym() {
   const [open, setOpen] = useState(false);
   const [showThankYouPopup, setShowThankYouPopup] = useState(false);
   const [reservedTimes, setReservedTimes] = useState([]);
@@ -582,4 +582,4 @@ export default FormGym = () => {
       </Box>
     </ThemeProvider>
   );
-};
+}
