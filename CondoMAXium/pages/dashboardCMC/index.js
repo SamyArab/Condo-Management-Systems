@@ -72,7 +72,6 @@ const Drawer = styled(MuiDrawer, {
 export default function PropertyList() {
   const [open, setOpen] = React.useState(true);
   const [properties, setProperties] = React.useState([]); // State to store fetched properties
-  const router = useRouter();
 
   // Fetch properties from the database on component mount
   React.useEffect(() => {
@@ -117,6 +116,8 @@ export default function PropertyList() {
     setOpen(!open);
   };
 
+  const router = useRouter();
+
   // Function to render a single property
   const renderProperty = (property) => {
     // Handle click event for adding amenities
@@ -130,7 +131,6 @@ export default function PropertyList() {
       // Navigate to maintenance page
       console.log(`Navigating to maintenance for ${property.name}`);
     };
-
     const handlePropertyClick = (propertyid) => {
       console.log("viewing property with index :", propertyid);
       router.push({
