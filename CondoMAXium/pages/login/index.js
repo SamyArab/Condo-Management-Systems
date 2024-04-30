@@ -18,7 +18,7 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Head from "next/head";
+
 import Script from "next/script";
 
 function Copyright(props) {
@@ -101,12 +101,10 @@ export default function SignInSide() {
 
   return (
     <>
-      <Head>
-        <Script
-          id="sc-script"
-          src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
-        ></Script>
-      </Head>
+      <Script
+        id="sc-script"
+        src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
+      ></Script>
       <ThemeProvider theme={defaultTheme}>
         <Grid container component="main" sx={{ height: "100vh" }}>
           <CssBaseline />
