@@ -137,7 +137,7 @@ const defaultTheme = createTheme();
  *
  * @returns {*}
  */
-function formRooftopDeck() {
+const FormRooftopDeck = () => {
   const [open, setOpen] = useState(false);
   const [showThankYouPopup, setShowThankYouPopup] = useState(false);
   const [reservedTimes, setReservedTimes] = useState([]);
@@ -588,6 +588,6 @@ function formRooftopDeck() {
       </Box>
     </ThemeProvider>
   );
-}
+};
 
-export default formRooftopDeck;
+export default FormRooftopDeck;

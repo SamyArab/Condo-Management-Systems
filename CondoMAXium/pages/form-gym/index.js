@@ -131,7 +131,7 @@ const isTimeReserved = async (time) => {
 
 const defaultTheme = createTheme();
 
-function FormGym() {
+export default FormGym = () => {
   const [open, setOpen] = useState(false);
   const [showThankYouPopup, setShowThankYouPopup] = useState(false);
   const [reservedTimes, setReservedTimes] = useState([]);
@@ -314,14 +314,12 @@ function FormGym() {
 
     // If no existing reservation is found, insert the new one
     if (existingreservations_gym.length === 0) {
-      let { error } = await supabase
-        .from("reservations_gym")
-        .insert({
-          starttime: startTimestamp,
-          endtime: endTimestamp,
-          profileFky: user.id,
-          numOfGuests: guests,
-        });
+      let { error } = await supabase.from("reservations_gym").insert({
+        starttime: startTimestamp,
+        endtime: endTimestamp,
+        profileFky: user.id,
+        numOfGuests: guests,
+      });
 
       if (error) {
         console.log("Error inserting reservation:", error);
@@ -584,6 +582,4 @@ function FormGym() {
       </Box>
     </ThemeProvider>
   );
-}
-
-export default FormGym;
+};

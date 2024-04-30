@@ -320,14 +320,12 @@ function FormSpa() {
 
     // If no existing reservation is found, insert the new one
     if (existingreservations_spa.length === 0) {
-      let { error } = await supabase
-        .from("reservations_spa")
-        .insert({
-          starttime: startTimestamp,
-          endtime: endTimestamp,
-          profileFky: user.id,
-          numOfGuests: guests,
-        });
+      let { error } = await supabase.from("reservations_spa").insert({
+        starttime: startTimestamp,
+        endtime: endTimestamp,
+        profileFky: user.id,
+        numOfGuests: guests,
+      });
 
       if (error) {
         console.log("Error inserting reservation:", error);
@@ -591,5 +589,7 @@ function FormSpa() {
     </ThemeProvider>
   );
 }
+
+FormSpa.displayName = "FormSpa";
 
 export default FormSpa;
