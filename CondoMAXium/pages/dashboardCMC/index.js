@@ -22,8 +22,6 @@ import { useTheme } from "@mui/material/styles";
 import supabase from "../../config/supabaseClient";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-import { useRouter } from "next/router";
-
 // Define width of drawer
 const drawerWidth = 240;
 
