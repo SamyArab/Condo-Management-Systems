@@ -33,13 +33,23 @@ const NotificationsPage = () => {
       console.error("Error fetching user: ", error.message);
     }
     try{
-      let { data: notifications, error } = await supabase
-        .from('requests')
-        .select('*')
-        .eq('user', user.email);
-
-      //if (error) console.error('Error fetching notifications:', error);
-      setNotificationsData(notifications);
+        if (user.position == "daily_op"){
+            let { data: notifications, error } = await supabase
+            .from('requests')
+            .select('*')
+            .eq('type', "Maintenane")
+            .or('type', 'eq', 'Access')
+            .or('type', 'eq', 'Renovation')
+            .or('type', 'eq', 'Violation');
+            setNotificationsData(notifications);
+        }
+        else{
+            let { data: notifications, error } = await supabase
+            .from('requests')
+            .select('*')
+            .eq('type', );
+            setNotificationsData(notifications);
+        }
     }
     catch(error){
       console.error("Error fetching notifications: ", error.message);

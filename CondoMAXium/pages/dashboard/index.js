@@ -175,6 +175,9 @@ export default function Dashboard() {
   const goToProfile = () => {
     router.push("/profile");
   };
+  const goToNotifications = () => {
+    router.push("/notifications");
+  };
 
   return (
       <ThemeProvider theme={defaultTheme}>
@@ -207,7 +210,7 @@ export default function Dashboard() {
               >
                 Dashboard
               </Typography>
-              <IconButton color="inherit">
+              <IconButton color="inherit" onClick={goToNotifications}>
                 <Badge badgeContent={notificationCount} color="secondary">
                   <NotificationsIcon />
                 </Badge>
