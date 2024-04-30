@@ -14,6 +14,16 @@ const notificationsData = [
   // REPLACE WITH ACTUAL BACKEND
 ];
 
+const handleNotificationSelect = (notification) => {
+  setSelectedNotification(notification);
+};
+const goToProfile = () => {
+  router.push("/profile");
+};  
+const goToDashboard = () => {
+  router.push("/dashboard");
+};
+
 const NotificationsPage = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [notificationsData, setNotificationsData] = useState([]);
@@ -44,18 +54,8 @@ const NotificationsPage = () => {
     catch(error){
       console.error("Error fetching notifications: ", error.message);
     }
-  };
 
-  const handleNotificationSelect = (notification) => {
-    setSelectedNotification(notification);
   };
-  const goToProfile = () => {
-    router.push("/profile");
-  };  
-  const goToDashboard = () => {
-    router.push("/dashboard");
-  };
-
 
 
   return (
@@ -71,11 +71,11 @@ const NotificationsPage = () => {
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <IconButton color="inherit" onClick={goToDashboard}>
+          <IconButton color="inherit" onClick={goToDashboard} aria-label="dashboard">
             {/* dashboard Button */}
               <PropertyIcon />
           </IconButton>
-          <IconButton color="inherit" onClick={goToProfile}>
+          <IconButton color="inherit" onClick={goToProfile} aria-label="profile">
             {/* Profile Button */}
               <AccountCircleIcon />
           </IconButton>
@@ -86,7 +86,7 @@ const NotificationsPage = () => {
         <Box sx={{ width: '20%', borderRight: 1, borderColor: 'divider' }}>
           <List>
             {notificationsData.map(notification => (
-              <ListItem placeholder="Select Notification" key={notification.id} button onClick={() => handleNotificationSelect(notification)}>
+              <ListItem placeholder="Select Notification" key={notification.id} button onClick={() => handleNotificationSelect(notification)} aria-label={'notificationid'}>
                 <ListItemText primary={notification.subject} secondary={notification.from} />
               </ListItem>
             ))}
