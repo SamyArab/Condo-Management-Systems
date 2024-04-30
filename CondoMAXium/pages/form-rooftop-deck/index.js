@@ -137,7 +137,7 @@ const defaultTheme = createTheme();
  *
  * @returns {*}
  */
-function FormRooftopDeck() {
+function formRooftopDeck() {
   const [open, setOpen] = useState(false);
   const [showThankYouPopup, setShowThankYouPopup] = useState(false);
   const [reservedTimes, setReservedTimes] = useState([]);
@@ -320,14 +320,12 @@ function FormRooftopDeck() {
 
     // If no existing reservation is found, insert the new one
     if (existingReservations.length === 0) {
-      let { error } = await supabase
-        .from("reservations")
-        .insert({
-          starttime: startTimestamp,
-          endtime: endTimestamp,
-          profileFky: user.id,
-          numOfGuests: guests,
-        });
+      let { error } = await supabase.from("reservations").insert({
+        starttime: startTimestamp,
+        endtime: endTimestamp,
+        profileFky: user.id,
+        numOfGuests: guests,
+      });
 
       if (error) {
         console.log("Error inserting reservation:", error);
@@ -592,4 +590,4 @@ function FormRooftopDeck() {
   );
 }
 
-export default FormRooftopDeck;
+export default formRooftopDeck;
