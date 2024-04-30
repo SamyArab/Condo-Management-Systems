@@ -100,12 +100,12 @@ export default function SignInSide() {
 
   return (
     <>
-      <Head>
+      {/* <Head>
         <script
           id="sc-script"
           src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
         ></script>
-      </Head>
+      </Head> */}
       <ThemeProvider theme={defaultTheme}>
         <Grid container component="main" sx={{ height: "100vh" }}>
           <CssBaseline />
