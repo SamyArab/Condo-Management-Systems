@@ -25,6 +25,8 @@ import SpaRoom from "../../public/sparoom.jpg";
 import { useRouter } from "next/router";
 import "../../styles/reservation.module.css";
 
+import Head from "next/head";
+
 /**
  * ${1:Description placeholder}
  * @date 3/20/2024 - 9:28:02 PM
@@ -68,7 +70,7 @@ const facilities = [
     availableStartTime: "18:00",
     availableEndTime: "23:00",
     maxGuests: 15,
-    buttonRoute: '/form-rooftop-deck',
+    buttonRoute: "/form-rooftop-deck",
   },
   {
     id: 2,
@@ -80,7 +82,7 @@ const facilities = [
     availableStartTime: "08:00",
     availableEndTime: "21:00",
     maxGuests: 2,
-    buttonRoute: '/form-gym',
+    buttonRoute: "/form-gym",
   },
   {
     id: 3,
@@ -92,10 +94,9 @@ const facilities = [
     availableStartTime: "08:00",
     availableEndTime: "21:00",
     maxGuests: 1,
-    buttonRoute: '/form-spa',
+    buttonRoute: "/form-spa",
   },
 ];
-
 
 /**
  * ${1:Description placeholder}
@@ -121,9 +122,7 @@ const ReservationPage = () => {
    * Method for handling the click of the Reserve button
    */
   const handleReserveClick = (facility) => {
-    console.log(
-      `Reserve facility with ID: ${facility} on `
-    );
+    console.log(`Reserve facility with ID: ${facility} on `);
     router.push({
       pathname: facility.buttonRoute,
       query: {
@@ -160,7 +159,6 @@ const ReservationPage = () => {
     setShowNotifications(!showNotifications);
   };
 
-
   /**
    * Method for handling clicking outside of notifications box to close it
    */
@@ -184,149 +182,157 @@ const ReservationPage = () => {
   }, []);
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar position="absolute">
-          <Toolbar sx={{ justifyContent: "space-between", pr: "24px" }}>
-            <Typography component="h1" variant="h6" color="inherit" noWrap>
-              Common Facilities / Reservations
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <IconButton
-                size="small"
-                color="inherit"
-                sx={{ mr: 2 }}
-                onClick={handleViewReservationsClick}
-              >
-                {/* Adjusted margin for spacing */}
-                <Typography variant="body2" sx={{ fontSize: "1rem" }}>
-                  My Reservations
-                </Typography>
-              </IconButton>
-              <IconButton
-                color="inherit"
-                onClick={toggleNotifications}
-                ref={notificationButtonRef}
-              >
-                <Badge badgeContent={4} color="secondary">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-              <CSSTransition
-                in={showNotifications}
-                timeout={300}
-                classNames="dropdown"
-                unmountOnExit
-                onEnter={() => setShowNotifications(true)}
-                onExited={() => setShowNotifications(false)}
-              >
-                <Box
-                  ref={notificationsRef}
-                  sx={{
-                    position: "absolute",
-                    right: 0,
-                    top: "100%",
-                    backgroundColor: "white",
-                    boxShadow: "0px 4px 12px rgba(0,0,0,0.15)",
-                    zIndex: 10,
-                    p: 2,
-                    mt: 0.5,
-                    borderRadius: "4px",
-                    minWidth: "200px",
-                  }}
+    <>
+      <Head>
+        <script
+          id="sc-script"
+          src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
+        />
+      </Head>
+      <ThemeProvider theme={defaultTheme}>
+        <Box sx={{ display: "flex" }}>
+          <CssBaseline />
+          <AppBar position="absolute">
+            <Toolbar sx={{ justifyContent: "space-between", pr: "24px" }}>
+              <Typography component="h1" variant="h6" color="inherit" noWrap>
+                Common Facilities / Reservations
+              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <IconButton
+                  size="small"
+                  color="inherit"
+                  sx={{ mr: 2 }}
+                  onClick={handleViewReservationsClick}
                 >
-                  <Typography color="secondary">
-                    No new notifications
+                  {/* Adjusted margin for spacing */}
+                  <Typography variant="body2" sx={{ fontSize: "1rem" }}>
+                    My Reservations
                   </Typography>
-                </Box>
-              </CSSTransition>
-              <IconButton onClick={handleProfileClick}>
-                <Badge
-                  color="secondary"
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
+                </IconButton>
+                <IconButton
+                  color="inherit"
+                  onClick={toggleNotifications}
+                  ref={notificationButtonRef}
                 >
-                  <AccountCircle sx={{ fontSize: 40 }} />{" "}
-                  {/* Adjust the icon size as needed */}
-                </Badge>
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </AppBar>
-
-        {/*<Toolbar/>*/}
-
-        <Divider />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={4} lg={15}>
-                {facilities.map((facility) => (
-                  <Paper
-                    key={facility.id}
+                  <Badge badgeContent={4} color="secondary">
+                    <NotificationsIcon />
+                  </Badge>
+                </IconButton>
+                <CSSTransition
+                  in={showNotifications}
+                  timeout={300}
+                  classNames="dropdown"
+                  unmountOnExit
+                  onEnter={() => setShowNotifications(true)}
+                  onExited={() => setShowNotifications(false)}
+                >
+                  <Box
+                    ref={notificationsRef}
                     sx={{
+                      position: "absolute",
+                      right: 0,
+                      top: "100%",
+                      backgroundColor: "white",
+                      boxShadow: "0px 4px 12px rgba(0,0,0,0.15)",
+                      zIndex: 10,
                       p: 2,
-                      display: "flex",
-                      flexDirection: "column",
-                      mb: 2,
+                      mt: 0.5,
+                      borderRadius: "4px",
+                      minWidth: "200px",
                     }}
                   >
-                    <div key={facility.id}>
-                      <div
-                        style={{
-                          backgroundColor: "#f5f5f5", 
-                          width: "100%", 
-                          padding: "8px", 
-                          boxSizing: "border-box", 
-                        }}
-                      >
-                        <h3 style={{ textDecoration: "underline" }}>
-                          {facility.title}
-                        </h3>
-                      </div>
-                      <img
-                        src={facility.imgLink}
-                        alt={facility.title}
-                        style={{
-                          width: "100%",
-                          height: "auto",
-                        }}
-                      />
-                      <p>{facility.description}</p>
-                      <p>Capacity: {facility.capacity} people</p>
-                      <p>Hours: {facility.hours}</p>
-                      <button
-                        className="button-22"
-                        onClick={() => handleReserveClick(facility)}
-                      >
+                    <Typography color="secondary">
+                      No new notifications
+                    </Typography>
+                  </Box>
+                </CSSTransition>
+                <IconButton onClick={handleProfileClick}>
+                  <Badge
+                    color="secondary"
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                  >
+                    <AccountCircle sx={{ fontSize: 40 }} />{" "}
+                    {/* Adjust the icon size as needed */}
+                  </Badge>
+                </IconButton>
+              </Box>
+            </Toolbar>
+          </AppBar>
+
+          {/*<Toolbar/>*/}
+
+          <Divider />
+          <Box
+            component="main"
+            sx={{
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? theme.palette.grey[100]
+                  : theme.palette.grey[900],
+              flexGrow: 1,
+              height: "100vh",
+              overflow: "auto",
+            }}
+          >
+            <Toolbar />
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={4} lg={15}>
+                  {facilities.map((facility) => (
+                    <Paper
+                      key={facility.id}
+                      sx={{
+                        p: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                        mb: 2,
+                      }}
+                    >
+                      <div key={facility.id}>
+                        <div
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            width: "100%",
+                            padding: "8px",
+                            boxSizing: "border-box",
+                          }}
+                        >
+                          <h3 style={{ textDecoration: "underline" }}>
+                            {facility.title}
+                          </h3>
+                        </div>
+                        <img
+                          src={facility.imgLink}
+                          alt={facility.title}
+                          style={{
+                            width: "100%",
+                            height: "auto",
+                          }}
+                        />
+                        <p>{facility.description}</p>
+                        <p>Capacity: {facility.capacity} people</p>
+                        <p>Hours: {facility.hours}</p>
+                        <button
+                          className="button-22"
+                          onClick={() => handleReserveClick(facility)}
+                        >
                           Reserve
-                      </button>
-                    </div>
-                  </Paper>
-                ))}
+                        </button>
+                      </div>
+                    </Paper>
+                  ))}
+                </Grid>
+                {/* Recent Orders */}
+                <Grid item xs={12}></Grid>
               </Grid>
-              {/* Recent Orders */}
-              <Grid item xs={12}></Grid>
-            </Grid>
-          </Container>
+            </Container>
+          </Box>
         </Box>
-      </Box>
-    </ThemeProvider>
+      </ThemeProvider>
+    </>
   );
 };
 
