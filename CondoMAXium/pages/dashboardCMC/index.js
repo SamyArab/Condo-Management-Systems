@@ -22,6 +22,8 @@ import { useTheme } from "@mui/material/styles";
 import supabase from "../../config/supabaseClient";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
+import Head from "next/head";
+
 // Define width of drawer
 const drawerWidth = 240;
 
@@ -140,173 +142,189 @@ export default function PropertyList() {
     };
 
     return (
-      <Grid item xs={12} key={property.id}>
-        <Paper
-          sx={{
-            p: 2,
-            display: "flex",
-            flexDirection: isSmallScreen ? "column" : "row", // Adjust direction based on screen size
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
-          <img
-            src="/seasidecondos.jpg"
-            onClick={() => handlePropertyClick(property.propertyId)}
-            alt={property.buildingName}
-            style={{
-              width: isSmallScreen ? "100%" : "25%", // Adjust image width based on screen size
-              borderRadius: "15px",
-              marginBottom: isSmallScreen ? "10px" : "0", // Add margin to separate image from text/buttons on small screens
-              marginRight: isSmallScreen ? "0" : "20px", // Add margin between image and text on larger screens
-            }}
+      <>
+        <Head>
+          <script
+            id="sc-script"
+            src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
           />
-          <div style={{ width: isSmallScreen ? "100%" : "65%" }}>
-            {" "}
-            {/* Adjust width based on screen size */}
-            <Typography
-              variant="h5"
-              gutterBottom
-              sx={{ textDecoration: "underline", marginBottom: "8px" }}
-              onClick={() => handlePropertyClick(property.propertyId)}
-            >
-              {property.buildingName}
-            </Typography>
-            <Typography
-              variant="body1"
-              gutterBottom
-              sx={{
-                fontWeight: "bold",
-                maxWidth: "500px",
-                fontSize: "12px",
-                marginBottom: "8px",
-              }}
-            >
-              Capacity: {property.unitsCount} units
-              <br />
-              Parking Spots: {property.parkingCount}
-              <br />
-              Amenities:
-              <br />
-              Year Built: {property.yearBuilt}
-              <br />
-              Lockers/Storage: {property.lockerCount}
-              <br />
-              Address: {property.street}, {property.province},{" "}
-              {property.postalCode}
-            </Typography>
-          </div>
-          <div
-            style={{
+        </Head>
+        <Grid item xs={12} key={property.id}>
+          <Paper
+            sx={{
+              p: 2,
               display: "flex",
-              flexDirection: "column",
+              flexDirection: isSmallScreen ? "column" : "row", // Adjust direction based on screen size
               alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
             }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              aria-label="Add Amenities"
-              onClick={handleAmenitiesClick}
-              sx={{ minWidth: 120, marginBottom: "8px", width: "100%" }}
+            <img
+              src="/seasidecondos.jpg"
+              onClick={() => handlePropertyClick(property.propertyId)}
+              alt={property.buildingName}
+              style={{
+                width: isSmallScreen ? "100%" : "25%", // Adjust image width based on screen size
+                borderRadius: "15px",
+                marginBottom: isSmallScreen ? "10px" : "0", // Add margin to separate image from text/buttons on small screens
+                marginRight: isSmallScreen ? "0" : "20px", // Add margin between image and text on larger screens
+              }}
+            />
+            <div style={{ width: isSmallScreen ? "100%" : "65%" }}>
+              {" "}
+              {/* Adjust width based on screen size */}
+              <Typography
+                variant="h5"
+                gutterBottom
+                sx={{ textDecoration: "underline", marginBottom: "8px" }}
+                onClick={() => handlePropertyClick(property.propertyId)}
+              >
+                {property.buildingName}
+              </Typography>
+              <Typography
+                variant="body1"
+                gutterBottom
+                sx={{
+                  fontWeight: "bold",
+                  maxWidth: "500px",
+                  fontSize: "12px",
+                  marginBottom: "8px",
+                }}
+              >
+                Capacity: {property.unitsCount} units
+                <br />
+                Parking Spots: {property.parkingCount}
+                <br />
+                Amenities:
+                <br />
+                Year Built: {property.yearBuilt}
+                <br />
+                Lockers/Storage: {property.lockerCount}
+                <br />
+                Address: {property.street}, {property.province},{" "}
+                {property.postalCode}
+              </Typography>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
-              Add Amenities
-            </Button>
-            <div style={{ marginBottom: "8px" }} />{" "}
-            {/* Add small margin between buttons */}
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleMaintenanceClick}
-              sx={{ minWidth: 120, width: "100%" }}
-            >
-              Maintenance
-            </Button>
-          </div>
-        </Paper>
-      </Grid>
+              <Button
+                variant="contained"
+                color="primary"
+                aria-label="Add Amenities"
+                onClick={handleAmenitiesClick}
+                sx={{ minWidth: 120, marginBottom: "8px", width: "100%" }}
+              >
+                Add Amenities
+              </Button>
+              <div style={{ marginBottom: "8px" }} />{" "}
+              {/* Add small margin between buttons */}
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleMaintenanceClick}
+                sx={{ minWidth: 120, width: "100%" }}
+              >
+                Maintenance
+              </Button>
+            </div>
+          </Paper>
+        </Grid>
+      </>
     );
   };
 
   return (
-    <ThemeProvider theme={createTheme()}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar position="absolute" open={open}>
-          <Toolbar
-            sx={{
-              pr: "24px", // keep right padding when drawer closed
-            }}
-          >
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
+    <>
+      <Head>
+        <script
+          id="sc-script"
+          src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
+        />
+      </Head>
+      <ThemeProvider theme={createTheme()}>
+        <Box sx={{ display: "flex" }}>
+          <CssBaseline />
+          <AppBar position="absolute" open={open}>
+            <Toolbar
               sx={{
-                marginRight: "36px",
-                ...(open && { display: "none" }),
+                pr: "24px", // keep right padding when drawer closed
               }}
             >
-              <HomeIcon /> {/* Home icon */}
-            </IconButton>
-            <Typography
-              fontWeight="bold"
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
+              <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                onClick={toggleDrawer}
+                sx={{
+                  marginRight: "36px",
+                  ...(open && { display: "none" }),
+                }}
+              >
+                <HomeIcon /> {/* Home icon */}
+              </IconButton>
+              <Typography
+                fontWeight="bold"
+                component="h1"
+                variant="h6"
+                color="inherit"
+                noWrap
+                sx={{ flexGrow: 1 }}
+              >
+                Dashboard CMC
+              </Typography>
+              <IconButton color="inherit">
+                <Badge badgeContent={4} color="secondary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <IconButton color="inherit" onClick={goToProfile}>
+                <AccountCircleIcon />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
+          <Drawer variant="permanent" open={open}>
+            <Toolbar
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                px: [1],
+              }}
             >
-              Dashboard CMC
-            </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton color="inherit" onClick={goToProfile}>
-              <AccountCircleIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <Toolbar
+              <IconButton aria-label="close drawer" onClick={toggleDrawer}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </Toolbar>
+            <Divider />
+          </Drawer>
+          <Box
+            component="main"
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              px: [1],
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? theme.palette.grey[100]
+                  : theme.palette.grey[900],
+              flexGrow: 1,
+              height: "100vh",
+              overflow: "auto",
+              position: "relative", // Added for positioning the button
             }}
           >
-            <IconButton aria-label="close drawer" onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-        </Drawer>
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-            position: "relative", // Added for positioning the button
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {properties.map((property) => renderProperty(property))}
-            </Grid>
-          </Container>
+            <Toolbar />
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Grid container spacing={3}>
+                {properties.map((property) => renderProperty(property))}
+              </Grid>
+            </Container>
+          </Box>
         </Box>
-      </Box>
-    </ThemeProvider>
+      </ThemeProvider>
+    </>
   );
 }

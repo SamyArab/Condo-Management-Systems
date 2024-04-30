@@ -23,6 +23,8 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import supabase from "../../config/supabaseClient";
 
+import Head from "next/head";
+
 /**
  * Supabase connection with user
  */
@@ -346,247 +348,259 @@ const FormSpa = () => {
   const formattedDate = format(selectedDate, "PPPP");
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Box>
-        <AppBar position="absolute">
-          <Toolbar sx={{ justifyContent: "space-between", pr: "24px" }}>
-            <Typography component="h1" variant="h6" color="inherit" noWrap>
-              Reserve Spa
-            </Typography>
-            <Box Box sx={{ display: "flex", alignItems: "center" }}></Box>
-          </Toolbar>
-        </AppBar>
-        <Divider />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <h2
-                className="formattedDate"
-                style={{ fontFamily: '"RM Neue", sans-serif' }}
-              >
-                {formattedDate}
-              </h2>
-              <DatePicker
-                selected={selectedDate}
-                onChange={handleDateChange}
-                customInput={<CustomInput value={formattedDate} />}
-                withPortal
-              />
-            </Box>
-            <Grid container spacing={3} alignItems="stretch">
-              {" "}
-              {/* Add alignItems="stretch" to make the items of the same height */}
-              {/* Image Grid */}
-              <Grid
-                item
-                xs={12}
-                md={6}
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <img
-                  src="sparoom.jpg"
-                  alt="Private Spa"
-                  style={{
-                    width: "100%", // Adjust as necessary
-                    height: "auto",
-                    maxWidth: "600px", // Adjust as necessary to control the image size
-                    borderRadius: "4px",
-                  }}
-                />
-              </Grid>
-              {/* Form Grid */}
-              <Grid item xs={12} md={6}>
-                <Paper
-                  sx={{
-                    width: "100%",
-                    maxWidth: "600px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center", // This centers the form vertically
-                    height: "91.5%", // Take full height of parent
-                    p: 2,
-                  }}
-                  style={{ fontFamily: '"RM Neue", sans-serif' }}
-                >
-                  <form
-                    onSubmit={handleSubmit}
-                    style={{
-                      display: "grid",
-                      gridTemplateRows: "1fr 1fr 1fr 1fr", // Explicitly defines equal size for 4 rows
-                      gap: "20px", // Consistent spacing between elements
-                      alignItems: "center", // Center items vertically for aesthetic spacing
-                      justifyContent: "center",
-                      gridTemplateColumns: "1fr",
-                    }}
-                  >
-                    <div>
-                      {/* Directly apply borderBottom styling to labels for visual consistency */}
-                      <label
-                        style={{
-                          borderBottom: "1px solid lightgrey",
-                          paddingBottom: "10px",
-                          display: "block",
-                        }}
-                      >
-                        Number of Guests:
-                        <input
-                          type="number"
-                          value={guests}
-                          onChange={(e) =>
-                            setGuests(
-                              Math.min(
-                                15,
-                                Math.max(1, parseInt(e.target.value))
-                              )
-                            )
-                          }
-                          min="0"
-                          max="15"
-                          style={{ marginLeft: "10px" }}
-                        />
-                      </label>
-                    </div>
-
-                    <div>
-                      <label
-                        style={{
-                          borderBottom: "1px solid lightgrey",
-                          paddingBottom: "10px",
-                          display: "block",
-                          borderWidth: "100%",
-                        }}
-                      >
-                        Start Time:
-                        <select
-                          value={startTime}
-                          onChange={(e) => setStartTime(e.target.value)}
-                        >
-                          <option value="">Select a start time</option>
-                          {startTimeOptions.map((time) => (
-                            <option key={time} value={time}>
-                              {time}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                    </div>
-
-                    <div>
-                      <label
-                        style={{
-                          borderBottom: "1px solid lightgrey",
-                          paddingBottom: "10px",
-                          display: "block",
-                        }}
-                      >
-                        End Time:
-                        <select
-                          value={endTime}
-                          onChange={(e) => setEndTime(e.target.value)}
-                          disabled={!startTime}
-                          style={{ marginLeft: "10px" }}
-                        >
-                          <option value="">Select an end time</option>
-                          {endTimeOptions.map((time) => (
-                            <option key={time} value={time}>
-                              {time}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                    </div>
-
-                    {/* Ensure the IconButton is styled to not disproportionately expand or contract. Use flex container for center alignment if necessary. */}
-                    <div style={{ display: "flex", justifyContent: "center" }}>
-                      <IconButton
-                        disabled={isDateInPast || isDateMoreThanTwoMonthsAhead}
-                        sx={{
-                          alignItems: "center",
-                          appearance: "button",
-                          backgroundColor: "#0276FF",
-                          borderRadius: "8px",
-                          borderStyle: "none",
-                          boxShadow:
-                            "rgba(255, 255, 255, 0.26) 0 1px 2px inset",
-                          boxSizing: "border-box",
-                          color: "#fff",
-                          cursor: "pointer",
-                          display: "flex",
-                          flexDirection: "row",
-                          flexShrink: 0,
-                          fontFamily: "'RM Neue', sans-serif",
-                          fontSize: "100%",
-                          lineHeight: 1.15,
-                          margin: 0,
-                          padding: "10px 21px",
-                          textAlign: "center",
-                          textTransform: "none",
-                          transition:
-                            "color .13s ease-in-out, background .13s ease-in-out, opacity .13s ease-in-out, box-shadow .13s ease-in-out",
-                          userSelect: "none",
-                          touchAction: "manipulation",
-                          "&:hover":
-                            !isDateInPast && !isDateMoreThanTwoMonthsAhead
-                              ? {
-                                  backgroundColor: "#0356e8",
-                                }
-                              : {},
-                          "&.Mui-disabled": {
-                            backgroundColor: "#AAAAAA",
-                            color: "#fff",
-                          },
-                        }}
-                        type="submit"
-                      >
-                        {!isDateInPast && !isDateMoreThanTwoMonthsAhead
-                          ? "Reserve"
-                          : "Unavailable"}
-                      </IconButton>
-                    </div>
-                  </form>
-                </Paper>
-              </Grid>
-            </Grid>
-          </Container>
-        </Box>
-        {/* Popup Message */}
-        {showThankYouPopup && (
+    <>
+      <Head>
+        <script
+          id="sc-script"
+          src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
+        />
+      </Head>
+      <ThemeProvider theme={defaultTheme}>
+        <Box>
+          <AppBar position="absolute">
+            <Toolbar sx={{ justifyContent: "space-between", pr: "24px" }}>
+              <Typography component="h1" variant="h6" color="inherit" noWrap>
+                Reserve Spa
+              </Typography>
+              <Box Box sx={{ display: "flex", alignItems: "center" }}></Box>
+            </Toolbar>
+          </AppBar>
+          <Divider />
           <Box
+            component="main"
             sx={{
-              position: "fixed",
-              top: "20%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              zIndex: 100,
-              background: "white",
-              padding: "20px",
-              borderRadius: "10px",
-              boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
-              width: "auto", // Adjust based on your needs
-              maxWidth: "80%", // Prevents the popup from being too wide on large screens
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? theme.palette.grey[100]
+                  : theme.palette.grey[900],
+              flexGrow: 1,
+              height: "100vh",
+              overflow: "auto",
             }}
           >
-            Thank you for reserving the spa room!
+            <Toolbar />
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                <h2
+                  className="formattedDate"
+                  style={{ fontFamily: '"RM Neue", sans-serif' }}
+                >
+                  {formattedDate}
+                </h2>
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={handleDateChange}
+                  customInput={<CustomInput value={formattedDate} />}
+                  withPortal
+                />
+              </Box>
+              <Grid container spacing={3} alignItems="stretch">
+                {" "}
+                {/* Add alignItems="stretch" to make the items of the same height */}
+                {/* Image Grid */}
+                <Grid
+                  item
+                  xs={12}
+                  md={6}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <img
+                    src="sparoom.jpg"
+                    alt="Private Spa"
+                    style={{
+                      width: "100%", // Adjust as necessary
+                      height: "auto",
+                      maxWidth: "600px", // Adjust as necessary to control the image size
+                      borderRadius: "4px",
+                    }}
+                  />
+                </Grid>
+                {/* Form Grid */}
+                <Grid item xs={12} md={6}>
+                  <Paper
+                    sx={{
+                      width: "100%",
+                      maxWidth: "600px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center", // This centers the form vertically
+                      height: "91.5%", // Take full height of parent
+                      p: 2,
+                    }}
+                    style={{ fontFamily: '"RM Neue", sans-serif' }}
+                  >
+                    <form
+                      onSubmit={handleSubmit}
+                      style={{
+                        display: "grid",
+                        gridTemplateRows: "1fr 1fr 1fr 1fr", // Explicitly defines equal size for 4 rows
+                        gap: "20px", // Consistent spacing between elements
+                        alignItems: "center", // Center items vertically for aesthetic spacing
+                        justifyContent: "center",
+                        gridTemplateColumns: "1fr",
+                      }}
+                    >
+                      <div>
+                        {/* Directly apply borderBottom styling to labels for visual consistency */}
+                        <label
+                          style={{
+                            borderBottom: "1px solid lightgrey",
+                            paddingBottom: "10px",
+                            display: "block",
+                          }}
+                        >
+                          Number of Guests:
+                          <input
+                            type="number"
+                            value={guests}
+                            onChange={(e) =>
+                              setGuests(
+                                Math.min(
+                                  15,
+                                  Math.max(1, parseInt(e.target.value))
+                                )
+                              )
+                            }
+                            min="0"
+                            max="15"
+                            style={{ marginLeft: "10px" }}
+                          />
+                        </label>
+                      </div>
+
+                      <div>
+                        <label
+                          style={{
+                            borderBottom: "1px solid lightgrey",
+                            paddingBottom: "10px",
+                            display: "block",
+                            borderWidth: "100%",
+                          }}
+                        >
+                          Start Time:
+                          <select
+                            value={startTime}
+                            onChange={(e) => setStartTime(e.target.value)}
+                          >
+                            <option value="">Select a start time</option>
+                            {startTimeOptions.map((time) => (
+                              <option key={time} value={time}>
+                                {time}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+
+                      <div>
+                        <label
+                          style={{
+                            borderBottom: "1px solid lightgrey",
+                            paddingBottom: "10px",
+                            display: "block",
+                          }}
+                        >
+                          End Time:
+                          <select
+                            value={endTime}
+                            onChange={(e) => setEndTime(e.target.value)}
+                            disabled={!startTime}
+                            style={{ marginLeft: "10px" }}
+                          >
+                            <option value="">Select an end time</option>
+                            {endTimeOptions.map((time) => (
+                              <option key={time} value={time}>
+                                {time}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+
+                      {/* Ensure the IconButton is styled to not disproportionately expand or contract. Use flex container for center alignment if necessary. */}
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <IconButton
+                          disabled={
+                            isDateInPast || isDateMoreThanTwoMonthsAhead
+                          }
+                          sx={{
+                            alignItems: "center",
+                            appearance: "button",
+                            backgroundColor: "#0276FF",
+                            borderRadius: "8px",
+                            borderStyle: "none",
+                            boxShadow:
+                              "rgba(255, 255, 255, 0.26) 0 1px 2px inset",
+                            boxSizing: "border-box",
+                            color: "#fff",
+                            cursor: "pointer",
+                            display: "flex",
+                            flexDirection: "row",
+                            flexShrink: 0,
+                            fontFamily: "'RM Neue', sans-serif",
+                            fontSize: "100%",
+                            lineHeight: 1.15,
+                            margin: 0,
+                            padding: "10px 21px",
+                            textAlign: "center",
+                            textTransform: "none",
+                            transition:
+                              "color .13s ease-in-out, background .13s ease-in-out, opacity .13s ease-in-out, box-shadow .13s ease-in-out",
+                            userSelect: "none",
+                            touchAction: "manipulation",
+                            "&:hover":
+                              !isDateInPast && !isDateMoreThanTwoMonthsAhead
+                                ? {
+                                    backgroundColor: "#0356e8",
+                                  }
+                                : {},
+                            "&.Mui-disabled": {
+                              backgroundColor: "#AAAAAA",
+                              color: "#fff",
+                            },
+                          }}
+                          type="submit"
+                        >
+                          {!isDateInPast && !isDateMoreThanTwoMonthsAhead
+                            ? "Reserve"
+                            : "Unavailable"}
+                        </IconButton>
+                      </div>
+                    </form>
+                  </Paper>
+                </Grid>
+              </Grid>
+            </Container>
           </Box>
-        )}
-      </Box>
-    </ThemeProvider>
+          {/* Popup Message */}
+          {showThankYouPopup && (
+            <Box
+              sx={{
+                position: "fixed",
+                top: "20%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                zIndex: 100,
+                background: "white",
+                padding: "20px",
+                borderRadius: "10px",
+                boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+                width: "auto", // Adjust based on your needs
+                maxWidth: "80%", // Prevents the popup from being too wide on large screens
+              }}
+            >
+              Thank you for reserving the spa room!
+            </Box>
+          )}
+        </Box>
+      </ThemeProvider>
+    </>
   );
 };
 

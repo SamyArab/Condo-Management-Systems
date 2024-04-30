@@ -20,8 +20,9 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import supabase from "../../config/supabaseClient";
 import styles from "../../styles/units.module.css";
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
+import Head from "next/head";
 
 // const {
 //   data: { user },
@@ -58,7 +59,9 @@ const AddUnitForm = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       setUser(user);
     };
 
@@ -69,7 +72,10 @@ const AddUnitForm = () => {
   useEffect(() => {
     async function fetchPropertyID() {
       try {
-        const { data } = await supabase.from('properties').select('*').eq('buildingName', propertyName);
+        const { data } = await supabase
+          .from("properties")
+          .select("*")
+          .eq("buildingName", propertyName);
         if (data && data.length > 0) {
           const propertyId = data[0].propertyId;
           setPropertyFky(propertyId);
@@ -85,7 +91,7 @@ const AddUnitForm = () => {
       fetchPropertyID();
     }
   }, [propertyName]);
-  
+
   //Owner ID for ownerFky
   // useEffect(() => {
   //   async function fetchOwnerID() {
@@ -106,66 +112,66 @@ const AddUnitForm = () => {
   //     fetchOwnerID();
   //   }
   // }, [ownerFullName]);
-  
-    // For tenant fky
-    // useEffect(() => {
-    //   async function fetchPropertyID() {
-    //     try {
-    //       const { data } = await supabase.from('properties').select('*').eq('buildingName', propertyName);
-    //       if (data && data.length > 0) {
-    //         const propertyId = data[0].propertyId;
-    //         setPropertyFky(propertyId);
-    //         console.log("Property ID:", propertyId);
-    //       } else {
-    //         console.log("No property found with name:", propertyName);
-    //       }
-    //     } catch (error) {
-    //       console.error("Error fetching property ", error.message);
-    //     }
-    //   }
-    //   if (propertyName) {
-    //     fetchPropertyID();
-    //   }
-    // }, [propertyName]);
+
+  // For tenant fky
+  // useEffect(() => {
+  //   async function fetchPropertyID() {
+  //     try {
+  //       const { data } = await supabase.from('properties').select('*').eq('buildingName', propertyName);
+  //       if (data && data.length > 0) {
+  //         const propertyId = data[0].propertyId;
+  //         setPropertyFky(propertyId);
+  //         console.log("Property ID:", propertyId);
+  //       } else {
+  //         console.log("No property found with name:", propertyName);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching property ", error.message);
+  //     }
+  //   }
+  //   if (propertyName) {
+  //     fetchPropertyID();
+  //   }
+  // }, [propertyName]);
 
   //handle method for size input to only accept numbers
   const handleSizeChange = (value) => {
     // Regular expression to remove any non-numeric characters from the input
-    const numericValue = value.replace(/\D/g, '');
+    const numericValue = value.replace(/\D/g, "");
     setUnitSize(numericValue);
   };
 
   //handle method for condo fee sqft input to only accept numbers
   const handleCondoFeeSQFTChange = (value) => {
     // Regular expression to remove any non-numeric characters except decimal points from the input
-    const numericValue = value.replace(/[^\d.]/g, '');
-  
+    const numericValue = value.replace(/[^\d.]/g, "");
+
     // You might also want to handle cases where there are multiple decimal points
     // This part ensures there's only one decimal point in the number
-    const parts = numericValue.split('.');
+    const parts = numericValue.split(".");
     let decimalValue;
     if (parts.length > 2) {
       // Join the first part with the second part, discarding additional decimal points
-      decimalValue = parts[0] + '.' + parts.slice(1).join('');
+      decimalValue = parts[0] + "." + parts.slice(1).join("");
     } else {
       decimalValue = numericValue;
     }
-  
+
     setcondoFeeSqft(decimalValue);
   };
 
   //handle method for parking fee input to only accept numbers
   const handleParkingFeeChange = (value) => {
     // Regular expression to remove any non-numeric characters from the input
-    const numericValue = value.replace(/[^\d.]/g, '');
+    const numericValue = value.replace(/[^\d.]/g, "");
 
     // You might also want to handle cases where there are multiple decimal points
     // This part ensures there's only one decimal point in the number
-    const parts = numericValue.split('.');
+    const parts = numericValue.split(".");
     let decimalValue;
     if (parts.length > 2) {
       // Join the first part with the second part, discarding additional decimal points
-      decimalValue = parts[0] + '.' + parts.slice(1).join('');
+      decimalValue = parts[0] + "." + parts.slice(1).join("");
     } else {
       decimalValue = numericValue;
     }
@@ -190,10 +196,13 @@ const AddUnitForm = () => {
   //correct formatting for phone number
   const formatPhoneNumber = (input) => {
     // Remove non-numeric characters
-    const numericInput = input.replace(/\D/g, '');
-    
+    const numericInput = input.replace(/\D/g, "");
+
     // Apply the desired pattern (XXX-XXX-XXXX)
-    const formattedPhoneNumber = numericInput.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+    const formattedPhoneNumber = numericInput.replace(
+      /(\d{3})(\d{3})(\d{4})/,
+      "$1-$2-$3"
+    );
 
     return formattedPhoneNumber;
   };
@@ -211,27 +220,34 @@ const AddUnitForm = () => {
 
     // Initialize an array with fields that are always required
     let requiredFields = [
-      propertyName, 
-      unitNumber, 
-      ownerFirstName, 
-      ownerLastName, 
-      ownerEmail, 
-      ownerPhone, 
-      occupiedBy, 
-      unitSize, 
-      condoFeeSqft, 
-      condoFeeParking, 
-      parkingNumber, 
-      lockerNumber
+      propertyName,
+      unitNumber,
+      ownerFirstName,
+      ownerLastName,
+      ownerEmail,
+      ownerPhone,
+      occupiedBy,
+      unitSize,
+      condoFeeSqft,
+      condoFeeParking,
+      parkingNumber,
+      lockerNumber,
     ];
 
     // If the unit is occupied by a tenant, add tenant information fields to the validation list
     if (occupiedBy === "Tenant") {
-      requiredFields = requiredFields.concat([tenantFirstName, tenantLastName, tenantEmail, tenantPhone]);
+      requiredFields = requiredFields.concat([
+        tenantFirstName,
+        tenantLastName,
+        tenantEmail,
+        tenantPhone,
+      ]);
     }
 
     // Check if all required fields are filled
-    const isFormComplete = requiredFields.every(field => field && field.trim() !== '');
+    const isFormComplete = requiredFields.every(
+      (field) => field && field.trim() !== ""
+    );
 
     if (!isFormComplete) {
       setIsIncompleteForm(true);
@@ -273,44 +289,45 @@ const AddUnitForm = () => {
 
       // Insert data into the "units" table
       const { data: unitData, error: unitError } = await supabase
-      .from("units")
-      .insert([
-        {
-          property_name: propertyName,
-          unit_number: unitNumber,
-          first_name_owner: ownerFirstName,
-          last_name_owner: ownerLastName,
-          emailUnit: ownerEmail,
-          owner_phone: ownerPhone,
-          first_name_tenant: occupiedBy === "Owner" ? "" : tenantFirstName,  // Clear if owner
-          last_name_tenant: occupiedBy === "Owner" ? "" : tenantLastName,    // Clear if owner
-          tenant_email: occupiedBy === "Owner" ? "" : tenantEmail,           // Clear if owner
-          tenant_phone: occupiedBy === "Owner" ? "" : tenantPhone,           // Clear if owner
-          occupied_by: occupiedBy,
-          size: unitSize,
-          condo_fee_sqft: condoFeeSqft,
-          parking_fee: condoFeeParking,
-          condo_fee_total: ((condoFeeSqft * unitSize) + parseFloat(condoFeeParking, 10)),
-          parking_number: parkingNumber,
-          locker_number: lockerNumber,
-          jan_fee__: monthlyFees.jan_fee__,
-          feb_fee__: monthlyFees.feb_fee__,
-          mar_fee__: monthlyFees.mar_fee__,
-          apr_fee__: monthlyFees.apr_fee__,
-          may_fee__: monthlyFees.may_fee__,
-          jun_fee__: monthlyFees.jun_fee__,
-          jul_fee__: monthlyFees.jul_fee__,
-          aug_fee__: monthlyFees.aug_fee__,
-          sep_fee__: monthlyFees.sep_fee__,
-          oct_fee__: monthlyFees.oct_fee__,
-          nov_fee__: monthlyFees.nov_fee__,
-          dec_fee__: monthlyFees.dec_fee__,
-          //fky
-          propertyFky: propertyFky,
-          // picture: null
-          // tenantFky: null
-        }
-      ]);
+        .from("units")
+        .insert([
+          {
+            property_name: propertyName,
+            unit_number: unitNumber,
+            first_name_owner: ownerFirstName,
+            last_name_owner: ownerLastName,
+            emailUnit: ownerEmail,
+            owner_phone: ownerPhone,
+            first_name_tenant: occupiedBy === "Owner" ? "" : tenantFirstName, // Clear if owner
+            last_name_tenant: occupiedBy === "Owner" ? "" : tenantLastName, // Clear if owner
+            tenant_email: occupiedBy === "Owner" ? "" : tenantEmail, // Clear if owner
+            tenant_phone: occupiedBy === "Owner" ? "" : tenantPhone, // Clear if owner
+            occupied_by: occupiedBy,
+            size: unitSize,
+            condo_fee_sqft: condoFeeSqft,
+            parking_fee: condoFeeParking,
+            condo_fee_total:
+              condoFeeSqft * unitSize + parseFloat(condoFeeParking, 10),
+            parking_number: parkingNumber,
+            locker_number: lockerNumber,
+            jan_fee__: monthlyFees.jan_fee__,
+            feb_fee__: monthlyFees.feb_fee__,
+            mar_fee__: monthlyFees.mar_fee__,
+            apr_fee__: monthlyFees.apr_fee__,
+            may_fee__: monthlyFees.may_fee__,
+            jun_fee__: monthlyFees.jun_fee__,
+            jul_fee__: monthlyFees.jul_fee__,
+            aug_fee__: monthlyFees.aug_fee__,
+            sep_fee__: monthlyFees.sep_fee__,
+            oct_fee__: monthlyFees.oct_fee__,
+            nov_fee__: monthlyFees.nov_fee__,
+            dec_fee__: monthlyFees.dec_fee__,
+            //fky
+            propertyFky: propertyFky,
+            // picture: null
+            // tenantFky: null
+          },
+        ]);
 
       if (unitError) {
         console.error("Insertion error: ", unitError);
@@ -319,9 +336,8 @@ const AddUnitForm = () => {
 
       console.log("Successfully added unit: ", unitData);
       router.push("/units");
-
-    } //end of try {}
-    catch (error) {
+    } catch (error) {
+      //end of try {}
       console.error("Error adding data: ", error.message);
     }
 
@@ -329,9 +345,9 @@ const AddUnitForm = () => {
 
     // Check if the owner email already exists in the "units" table
     const { data: unitsOwner, error: unitsErrorOwner } = await supabase
-      .from('units')
-      .select('emailUnit')
-      .eq('emailUnit', ownerEmail);
+      .from("units")
+      .select("emailUnit")
+      .eq("emailUnit", ownerEmail);
 
     if (unitsErrorOwner) {
       console.error("Error fetching units for owner:", unitsErrorOwner.message);
@@ -353,44 +369,61 @@ const AddUnitForm = () => {
     if (errorO) {
       console.error("Error signing up:", errorO.message);
     } else {
-      alert('OTP has been sent to your email');
+      alert("OTP has been sent to your email");
     }
 
     // Check profile for owner
-    const { data: existingProfileOwner, error: profileErrorOwner } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('emailProfile', ownerEmail)
-    .single();
+    const {
+      data: existingProfileOwner,
+      error: profileErrorOwner,
+    } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("emailProfile", ownerEmail)
+      .single();
 
     if (existingProfileOwner) {
-      console.error('Error fetching existing profile:', profileErrorOwner);
+      console.error("Error fetching existing profile:", profileErrorOwner);
     } else if (!existingProfileOwner) {
       const { data: newProfile, error: insertError } = await supabase
-        .from('profiles')
+        .from("profiles")
         .insert([
-          { first_name: ownerFirstName, last_name: ownerLastName, roleOfUser: 'owner', emailProfile: ownerEmail, id: uuidv4() }
+          {
+            first_name: ownerFirstName,
+            last_name: ownerLastName,
+            roleOfUser: "owner",
+            emailProfile: ownerEmail,
+            id: uuidv4(),
+          },
         ]);
 
       if (insertError) {
-        console.error('Error inserting new profile for owner:', insertError);
+        console.error("Error inserting new profile for owner:", insertError);
       } else {
-        console.log('Inserted new profile for owner:', newProfile);
+        console.log("Inserted new profile for owner:", newProfile);
       }
     } else {
-      console.log('Profile with this email already exists:', existingProfileOwner);
+      console.log(
+        "Profile with this email already exists:",
+        existingProfileOwner
+      );
     }
 
-
-    if (occupiedBy === 'Tenant'){
+    if (occupiedBy === "Tenant") {
       // Check if the tenant email already exists in the "units" table
-      const { data: unitsTenant, error: unitsErrorTenant } = await supabase
-        .from('units')
-        .select('tenant_email')
-        .eq('tenant_email', tenantEmail);
+      const {
+        data: unitsTenant,
+        error: unitsErrorTenant,
+      } = await supabase
+        .from("units")
+        .select("tenant_email")
+        .eq("tenant_email", tenantEmail);
 
       if (unitsErrorTenant) {
-        console.error("Error fetching units for tenant:", unitsErrorTenant.message);
+        console.error(
+          "Error fetching units for tenant:",
+          unitsErrorTenant.message
+        );
         return;
       }
 
@@ -408,35 +441,46 @@ const AddUnitForm = () => {
       if (errorT) {
         console.error("Error signing up:", errorT.message);
       } else {
-        alert('OTP has been sent to your email');
+        alert("OTP has been sent to your email");
       }
 
       // Check profile for tenant
-      const { data: existingProfileTenant, error: profileErrorTenant } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('emailProfile', tenantEmail)
-      .single();
+      const {
+        data: existingProfileTenant,
+        error: profileErrorTenant,
+      } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("emailProfile", tenantEmail)
+        .single();
 
       if (existingProfileTenant) {
-        console.error('Error fetching existing profile:', profileErrorTenant);
+        console.error("Error fetching existing profile:", profileErrorTenant);
       } else if (!existingProfileTenant) {
         const { data: newProfile, error: insertError } = await supabase
-          .from('profiles')
+          .from("profiles")
           .insert([
-            { first_name: tenantFirstName, last_name: tenantLastName, roleOfUser: 'tenant', emailProfile: tenantEmail, id: uuidv4() }
+            {
+              first_name: tenantFirstName,
+              last_name: tenantLastName,
+              roleOfUser: "tenant",
+              emailProfile: tenantEmail,
+              id: uuidv4(),
+            },
           ]);
 
         if (insertError) {
-          console.error('Error inserting new profile for tenant:', insertError);
+          console.error("Error inserting new profile for tenant:", insertError);
         } else {
-          console.log('Inserted new profile for tenant:', newProfile);
+          console.log("Inserted new profile for tenant:", newProfile);
         }
       } else {
-        console.log('Profile with this email already exists:', existingProfileOwner);
+        console.log(
+          "Profile with this email already exists:",
+          existingProfileOwner
+        );
       }
     }
-
   }; // end of handleAdd
 
   //const [open, setOpen] = useState(false); // State for controlling dialog visibility
@@ -444,21 +488,31 @@ const AddUnitForm = () => {
   const router = useRouter();
 
   return (
-    <Box className={styles.outsideContainer}>
+    <>
+      <Head>
+        <script
+          id="sc-script"
+          src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
+        />
+      </Head>
+      <Box className={styles.outsideContainer}>
         <Container className={styles.unitsContainer}>
-
-        <Typography variant="h4" gutterBottom className={styles.editUnitsHeader}>
-          Add Unit
-        </Typography>
-        <Typography 
-          variant="h5" 
-          gutterBottom 
-          sx={{textDecoration: 'underline'}} 
-          display="inline" 
-          style={{ color:"#333", padding: "2%" }}
+          <Typography
+            variant="h4"
+            gutterBottom
+            className={styles.editUnitsHeader}
           >
-          Owner Information
-        </Typography>
+            Add Unit
+          </Typography>
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{ textDecoration: "underline" }}
+            display="inline"
+            style={{ color: "#333", padding: "2%" }}
+          >
+            Owner Information
+          </Typography>
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <TextField
@@ -502,35 +556,35 @@ const AddUnitForm = () => {
                 fullWidth
                 margin="normal"
                 required
-                inputProps={{ 
+                inputProps={{
                   maxLength: 10,
-                  pattern: "[0-9]*"
+                  pattern: "[0-9]*",
                 }}
               />
             </Grid>
           </Grid>
-          <br/>
-          <Typography 
-            variant="h5" 
-            gutterBottom 
-            sx={{textDecoration: 'underline'}} 
-            display="inline" 
-            style={{ color:"#333", padding: "2%" }}
-            >
+          <br />
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{ textDecoration: "underline" }}
+            display="inline"
+            style={{ color: "#333", padding: "2%" }}
+          >
             Unit Information
           </Typography>
-          <br/>
+          <br />
           <Grid container spacing={2}>
             <Grid item xs={6}>
-                <TextField
-                  name="propertyName"
-                  label="Property Name"
-                  value={propertyName}
-                  onChange={(event) => setPropertyName(event.target.value)}
-                  fullWidth
-                  margin="normal"
-                  required
-                />
+              <TextField
+                name="propertyName"
+                label="Property Name"
+                value={propertyName}
+                onChange={(event) => setPropertyName(event.target.value)}
+                fullWidth
+                margin="normal"
+                required
+              />
             </Grid>
             <Grid item xs={6}>
               <TextField
@@ -547,15 +601,17 @@ const AddUnitForm = () => {
             <Grid item xs={6}>
               <TextField
                 required
-                name='unitSize'
-                type='text'
-                label='Size'
+                name="unitSize"
+                type="text"
+                label="Size"
                 value={unitSize}
                 onChange={(event) => handleSizeChange(event.target.value)}
-                InputProps={{ 
-                    startAdornment: <InputAdornment position="start">sqft</InputAdornment>,
-                    inputMode: 'numeric',
-                    pattern: '[0-9]*', //Allow only numeric numbers
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">sqft</InputAdornment>
+                  ),
+                  inputMode: "numeric",
+                  pattern: "[0-9]*", //Allow only numeric numbers
                 }}
                 margin="normal"
                 fullWidth
@@ -591,7 +647,9 @@ const AddUnitForm = () => {
                 name="condoFeeSqft"
                 label="Condo Fee Per sqft (monthly)"
                 value={condoFeeSqft}
-                onChange={(event) => handleCondoFeeSQFTChange(event.target.value)}
+                onChange={(event) =>
+                  handleCondoFeeSQFTChange(event.target.value)
+                }
                 fullWidth
                 margin="normal"
                 required
@@ -608,8 +666,6 @@ const AddUnitForm = () => {
                 required
               />
             </Grid>
-
-
 
             <Grid item xs={6}>
               <FormControl required fullWidth margin="normal">
@@ -630,9 +686,7 @@ const AddUnitForm = () => {
               </FormControl>
             </Grid>
             {occupiedBy === "Tenant" && (
-              <Grid container spacing={2} 
-                style={{margin: "0.2%"}}
-                >
+              <Grid container spacing={2} style={{ margin: "0.2%" }}>
                 <Grid item xs={6}>
                   <TextField
                     name="tenantFirstName"
@@ -676,9 +730,9 @@ const AddUnitForm = () => {
                     fullWidth
                     margin="normal"
                     required
-                    inputProps={{ 
+                    inputProps={{
                       maxLength: 10,
-                      pattern: "[0-9]*"
+                      pattern: "[0-9]*",
                     }}
                   />
                 </Grid>
@@ -686,11 +740,7 @@ const AddUnitForm = () => {
             )}
           </Grid>
           <Grid container justifyContent="center" style={{ marginTop: "20px" }}>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={handleAdd}
-            >
+            <Button variant="contained" size="large" onClick={handleAdd}>
               Save
             </Button>
             {isIncompleteForm && (
@@ -700,22 +750,29 @@ const AddUnitForm = () => {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
               >
-                <DialogTitle id="alert-dialog-title">{"Incomplete Form"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">
+                  {"Incomplete Form"}
+                </DialogTitle>
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description">
                     Please fill out all required fields before saving.
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={() => setIsIncompleteForm(false)} color="primary" autoFocus>
+                  <Button
+                    onClick={() => setIsIncompleteForm(false)}
+                    color="primary"
+                    autoFocus
+                  >
                     Okay
                   </Button>
                 </DialogActions>
               </Dialog>
             )}
           </Grid>
-      </Container>
-    </Box>
+        </Container>
+      </Box>
+    </>
   );
 };
 
