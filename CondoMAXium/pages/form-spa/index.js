@@ -137,7 +137,7 @@ const defaultTheme = createTheme();
  *
  * @returns {*}
  */
-function FormSpa() {
+const FormSpa = () => {
   const [open, setOpen] = useState(false);
   const [showThankYouPopup, setShowThankYouPopup] = useState(false);
   const [reservedTimes, setReservedTimes] = useState([]);
@@ -588,7 +588,7 @@ function FormSpa() {
       </Box>
     </ThemeProvider>
   );
-}
+};
 
 FormSpa.displayName = "FormSpa";
 
