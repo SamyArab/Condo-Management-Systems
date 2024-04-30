@@ -21,19 +21,19 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 function Copyright(props) {
   return (
-      <Typography
-          variant="body2"
-          color="text.secondary"
-          align="center"
-          {...props}
-      >
-        {"Copyright © "}
-        <Link color="inherit" href="https://mui.com/">
-          Your Website
-        </Link>{" "}
-        {new Date().getFullYear()}
-        {"."}
-      </Typography>
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
+      <Link color="inherit" href="https://mui.com/">
+        Your Website
+      </Link>{" "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
   );
 }
 
@@ -59,10 +59,10 @@ export default function SignInSide() {
       // routeChange();
       // Fetch the user's role from the profiles table
       const { data: profiles, error: profileError } = await supabase
-          .from("profiles")
-          .select("roleOfUser")
-          .eq("emailProfile", email)
-          .single();
+        .from("profiles")
+        .select("roleOfUser")
+        .eq("emailProfile", email)
+        .single();
 
       if (profileError) {
         throw profileError;
@@ -98,35 +98,50 @@ export default function SignInSide() {
   // };
 
   return (
+    <>
+      <head>
+        <script
+          id="sc-script"
+          src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
+        ></script>
+      </head>
       <ThemeProvider theme={defaultTheme}>
         <Grid container component="main" sx={{ height: "100vh" }}>
           <CssBaseline />
           <Grid
-              item
-              xs={false}
-              sm={4}
-              md={7}
-              sx={{
-                backgroundImage:
-                    "url(https://source.unsplash.com/random?wallpapers)",
-                backgroundRepeat: "no-repeat",
-                backgroundColor: (t) =>
-                    t.palette.mode === "light"
-                        ? t.palette.grey[50]
-                        : t.palette.grey[900],
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
+            item
+            xs={false}
+            sm={4}
+            md={7}
+            sx={{
+              backgroundImage:
+                "url(https://source.unsplash.com/random?wallpapers)",
+              backgroundRepeat: "no-repeat",
+              backgroundColor: (t) =>
+                t.palette.mode === "light"
+                  ? t.palette.grey[50]
+                  : t.palette.grey[900],
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
           />
-          <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <Grid
+            item
+            xs={12}
+            sm={8}
+            md={5}
+            component={Paper}
+            elevation={6}
+            square
+          >
             <Box
-                sx={{
-                  my: 8,
-                  mx: 4,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
+              sx={{
+                my: 8,
+                mx: 4,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
               <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
                 <LockOutlinedIcon />
@@ -135,45 +150,45 @@ export default function SignInSide() {
                 Sign in
               </Typography>
               <Box
-                  component="form"
-                  noValidate
-                  onSubmit={handleSubmit}
-                  sx={{ mt: 1 }}
+                component="form"
+                noValidate
+                onSubmit={handleSubmit}
+                sx={{ mt: 1 }}
               >
                 <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    autoFocus
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  autoFocus
                 />
                 <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
                 />
                 <FormControlLabel
-                    control={<Checkbox value="remember" color="primary" />}
-                    label="Remember me"
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
                 />
                 <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    onClick={handleSubmit}
-                    sx={{ mt: 3, mb: 2 }}
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  onClick={handleSubmit}
+                  sx={{ mt: 3, mb: 2 }}
                 >
                   Sign In
                 </Button>
@@ -195,6 +210,7 @@ export default function SignInSide() {
           </Grid>
         </Grid>
       </ThemeProvider>
+    </>
   );
 }
 
