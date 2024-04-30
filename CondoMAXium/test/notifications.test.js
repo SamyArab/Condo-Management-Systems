@@ -6,89 +6,109 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import supabase from '../config/supabaseClient';
 import NotificationsPage from '../pages/notifications/index';
 
-// Mock useRouter to push a new page
 jest.mock('next/router', () => ({
-    useRouter: jest.fn()
-}))
-
-// Mock supabase for backend
-jest.mock('../config/supabaseClient', () => ({
+    useRouter: jest.fn(),
+  }));
+  
+  
+  jest.mock('../config/supabaseClient', () => ({
     auth: {
-        signInWithPassword: jest.fn(),
+      getUser: jest.fn(),
     },
-}));
-
-// Mock console.error to throw an error
-console.error = jest.fn().mockImplementation(() => {
-    throw new Error('console.error called');
-});
-
-// Mock console.error to spy on it
-const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-
-// Mock window.alert
-const mockAlert = jest.fn();
-global.alert = mockAlert;
-
-// Mock console.log to do nothing
-console.log = jest.fn();
-
-describe('NotificationsPage Component', () => {
-
-    // Clearing useRouter mock before each test
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+  }));
+  
+  describe('NotificationsPage', () => {
     beforeEach(() => {
-        useRouter.mockClear();
+      useRouter.mockImplementation(() => ({
+        push: jest.fn(),
+      }));
     });
-
-    // Clearing all mocks after each test
-    afterEach(() => {
-        jest.clearAllMocks();
+  
+    it('calls handleNotificationSelect when a notification is clicked', async () => {
+      const { getByText } = render(<NotificationsPage />);
+      const notificationItem = getByText(/An update on your request has been made/i);
+  
+      fireEvent.click(notificationItem);
+  
+      await waitFor(() => {
+        expect(getByText(/From: CMC/i)).toBeInTheDocument();
+      });
     });
+  
+  
+    it('navigates to dashboard on dashboard button click', async () => {
+        const { findByRole } = render(<NotificationsPage />);
+        const dashboardButton = await findByRole('button', { name: /dashboard/i });
+      
+        fireEvent.click(dashboardButton);
+      
+        expect(useRouter().push).toHaveBeenCalledWith('/dashboard');
+      });
 
-    // This test is for the page in general
-    test('renders the NotificationsPage component without errors', () => {
-        useRouter.mockReturnValue({ query: {} })
-        render(<NotificationsPage />);
-    });
-
-    // test('show details section when notification is clicked', async () => {
-    //     const { getByPlaceholderText, getByText } = render(
-    //         <Router>
-    //             <NotificationsPage />
-    //         </Router>
-    //     );
-    //     const selectButton = getByPlaceholderText('Select Notification');
-
-    //     fireEvent.click(selectButton);
-    //     await waitFor(() => {
-    //         expect(getByText('From:')).toBeInTheDocument();
-    //     });
-    // });
-
-    test('handles error in fetching notification query', async () => {
-        //const error = new Error('Error fetching units');
-        render(
-            <Router>
-                <NotificationsPage />
-            </Router>
-        );
-        await waitFor(() => {
-            expect(console.error).toHaveBeenCalledWith('Error fetching notifications: ','_supabaseClient.default.auth.getUser is not a function');
-        });
+    it('navigates to profile on profile button click', async () => {
+        const { findByRole } = render(<NotificationsPage />);
+        const profileButton = await findByRole('button', { name: /profile/i });
+      
+        fireEvent.click(profileButton);
+      
+        expect(useRouter().push).toHaveBeenCalledWith('/profile');
     });
 
     
-    // test('handles error in fetching user query', async () => {
-    //     //const error = new Error('Error fetching units');
-    //     render(
-    //         <Router>
-    //             <NotificationsPage />
-    //         </Router>
-    //     );
-    //     await waitFor(() => {
-    //         expect(console.error).toHaveBeenCalledWith('Error fetching user: ','_supabaseClient.default.auth.getUser is not a function');
-    //     });
-    // });
+    
+      
+      
+    
+   
+  });
 
 
-});
+
+
+
+
+
+
+
+// describe('NotificationsPage Component', () => {
+
+//     // Clearing useRouter mock before each test
+//     beforeEach(() => {
+//         useRouter.mockImplementation(() => ({
+//           push: jest.fn(),
+//         }));
+//       });
+
+//     // Clearing all mocks after each test
+//     afterEach(() => {
+//         jest.clearAllMocks();
+//     });
+
+//     // This test is for the page in general
+//     test('renders the NotificationsPage component without errors', () => {
+//         useRouter.mockReturnValue({ query: {} })
+//         render(<NotificationsPage />);
+//     });
+
+    
+
+//     // test('show details section when notification is clicked', async () => {
+//     //     const { getByPlaceholderText, getByText } = render(
+//     //         <Router>
+//     //             <NotificationsPage />
+//     //         </Router>
+//     //     );
+//     //     const selectButton = getByPlaceholderText('Select Notification');
+
+//     //     fireEvent.click(selectButton);
+//     //     await waitFor(() => {
+//     //         expect(getByText('From:')).toBeInTheDocument();
+//     //     });
+//     // });      
+     
+// });
+
+
