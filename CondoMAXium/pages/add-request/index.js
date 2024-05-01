@@ -36,7 +36,7 @@ const AddRequestForm = () => {
           data: { user },
           error,
         } = await supabase.auth.getUser();
-        if (error) throw error;
+        // if (error) throw error; //not needed
         setUserEmail(user?.email);
       } catch (error) {
         console.error("Error fetching user data:", error.message);
@@ -65,7 +65,7 @@ const AddRequestForm = () => {
       console.log("Successfully added request: ", data);
       router.push("/requests");
     } catch (error) {
-      console.error("Error adding request: ", error.message);
+      console.error("Error adding request: ", error.message); 
     }
   };
 

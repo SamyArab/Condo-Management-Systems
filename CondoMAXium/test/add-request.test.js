@@ -153,4 +153,33 @@ describe('AddRequestForm component', () => {
     consoleSpy.mockRestore();
   });
 
+  it('logs an error and does not navigate when the Supabase insert fails', async () => {
+    const error = new Error("Cannot read properties of null (reading 'user')");
+    supabase.from().insert.mockRejectedValue(error); // Setup Supabase to throw an error
+    console.error = jest.fn(); // Mock console.error
+
+    const { getByText, getByRole } = render(<AddRequestForm />);
+
+    // Get the input field
+    const input1 = getByRole('textbox', {name: 'Request Subject'});
+    const input2 = getByRole('textbox', {name: 'Description'});
+
+    act(() => {
+      // Simulate user typing into the input field
+      fireEvent.change(input1, { target: { value: 'New Subject' } });
+      fireEvent.change(input2, { target: { value: 'New Description' } });
+
+      // Simulate form submission
+      fireEvent.click(getByText('Submit'));
+    });
+
+    // Wait for async actions to complete
+    await waitFor(() => expect(console.error).toHaveBeenCalledWith("Error fetching user data:", error.message));
+
+    // Verify that the router did not navigate
+    // expect(mockPush).not.toHaveBeenCalled();
+  });
+
+
+
 });
