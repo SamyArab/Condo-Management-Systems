@@ -10,6 +10,7 @@
     "test": "jest --coverage --watchAll"
   },
   "dependencies": {
+    "@babel/eslint-parser": "^7.24.5",
     "@babel/plugin-syntax-jsx": "^7.23.3",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
