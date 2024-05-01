@@ -195,7 +195,7 @@ const ReservationPage = () => {
           <AppBar position="absolute">
             <Toolbar sx={{ justifyContent: "space-between", pr: "24px" }}>
               <Typography component="h1" variant="h6" color="inherit" noWrap>
-                Common Facilities / Reservations
+                CondoMAXium
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <IconButton
@@ -205,17 +205,35 @@ const ReservationPage = () => {
                   onClick={handleViewReservationsClick}
                 >
                   {/* Adjusted margin for spacing */}
-                  <Typography variant="body2" sx={{ fontSize: "1rem" }}>
-                    My Reservations
-                  </Typography>
+                  <Typography
+                component="h2"
+                variant="h6"
+                color="inherit"
+                noWrap
+                onClick={() => router.push("/dashboard")}
+                // sx={{ flexGrow: 1 }}
+              >
+                Dashboard
+              </Typography>
+              <Typography
+                component="h2"
+                variant="h6"
+                color="inherit"
+                noWrap
+                sx={{pl: 3}}
+                onClick={() => router.push("/dashboard")}
+                // sx={{ flexGrow: 1 }}
+              >
+                My Reservations
+              </Typography>
                 </IconButton>
                 <IconButton
                   color="inherit"
                   onClick={toggleNotifications}
                   ref={notificationButtonRef}
                 >
-                  <Badge badgeContent={4} color="secondary">
-                    <NotificationsIcon />
+                  <Badge color="secondary">
+                  <NotificationsIcon  onClick={() => router.push("/notifications")}/>
                   </Badge>
                 </IconButton>
                 <CSSTransition
@@ -246,18 +264,9 @@ const ReservationPage = () => {
                     </Typography>
                   </Box>
                 </CSSTransition>
-                <IconButton onClick={handleProfileClick}>
-                  <Badge
-                    color="secondary"
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                  >
-                    <AccountCircle sx={{ fontSize: 40 }} />{" "}
-                    {/* Adjust the icon size as needed */}
-                  </Badge>
-                </IconButton>
+                <IconButton aria-label="profile" color="inherit" onClick={() => router.push("/profile")}>
+                <AccountCircleIcon />
+              </IconButton>
               </Box>
             </Toolbar>
           </AppBar>

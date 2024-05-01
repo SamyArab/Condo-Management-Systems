@@ -206,7 +206,7 @@ const UserRequests = () => {
       <ThemeProvider theme={defaultTheme}>
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
-          <AppBar position="absolute" open={open}>
+          <AppBar position="absolute" >
             <Toolbar sx={{ pr: "24px" }}>
               <IconButton
                 edge="start"

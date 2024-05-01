@@ -213,7 +213,7 @@ const CMCUnits = () => {
       </Head>
       {/* <Header></Header> */}
       {/* <Container className="units-container" maxWidth={5}> */}
-      <AppBar position="absolute" open={open}>
+      <AppBar position="absolute">
             <Toolbar sx={{ pr: "24px" }}>
               {/* <IconButton
                 edge="start"

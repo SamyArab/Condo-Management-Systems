@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useRouter } from "next/router";
-import { useState, useEffect } from 'react';
 
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -31,7 +30,6 @@ import supabase from "../../config/supabaseClient";
 import Head from "next/head";
 
 function Copyright(props) {
-  
   return (
     <Typography
       variant="body2"
@@ -99,8 +97,6 @@ const Drawer = styled(MuiDrawer, {
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
-  
-  const [notificationCount, setNotificationCount] = useState('');
   const [open, setOpen] = React.useState(true);
   const [showMoreInfo, setShowMoreInfo] = React.useState(false); // Define showMoreInfo state variable
   const router = useRouter();
@@ -127,21 +123,6 @@ export default function Dashboard() {
         const {
           data: { user },
         } = await supabase.auth.getUser();
-
-        const { data: RequestData, error:RequestError } = await supabase
-        .from('requests')
-        .select('status')
-        .eq('user', user.email)
-        .eq('status', 'Open');
-
-        if (error) {
-          console.log('Error: ', RequestError);
-        } else {
-          console.log('Returned data: ', RequestData);
-          console.log(`The email ${user.email} exists in ${RequestData.length} row(s) with status 'Open'.`);
-          setNotificationCount(RequestData.length);
-        }
-        
 
         // Extract user email
         const userEmail = user?.email;
@@ -196,9 +177,6 @@ export default function Dashboard() {
   const goToProfile = () => {
     router.push("/profile");
   };
-  const goToNotifications = () => {
-    router.push("/notifications");
-  };
 
   return (
     <>
@@ -211,24 +189,20 @@ export default function Dashboard() {
       <ThemeProvider theme={defaultTheme}>
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
-          <AppBar position="absolute" open={open}>
-            <Toolbar
-              sx={{
-                pr: "24px", // keep right padding when drawer closed
-              }}
-            >
-              <IconButton
+          <AppBar position="absolute" >
+            <Toolbar sx={{ pr: "24px" }}>
+              {/* <IconButton
                 edge="start"
                 color="inherit"
                 aria-label="open drawer"
-                onClick={toggleDrawer}
+                // onClick={toggleDrawer}
                 sx={{
                   marginRight: "36px",
                   ...(open && { display: "none" }),
                 }}
               >
                 <MenuIcon />
-              </IconButton>
+              </IconButton> */}
               <Typography
                 component="h1"
                 variant="h6"
@@ -238,13 +212,22 @@ export default function Dashboard() {
               >
                 Dashboard
               </Typography>
-              <IconButton color="inherit" onClick={goToNotifications}>
-                <Badge badgeContent={notificationCount} color="secondary">
-                  <NotificationsIcon />
+              <Typography
+                component="h2"
+                variant="h6"
+                color="inherit"
+                noWrap
+                onClick={() => router.push("/reservation")}
+                // sx={{ flexGrow: 1 }}
+              >
+                Reservation
+              </Typography>
+              <IconButton color="inherit">
+                <Badge color="secondary">
+                  <NotificationsIcon  onClick={() => router.push("/notifications")}/>
                 </Badge>
               </IconButton>
-              {/* Profile Button */}
-              <IconButton color="inherit" onClick={goToProfile}>
+              <IconButton aria-label="profile" color="inherit" onClick={() => router.push("/profile")}>
                 <AccountCircleIcon />
               </IconButton>
             </Toolbar>
@@ -280,8 +263,8 @@ export default function Dashboard() {
               ))}
               <Divider sx={{ my: 1 }} />
 
-              {/* Add property button
-               <ListItem
+               {/* Add property button */}
+               {/* <ListItem
                 button
                 aria-label="add property"
                 onClick={() => router.push("/add-property")}
@@ -290,8 +273,7 @@ export default function Dashboard() {
                   <AddIcon />
                 </ListItemIcon>
                 <ListItemText primary="Add Property" />
-              </ListItem> */} 
-
+              </ListItem> */}
             </List>
           </Drawer>
           <Box
