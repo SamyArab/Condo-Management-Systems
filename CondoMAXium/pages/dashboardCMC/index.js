@@ -21,8 +21,10 @@ import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import supabase from "../../config/supabaseClient";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AddIcon from "@mui/icons-material/Add";
 
 import Head from "next/head";
+
 
 // Define width of drawer
 const drawerWidth = 240;
@@ -113,6 +115,7 @@ export default function PropertyList() {
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
 
   const toggleDrawer = () => {
     setOpen(!open);

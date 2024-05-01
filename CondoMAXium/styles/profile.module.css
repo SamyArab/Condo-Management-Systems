@@ -1,41 +1,21 @@
-/* body {
-  margin: 0; /* Réinitialise les marges */
-/* padding: 0;  */
-/* Réinitialise les rembourrages */
-/* } */
-
 /* Outer Container */
 .outerContainer {
   background-color: white;
-  /*height: 100vh; !* Prend toute la hauteur de la fenêtre *!*/
   display: flex;
-  justify-content: center; /* Centre les éléments horizontalement */
-  align-items: center; /* Centre les éléments verticalement */
-  margin-top: 105px;
-  /*margin-bottom: 10px;*/
-  /*width: 100%; !* Prend toute la largeur de son conteneur parent *!*/
-  /*margin: 0; !* Supprime les marges par défaut du body *!*/
-  /*padding: 0; !* Supprime les rembourrages par défaut du body *!*/
-  background-image: url("../public/bg-image2.png");
-  background-size: 75%;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-size: cover; /* Cover the entire area if using background image */
 }
 
 /* Profile Container */
 .profileContainer {
-  /*width: 95% !important; !* Ajustez la largeur selon vos besoins *!*/
-  max-width: 55% !important;
-  /*margin: 40% !important; !* Centre le conteneur horizontalement *!*/
-  /*margin-left: 40% !important;*/
-  padding: 1.5%; /* Ajoutez un peu de marge intérieure */
-  background-color: rgba(0, 0, 0, 0.1);
-  color-interpolation: linearRGB;
+  max-width: 75% !important;
+  padding: 1.5%; /* Add some padding */
+  background-color: rgba(0, 0, 0, 0.1); /* Slight transparency */
   border-radius: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  box-sizing: content-box !important;
-}
-
-.secondGrid {
-  margin-bottom: -6% !important; /* Adjust the margin-bottom as needed */
 }
 
 .profileBox {
@@ -44,58 +24,8 @@
   margin: 0 auto;
   padding: 20px;
   background-color: white;
-  color-interpolation: linearRGB;
   border-radius: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.keyBox {
-  /*max-width: 100%;*/
-  /*margin: 0 auto;*/
-  padding: 20px;
-
-  /*max-height: 100%;*/
-  background-color: white;
-  color-interpolation: linearRGB;
-  border-radius: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Properties Box */
-.propertiesDiv {
-  overflow-y: auto; /* Utilisez auto au lieu de scroll pour afficher la barre de défilement uniquement si nécessaire */
-  display: flex;
-  flex-direction: column;
-  /*padding-right: 10px; !* Ajoutez un padding pour éviter le chevauchement du contenu par la barre de défilement *!*/
-}
-
-.propertiesBox {
-  overflow: hidden; /* Ajoutez overflow: hidden; pour cacher tout contenu dépassant le cadre du deuxième grid */
-  margin-bottom: 3%;
-  padding: 20px;
-  background-color: white;
-  color-interpolation: linearRGB;
-  border-radius: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-height: 47%;
-}
-
-/* Properties Box */
-.propertiesBox {
-  overflow-y: scroll;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Payment Container */
-.paymentBox {
-  background-color: white;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-height: 200px;
-  overflow: auto;
 }
 
 /* Profile Header */
@@ -105,12 +35,12 @@
   text-align: center;
 }
 
-/* Profile Details */
 .profileDetails {
+  text-align: center; /* Centers the text */
   margin-top: 20px;
-  text-align: left;
   font-size: 15px !important;
 }
+
 
 /* Profile Details Strong */
 .profileDetails strong {
@@ -126,35 +56,10 @@
   margin-top: 20px;
 }
 
-/* Payment Title */
-.paymentTitle,
-.keyTitle,
-.propertiesTitle,
-.profileTitle {
+/* Titles used within the Profile Section */
+.profileTitle, .keyTitle {
   font-size: 20px !important;
   color: black;
   text-align: center;
   margin-bottom: 20px;
-}
-
-/* Payment Table */
-.paymentTable {
-  width: 100%;
-}
-
-/* Payment Table Headers and Cells */
-.paymentTable th,
-.paymentTable td {
-  padding: 10px;
-  text-align: center;
-}
-
-/* Payment Table Header */
-.paymentTable th {
-  background-color: #f0f0f0;
-}
-
-/* Payment Table Button */
-.paymentTable td button {
-  text-transform: none;
 }

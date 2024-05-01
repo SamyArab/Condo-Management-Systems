@@ -1,134 +1,106 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import {
-  AppBar,
-  Box,
-  Container,
-  Toolbar,
-  IconButton,
-  Typography,
-  Menu,
-  Tooltip,
-  Avatar,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+    AppBar,
+    Box,
+    Container,
+    Toolbar,
+    IconButton,
+    Typography,
+    Menu,
+    MenuItem,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import supabase from '../../config/supabaseClient'; // Ensure the correct path
 
 const Header = () => {
-  const [anchorElNav, setAnchorElNav] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
+    const [anchorElNav, setAnchorElNav] = useState(null);
+    const [role, setRole] = useState(null);
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
+    useEffect(() => {
+        const fetchRole = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('roleOfUser')
+                    .eq('emailProfile', user.email)
+                    .single();
+                setRole(profile.roleOfUser);
+            }
+        };
 
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
+        fetchRole();
+    }, []);
 
-  const handleCloseMenu = (type) => {
-    type === "nav" ? setAnchorElNav(null) : setAnchorElUser(null);
-  };
+    const handleOpenNavMenu = (event) => {
+        console.log('Opening menu...');
+        setAnchorElNav(event.currentTarget);
+    };
 
-  return (
-    <AppBar position="static" sx={{ paddingY: "10px", marginBottom: "25px" }}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Typography
-            variant="h4"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "Arial",
-              fontWeight: 700,
-              // letterSpacing: ".1rem",
-              color: "inherit",
-              textDecoration: "none",
-              marginTop: "-15px",
-              alignSelf: "center", // align to the vertical center
-            }}
-          >
-            CondoMAXium
-          </Typography>
+    const handleCloseMenu = () => {
+        console.log('Closing menu...');
+        setAnchorElNav(null);
+    };
 
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "flex", md: "none" },
-              alignSelf: "center",
-            }}
-          >
-            <IconButton
-              size="large"
-              aria-label="menu"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={() => handleCloseMenu("nav")}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-              {/* You can add your custom menu items here */}
-            </Menu>
-          </Box>
+    const handleMenuItemClick = () => {
+        handleCloseMenu();
+        if (role === 'owner') {
+            window.location.href = '/dashboard';
+        } else if (role === 'cmc') {
+            window.location.href = '/dashboardCMC';
+        } else {
+            window.location.href = '/dashboard'; // Default navigation
+        }
+    };
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              marginLeft: "auto",
-              marginTop: "-15px",
-            }}
-          >
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="X" src="/static/images/avatar.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Typography variant="body1" sx={{ marginLeft: "8px" }}></Typography>
-          </Box>
-          {/*
-                    <Menu
-                        sx={{ mt: '45px' }}
-                        id="menu-appbar"
-                        anchorEl={anchorElUser}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
+    return (
+        <AppBar position="static" sx={{ flexGrow: 1, marginBottom: "25px" }}>
+            <Container maxWidth="xl" sx={{ paddingX: 0 }}>
+                <Toolbar disableGutters>
+                    <Typography
+                        variant="h4"
+                        noWrap
+                        component="a"
+                        href="#app-bar-with-responsive-menu"
+                        sx={{
+                            flexGrow: 1,
+                            fontFamily: "Arial",
+                            fontWeight: 700,
+                            color: "inherit",
+                            textDecoration: "none",
+                            marginTop: "-15px",
+                            alignSelf: "center",
                         }}
-                        keepMounted
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        open={Boolean(anchorElUser)}
-                        onClose={() => handleCloseMenu('user')}
-                    > 
-                        {/* You can add your custom menu items here */}
-          {/* </Menu> */}
-        </Toolbar>
-      </Container>
-    </AppBar>
-  );
+                    >
+                        CondoMAXium
+                    </Typography>
+
+                    <Box sx={{ flexGrow: 1 }} />
+
+                    <Box>
+                        <IconButton
+                            size="large"
+                            aria-label="menu"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={handleOpenNavMenu}
+                            color="inherit"
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={anchorElNav}
+                            open={Boolean(anchorElNav)}
+                            onClose={handleCloseMenu}
+                        >
+                            <MenuItem onClick={handleMenuItemClick}>Dashboard</MenuItem>
+                        </Menu>
+                    </Box>
+                </Toolbar>
+            </Container>
+        </AppBar>
+    );
 };
 
 export default Header;

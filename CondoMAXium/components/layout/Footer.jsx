@@ -1,11 +1,11 @@
-// Footer.tsx
+// Footer.jsx
 import React from "react";
 
 const Footer = () => {
   return (
     <footer
       style={{
-        backgroundColor: "rgba(0, 0, 0, 0.1)",
+        backgroundColor: "white",
         padding: "40px",
         textAlign: "center",
       }}
