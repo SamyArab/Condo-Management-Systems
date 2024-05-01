@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useRouter } from "next/router";
+
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
@@ -21,9 +22,6 @@ import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import supabase from "../../config/supabaseClient";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-
-import { useRouter } from "next/router";
-
 
 // Define width of drawer
 const drawerWidth = 240;
@@ -120,7 +118,6 @@ export default function PropertyList() {
         setOpen(!open);
     };
 
-    const router = useRouter();
 
     // Function to render a single property
     const renderProperty = (property) => {
@@ -207,6 +204,7 @@ export default function PropertyList() {
                             aria-label="Add Amenities"
                             onClick={handleAmenitiesClick}
                             sx={{ minWidth: 120, marginBottom: '8px', width: '100%' }}
+                            name="Add Amenities" // Set the name attribute
                         >
                             Add Amenities
                         </Button>
@@ -214,8 +212,10 @@ export default function PropertyList() {
                         <Button
                             variant="contained"
                             color="secondary"
+                            aria-label="Maintenance"
                             onClick={handleMaintenanceClick}
                             sx={{ minWidth: 120, width: '100%' }}
+                            name="Maintenance" // Set the name attribute
                         >
                             Maintenance
                         </Button>
@@ -258,11 +258,11 @@ export default function PropertyList() {
                             Dashboard CMC
                         </Typography>
                         <IconButton color="inherit">
-                            <Badge badgeContent={4} color="secondary">
+                            <Badge aria-label="notification" badgeContent={4} color="secondary">
                                 <NotificationsIcon />
                             </Badge>
                         </IconButton>
-                        <IconButton color="inherit" onClick={goToProfile}>
+                        <IconButton aria-label="profile" color="inherit" onClick={goToProfile}>
                             <AccountCircleIcon />
                         </IconButton>
                     </Toolbar>
