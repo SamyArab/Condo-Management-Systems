@@ -20,7 +20,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
-const AddPropertyForm = () => {
+const AddPropertyForm = () => { 
   const [propertyName, setPropertyName] = useState("");
   const [yearBuilt, setYearBuilt] = useState("");
   const [unitCount, setUnitCount] = useState("");
@@ -37,6 +37,7 @@ const AddPropertyForm = () => {
       const { data, error } = await supabase.auth.getUser();
       if (data && data.user) {
         setUserId(data.user.id);
+        console.log("User ID set:", data.user.id); // Debugging log
       }
     };
 

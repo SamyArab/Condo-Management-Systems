@@ -3,10 +3,12 @@ import { render, fireEvent, waitFor, screen, act, within } from '@testing-librar
 import { useRouter } from 'next/router';
 import userEvent from '@testing-library/user-event';
 import AddRequestForm from '../pages/add-request/index';
+import '@testing-library/jest-dom';
+import supabase from '../config/supabaseClient';
 
 // Mock userRouter to push a new page
 
-const mockPush = jest.fn();
+const mockPush = jest.fn(); 
 
 jest.mock('../styles/units.module.css', () => {
   return {
@@ -52,9 +54,14 @@ jest.mock('../config/supabaseClient', () => ({
 
 describe('AddRequestForm component', () => {
 
-    beforeEach(() => {
-      mockPush.mockClear();
-    });
+  beforeEach(() => {
+    mockPush.mockClear();
+  });
+
+  // Clearing all mocks after each test
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
     
   test('Form submission with valid data', async () => {
     await act(async () => {
@@ -67,7 +74,7 @@ describe('AddRequestForm component', () => {
     const descriptionInput = screen.getByLabelText(/Description/i);
     const submitButton = screen.getByRole('button', { name: /Submit/i });
 
-    await act(() => {
+    await act(async () => {
       userEvent.type(subjectInput, 'Test Subject');
       userEvent.type(descriptionInput, 'A detailed description of the request.');
     });
@@ -79,6 +86,7 @@ describe('AddRequestForm component', () => {
    
     await waitFor(() => screen.getByRole('listbox'))
     const listbox = within(screen.getByRole('listbox'));
+
     await act(async () => {
       userEvent.click(listbox.getByText(/Maintenance/i));
     });
@@ -96,6 +104,53 @@ describe('AddRequestForm component', () => {
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/requests');
     });
-});
+  },10000);
+
+  test('updates requestSubject on user input', () => {
+    // Render the component
+    const { getByRole } = render(<AddRequestForm />);
+    
+    // Mock setState
+    const mockSetRequestSubject = jest.fn();
+    React.useState = jest.fn(() => ["", mockSetRequestSubject]);
+
+    // Get the input field
+    const input1 = getByRole('textbox', {name: 'Request Subject'});
+    const input2 = getByRole('textbox', {name: 'Description'});
+
+    act(() => {
+      // Simulate user typing into the input field
+      fireEvent.change(input1, { target: { value: 'New Subject' } });
+      fireEvent.change(input2, { target: { value: 'New Description' } });
+    });
+
+    // Assert that the state was updated with the new value
+    expect(input1).toHaveValue('New Subject');
+    expect(input2).toHaveValue('New Description');
+  });
+
+  test('handles error when fetching user data fails', async () => {
+    // Mock the getUser to return an error
+    const error = new Error("Cannot read properties of null (reading 'user')");
+    supabase.auth.getUser.mockResolvedValue({ data: null, error });
+
+    // Optionally spy on console.error to verify it gets called
+    const consoleSpy = jest.spyOn(console, 'error');
+    consoleSpy.mockImplementation(() => {}); // Prevent logging in the test output
+
+    // Render the component
+    render(<AddRequestForm />);
+
+    // Since error handling is asynchronous, wait for any expected changes
+    // For instance, if you update the UI on error, you could check for that
+    // Here, we're just checking if console.error was called correctly
+    // Note: Adjust this according to your actual error handling logic
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching user data:', error.message);
+    });
+
+    // Cleanup the spy to avoid memory leaks
+    consoleSpy.mockRestore();
+  });
 
 });

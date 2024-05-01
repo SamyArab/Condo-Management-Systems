@@ -2,5 +2,6 @@
   "extends": ["next"],
   "rules": {
     "react/display-name": "off"
-  }
+  },
+  "parser": "@babel/eslint-parser"
 }
