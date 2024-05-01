@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useRouter } from "next/router";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -31,7 +31,6 @@ import supabase from "../../config/supabaseClient";
 import Head from "next/head";
 
 function Copyright(props) {
-  
   return (
     <Typography
       variant="body2"
@@ -99,8 +98,7 @@ const Drawer = styled(MuiDrawer, {
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
-  
-  const [notificationCount, setNotificationCount] = useState('');
+  const [notificationCount, setNotificationCount] = useState("");
   const [open, setOpen] = React.useState(true);
   const [showMoreInfo, setShowMoreInfo] = React.useState(false); // Define showMoreInfo state variable
   const router = useRouter();
@@ -128,20 +126,21 @@ export default function Dashboard() {
           data: { user },
         } = await supabase.auth.getUser();
 
-        const { data: RequestData, error:RequestError } = await supabase
-        .from('requests')
-        .select('status')
-        .eq('user', user.email)
-        .eq('status', 'Open');
+        const { data: RequestData, error: RequestError } = await supabase
+          .from("requests")
+          .select("status")
+          .eq("user", user.email)
+          .eq("status", "Open");
 
         if (error) {
-          console.log('Error: ', RequestError);
+          console.log("Error: ", RequestError);
         } else {
-          console.log('Returned data: ', RequestData);
-          console.log(`The email ${user.email} exists in ${RequestData.length} row(s) with status 'Open'.`);
+          console.log("Returned data: ", RequestData);
+          console.log(
+            `The email ${user.email} exists in ${RequestData.length} row(s) with status 'Open'.`
+          );
           setNotificationCount(RequestData.length);
         }
-        
 
         // Extract user email
         const userEmail = user?.email;
@@ -150,10 +149,10 @@ export default function Dashboard() {
         }
 
         const { data: profiles, error: profileError } = await supabase
-            .from("profiles")
-            .select("roleOfUser")
-            .eq("emailProfile", userEmail)
-            .single();
+          .from("profiles")
+          .select("roleOfUser")
+          .eq("emailProfile", userEmail)
+          .single();
 
         if (profileError) {
           throw profileError;
@@ -165,14 +164,14 @@ export default function Dashboard() {
         let { data: fetchedUnits, error: unitError } = {};
         if (role === "tenant") {
           ({ data: fetchedUnits, error: unitError } = await supabase
-              .from("units")
-              .select("*")
-              .eq("tenant_email", userEmail));
+            .from("units")
+            .select("*")
+            .eq("tenant_email", userEmail));
         } else if (role === "owner") {
           ({ data: fetchedUnits, error: unitError } = await supabase
-              .from("units")
-              .select("*")
-              .eq("emailUnit", userEmail));
+            .from("units")
+            .select("*")
+            .eq("emailUnit", userEmail));
         }
 
         if (unitError) {
@@ -190,7 +189,6 @@ export default function Dashboard() {
 
     fetchUnits();
   }, []);
-
 
   // Handler function to navigate to the profile page
   const goToProfile = () => {
@@ -280,9 +278,9 @@ export default function Dashboard() {
               ))}
               <Divider sx={{ my: 1 }} />
 
-//               {/* Add property button */}
-//               <ListItem
-//                 button
+              {/* Add property button */}
+              {/* <ListItem */}
+              {/* //                 button
 //                 aria-label="add property"
 //                 onClick={() => router.push("/add-property")}
 //               >
@@ -290,7 +288,7 @@ export default function Dashboard() {
 //                   <AddIcon />
 //                 </ListItemIcon>
 //                 <ListItemText primary="Add Property" />
-//               </ListItem>
+//               </ListItem> */}
             </List>
           </Drawer>
           <Box
