@@ -14,6 +14,10 @@ import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import HomeIcon from "@mui/icons-material/Home";
@@ -131,14 +135,23 @@ export default function PropertyList() {
   // Function to render a single property
   const renderProperty = (property) => {
     // Handle click event for adding amenities
-    const handleAmenitiesClick = () => {
+    const handleAmenitiesClick = (propertyid) => {
       // Navigate to add amenities page
-      console.log(`Navigating to add amenities for ${property.name}`);
+      console.log(`Navigating to add amenities for`, propertyid);
+      // router.push({
+      //   pathname: "/add-amenity",
+      //   // query: { propertyid: propertyid },
+      // });
+
     };
     // Handle click event for maintenance
-    const handleMaintenanceClick = () => {
+    const handleMaintenanceClick = (propertyId) => {
       // Navigate to maintenance page
-      console.log(`Navigating to maintenance for ${property.name}`);
+      console.log(`Navigating to maintenance for`, propertyId);
+      // router.push({
+      //   pathname: "/requests-cmc",
+      //   // query: { propertyid: propertyid },
+      // });
     };
     const handlePropertyClick = (propertyid) => {
       console.log("viewing property with index :", propertyid);
@@ -222,9 +235,10 @@ export default function PropertyList() {
             >
               <Button
                 variant="contained"
-                color="primary"
+                color="secondary"
                 aria-label="Add Amenities"
-                onClick={handleAmenitiesClick}
+                // onClick={handleAmenitiesClick(property.propertyId)}
+                onClick={() => router.push("/add-amenity")}
                 sx={{ minWidth: 120, marginBottom: "8px", width: "100%" }}
                 name="Add Amenities" // Set the name attribute
                 >
@@ -235,11 +249,22 @@ export default function PropertyList() {
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={handleMaintenanceClick}
-                sx={{ minWidth: 120, width: "100%" }}
+                // onClick={handleMaintenanceClick(property.propertyId)}
+                onClick={() => router.push("/requests-cmc")}
+                sx={{ minWidth: 120, marginBottom: "8px", width: "100%" }}
                 name="Maintenance" // Set the name attribute
               >
                 Maintenance
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                // onClick={handleMaintenanceClick(property.propertyId)}
+                onClick={() => router.push("/units")}
+                sx={{ minWidth: 120, width: "100%" }}
+                name="Units" // Set the name attribute
+              >
+                Units
               </Button>
             </div>
           </Paper>
@@ -287,9 +312,19 @@ export default function PropertyList() {
               >
                 Dashboard CMC
               </Typography>
+              <Typography
+                component="h2"
+                variant="h6"
+                color="inherit"
+                noWrap
+                onClick={() => router.push("/manage-employees")}
+                // sx={{ flexGrow: 1 }}
+              >
+                Employees
+              </Typography>
               <IconButton color="inherit">
-                <Badge aria-label="notification" badgeContent={4} color="secondary">
-                  <NotificationsIcon />
+                <Badge aria-label="notification" color="secondary">
+                  <NotificationsIcon  onClick={() => router.push("/notifications-cmc")}/>
                 </Badge>
               </IconButton>
               <IconButton aria-label="profile" color="inherit" onClick={goToProfile}>
@@ -311,6 +346,36 @@ export default function PropertyList() {
               </IconButton>
             </Toolbar>
             <Divider />
+            <List component="nav">
+              {/* Existing list items */}
+              {/* <Divider sx={{ my: 1 }} />
+              {units.map((unit) => (
+                <ListItem
+                  button
+                  key={unit.id}
+                  onClick={() => handleClick(unit)}
+                >
+                  <ListItemIcon>
+                    <PropertyIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={unit.property_name} />
+                </ListItem>
+              ))}
+              <Divider sx={{ my: 1 }} /> */}
+
+               {/* Add property button */}
+               <ListItem
+                button
+                aria-label="add property"
+                onClick={() => router.push("/add-property")}
+              >
+                <ListItemIcon>
+                  <AddIcon />
+                </ListItemIcon>
+                <ListItemText primary="Add Property" />
+              </ListItem>  
+
+            </List>
           </Drawer>
           <Box
             component="main"

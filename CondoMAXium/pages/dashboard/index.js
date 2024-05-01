@@ -280,17 +280,18 @@ export default function Dashboard() {
               ))}
               <Divider sx={{ my: 1 }} />
 
-//               {/* Add property button */}
-//               <ListItem
-//                 button
-//                 aria-label="add property"
-//                 onClick={() => router.push("/add-property")}
-//               >
-//                 <ListItemIcon>
-//                   <AddIcon />
-//                 </ListItemIcon>
-//                 <ListItemText primary="Add Property" />
-//               </ListItem>
+              {/* Add property button
+               <ListItem
+                button
+                aria-label="add property"
+                onClick={() => router.push("/add-property")}
+              >
+                <ListItemIcon>
+                  <AddIcon />
+                </ListItemIcon>
+                <ListItemText primary="Add Property" />
+              </ListItem> */} 
+
             </List>
           </Drawer>
           <Box

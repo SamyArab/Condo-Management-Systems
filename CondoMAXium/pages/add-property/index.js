@@ -10,8 +10,15 @@ import {
   Dialog,
   DialogTitle,
   DialogActions,
+  AppBar, 
+  Toolbar, 
+  Badge, 
+  IconButton
 } from "@mui/material";
 import Head from "next/head";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 const AddPropertyForm = () => {
   const [propertyName, setPropertyName] = useState("");
@@ -80,6 +87,49 @@ const AddPropertyForm = () => {
           src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
         />
       </Head>
+      <AppBar position="absolute" open={open}>
+            <Toolbar sx={{ pr: "24px" }}>
+              {/* <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                // onClick={toggleDrawer}
+                sx={{
+                  marginRight: "36px",
+                  ...(open && { display: "none" }),
+                }}
+              >
+                <MenuIcon />
+              </IconButton> */}
+              <Typography
+                component="h1"
+                variant="h6"
+                color="inherit"
+                noWrap
+                sx={{ flexGrow: 1 }}
+              >
+                CondoMAXium
+              </Typography>
+              <Typography
+                component="h2"
+                variant="h6"
+                color="inherit"
+                noWrap
+                onClick={() => router.push("/dashboardCMC")}
+                // sx={{ flexGrow: 1 }}
+              >
+                Dashboard
+              </Typography>
+              <IconButton color="inherit">
+                <Badge color="secondary">
+                  <NotificationsIcon  onClick={() => router.push("/notifications-cmc")}/>
+                </Badge>
+              </IconButton>
+              <IconButton aria-label="profile" color="inherit" onClick={() => router.push("/profile")}>
+                <AccountCircleIcon />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
       <div style={{ paddingTop: "140px", paddingBottom: "40px" }}>
         {" "}
         {/* Add padding top and bottom */}
@@ -179,7 +229,7 @@ const AddPropertyForm = () => {
                 type="submit"
                 variant="contained"
                 color="inherit"
-                onClick={() => router.push("/profile")} //where is onClick={handleOpen}
+                onClick={() => router.push("/dashboardCMC")} //where is onClick={handleOpen}
               >
                 Register Property
               </Button>

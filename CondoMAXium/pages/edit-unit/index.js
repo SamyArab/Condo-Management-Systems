@@ -15,11 +15,18 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  AppBar, 
+  Toolbar, 
+  Badge, 
+  IconButton
 } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import supabase from "../../config/supabaseClient";
 import styles from "../../styles/units.module.css";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 import Head from "next/head";
 
@@ -250,6 +257,49 @@ const EditUnitPage = () => {
           src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
         />
       </Head>
+      <AppBar position="absolute" open={open}>
+            <Toolbar sx={{ pr: "24px" }}>
+              {/* <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                // onClick={toggleDrawer}
+                sx={{
+                  marginRight: "36px",
+                  ...(open && { display: "none" }),
+                }}
+              >
+                <MenuIcon />
+              </IconButton> */}
+              <Typography
+                component="h1"
+                variant="h6"
+                color="inherit"
+                noWrap
+                sx={{ flexGrow: 1 }}
+              >
+                CondoMAXium
+              </Typography>
+              <Typography
+                component="h2"
+                variant="h6"
+                color="inherit"
+                noWrap
+                onClick={() => router.push("/dashboardCMC")}
+                // sx={{ flexGrow: 1 }}
+              >
+                Dashboard
+              </Typography>
+              <IconButton color="inherit">
+                <Badge color="secondary">
+                  <NotificationsIcon  onClick={() => router.push("/notifications-cmc")}/>
+                </Badge>
+              </IconButton>
+              <IconButton aria-label="profile" color="inherit" onClick={() => router.push("/profile")}>
+                <AccountCircleIcon />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
       <Box className={styles.outsideContainer}>
         <Container className={styles.unitsContainer}>
           <Typography
@@ -492,9 +542,19 @@ const EditUnitPage = () => {
             )}
           </Grid>
           <Grid container justifyContent="center" style={{ marginTop: "20px" }}>
-            <Button variant="contained" size="large" onClick={handleDBChange}>
+          <Button
+                  variant="contained"
+                  size="large"
+                  startIcon={<ArrowBackIosNewIcon />}
+                  sx={{ my: 1, ml: 5 }}
+                  onClick={() => router.push("/units")}
+                >
+                  Back
+                </Button>
+            <Button variant="contained" size="large" onClick={handleDBChange}  sx={{ my: 1, ml: 5 }}>
               Save
             </Button>
+            
             {isIncompleteForm && (
               <Dialog
                 open={isIncompleteForm}

@@ -5,7 +5,11 @@ import { Notifications as NotificationsIcon, subject } from '@mui/icons-material
 import supabase from "../../config/supabaseClient";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PropertyIcon from "@mui/icons-material/Category";
+// import NotificationsIcon from "@mui/icons-material/Notifications";
+// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
+import Head from "next/head";
 
 const notificationsData = [
   { id: 1, subject: "An update on your request has been made", from: "CMC", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit..." },
@@ -57,24 +61,58 @@ const NotificationsCMCPage = () => {
 
   return (
     <div>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Notifications
-          </Typography>
-          <IconButton color="inherit" onClick={goToDashboard} aria-label="dashboard">
-            {/* dashboard Button */}
-            <PropertyIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={goToProfile} aria-label="profile">
-            {/* Profile Button */}
-            <AccountCircleIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+      <Head>
+        <script
+          id="sc-script"
+          src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
+        />
+      </Head>
+      <AppBar position="absolute">
+            <Toolbar sx={{ pr: "24px" }}>
+              {/* <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                // onClick={toggleDrawer}
+                sx={{
+                  marginRight: "36px",
+                  ...(open && { display: "none" }),
+                }}
+              >
+                <MenuIcon />
+              </IconButton> */}
+              <Typography
+                component="h1"
+                variant="h6"
+                color="inherit"
+                noWrap
+                sx={{ flexGrow: 1 }}
+              >
+                CondoMAXium
+              </Typography>
+              <Typography
+                component="h2"
+                variant="h6"
+                color="inherit"
+                noWrap
+                onClick={() => router.push("/dashboardCMC")}
+                // sx={{ flexGrow: 1 }}
+              >
+                Dashboard
+              </Typography>
+              <IconButton color="inherit">
+                <Badge color="secondary">
+                  <NotificationsIcon  onClick={() => router.push("/notifications-cmc")}/>
+                </Badge>
+              </IconButton>
+              <IconButton aria-label="profile" color="inherit" onClick={() => router.push("/profile")}>
+                <AccountCircleIcon />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
 
-      <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)' }}>
-        <Box sx={{ width: '20%', borderRight: 1, borderColor: 'divider' }}>
+      <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)', py: 4 }}>
+        <Box sx={{ width: '20%', borderRight: 1, borderColor: 'divider', py: 4 }}>
           <List>
             {notificationsData.map(notification => (
               <ListItem placeholder="Select Notification" key={notification.id} button onClick={() => handleNotificationSelect(notification)}>
@@ -84,7 +122,7 @@ const NotificationsCMCPage = () => {
           </List>
         </Box>
 
-        <Box sx={{ flex: 1, padding: '20px' }}>
+        <Box sx={{ flex: 1, padding: '20px', py: 6 }}>
           {selectedNotification ? (
             <div>
               {/* Can add other attributes like type or status from request table */}
