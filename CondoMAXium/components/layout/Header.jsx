@@ -49,7 +49,7 @@ const Header = () => {
         } else if (role === 'cmc') {
             window.location.href = '/dashboardCMC';
         } else {
-            window.location.href = '/home'; // Default navigation
+            window.location.href = '/dashboard'; // Default navigation
         }
     };
 
