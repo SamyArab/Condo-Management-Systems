@@ -276,78 +276,57 @@ function UserRequests() {
               overflow: "auto",
             }}
           >
-
-            <IconButton aria-label="close drawer" onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <List component="nav">
-            {/* Your existing list items */}
-            <ListItem
-              button
-              aria-label="add request"
-              onClick={() => router.push("/add-request")}
-            >
-              <ListItemIcon>
-                <AddIcon /> {/* Icon for adding */}
-              </ListItemIcon>
-              <ListItemText primary="Add Request" />
-            </ListItem>
-          </List>
-        </Drawer>
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-          }}
-        >
-
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={3}>
-                <Box
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="subtitle1">Subject</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={3}>
-                <Box
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="subtitle1">Type</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={3}>
-                <Box
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="subtitle1">Assigned To</Typography>
-                </Box>
-
+            <Toolbar />
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={3}>
+                  <Box
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="subtitle1">Subject</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={3}>
+                  <Box
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="subtitle1">Type</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={3}>
+                  <Box
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="subtitle1">Assigned To</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={3}>
+                  <Box
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="subtitle1">Status</Typography>
+                  </Box>
+                </Grid>
               </Grid>
 
               <Divider />
