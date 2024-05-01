@@ -14,44 +14,33 @@ const notificationsData = [
   // REPLACE WITH ACTUAL BACKEND
 ];
 
-const NotificationsPage = () => {
+const NotificationsCMCPage = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [notificationsData, setNotificationsData] = useState([]);
   const router = useRouter();
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     fetchNotifications();
   }, []);
 
   const fetchNotifications = async () => {
-    try{
+    try {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      setUserData(user);
     }
-    catch(error){
+    catch (error) {
       console.error("Error fetching user: ", error.message);
     }
-    try{
-        if (user.position == "daily_op"){
-            let { data: notifications, error } = await supabase
-            .from('requests')
-            .select('*')
-            .eq('type', "Maintenane")
-            .or('type', 'eq', 'Access')
-            .or('type', 'eq', 'Renovation')
-            .or('type', 'eq', 'Violation');
-            setNotificationsData(notifications);
-        }
-        else{
-            let { data: notifications, error } = await supabase
-            .from('requests')
-            .select('*')
-            .eq('type', );
-            setNotificationsData(notifications);
-        }
+    try {
+      let { data: notifications, error } = await supabase
+        .from('requests')
+        .select('*');
+      setNotificationsData(notifications);
     }
-    catch(error){
+    catch (error) {
       console.error("Error fetching notifications: ", error.message);
     }
   };
@@ -61,12 +50,10 @@ const NotificationsPage = () => {
   };
   const goToProfile = () => {
     router.push("/profile");
-  };  
-  const goToDashboard = () => {
-    router.push("/dashboard");
   };
-
-
+  const goToDashboard = () => {
+    router.push("/dashboardCMC");
+  };
 
   return (
     <div>
@@ -75,19 +62,13 @@ const NotificationsPage = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Notifications
           </Typography>
-          <IconButton color="inherit">
-            {/* Show number of notifications */}
-            <Badge badgeContent={notificationsData.length} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <IconButton color="inherit" onClick={goToDashboard}>
+          <IconButton color="inherit" onClick={goToDashboard} aria-label="dashboard">
             {/* dashboard Button */}
-              <PropertyIcon />
+            <PropertyIcon />
           </IconButton>
-          <IconButton color="inherit" onClick={goToProfile}>
+          <IconButton color="inherit" onClick={goToProfile} aria-label="profile">
             {/* Profile Button */}
-              <AccountCircleIcon />
+            <AccountCircleIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -97,7 +78,7 @@ const NotificationsPage = () => {
           <List>
             {notificationsData.map(notification => (
               <ListItem placeholder="Select Notification" key={notification.id} button onClick={() => handleNotificationSelect(notification)}>
-                <ListItemText primary={notification.subject} secondary={notification.from} />
+                <ListItemText primary={notification.subject} secondary={notification.user} />
               </ListItem>
             ))}
           </List>
@@ -108,7 +89,7 @@ const NotificationsPage = () => {
             <div>
               {/* Can add other attributes like type or status from request table */}
               <Typography variant="h4">{selectedNotification.subject}</Typography>
-              <Typography variant="subtitle1">From: {selectedNotification.from}</Typography><br></br>
+              <Typography variant="subtitle1">From: {selectedNotification.user}</Typography><br></br>
               <Typography>{selectedNotification.description}</Typography>
             </div>
           ) : (
@@ -120,4 +101,4 @@ const NotificationsPage = () => {
   );
 };
 
-export default NotificationsPage;
+export default NotificationsCMCPage;
