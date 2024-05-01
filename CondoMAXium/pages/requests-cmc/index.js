@@ -18,6 +18,7 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -210,7 +211,7 @@ const UserRequests = () => {
       <ThemeProvider theme={defaultTheme}>
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
-          <AppBar position="absolute" open={open}>
+          <AppBar position="absolute" >
             <Toolbar sx={{ pr: "24px" }}>
               <IconButton
                 edge="start"
@@ -233,10 +234,23 @@ const UserRequests = () => {
               >
                 All Requests
               </Typography>
+              <Typography
+                component="h2"
+                variant="h6"
+                color="inherit"
+                noWrap
+                onClick={() => router.push("/dashboardCMC")}
+                // sx={{ flexGrow: 1 }}
+              >
+                Dashboard
+              </Typography>
               <IconButton color="inherit">
-                <Badge badgeContent={4} color="secondary">
-                  <NotificationsIcon />
+                <Badge color="secondary">
+                <NotificationsIcon  onClick={() => router.push("/notifications-cmc")}/>
                 </Badge>
+              </IconButton>
+              <IconButton aria-label="profile" color="inherit" onClick={() => router.push("/profile")}>
+                <AccountCircleIcon />
               </IconButton>
             </Toolbar>
           </AppBar>
@@ -256,16 +270,16 @@ const UserRequests = () => {
             <Divider />
             <List component="nav">
               {/* Your existing list items */}
-              <ListItem
+              {/* <ListItem
                 button
                 aria-label="add request"
                 onClick={() => router.push("/add-request")}
               >
                 <ListItemIcon>
-                  <AddIcon /> {/* Icon for adding */}
+                  <AddIcon /> Icon for adding
                 </ListItemIcon>
                 <ListItemText primary="Add Request" />
-              </ListItem>
+              </ListItem> */}
             </List>
           </Drawer>
           <Box

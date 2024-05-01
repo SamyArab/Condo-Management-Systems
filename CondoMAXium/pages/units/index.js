@@ -23,10 +23,16 @@ import {
   TableHead,
   TableRow,
   Typography,
+  AppBar,
+  Toolbar, 
+  IconButton,
+  Badge
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import supabase from "../../config/supabaseClient";
 import styles from "../../styles/units.module.css";
 
@@ -207,6 +213,49 @@ const CMCUnits = () => {
       </Head>
       {/* <Header></Header> */}
       {/* <Container className="units-container" maxWidth={5}> */}
+      <AppBar position="absolute">
+            <Toolbar sx={{ pr: "24px" }}>
+              {/* <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                // onClick={toggleDrawer}
+                sx={{
+                  marginRight: "36px",
+                  ...(open && { display: "none" }),
+                }}
+              >
+                <MenuIcon />
+              </IconButton> */}
+              <Typography
+                component="h1"
+                variant="h6"
+                color="inherit"
+                noWrap
+                sx={{ flexGrow: 1 }}
+              >
+                CondoMAXium
+              </Typography>
+              <Typography
+                component="h2"
+                variant="h6"
+                color="inherit"
+                noWrap
+                onClick={() => router.push("/dashboardCMC")}
+                // sx={{ flexGrow: 1 }}
+              >
+                Dashboard
+              </Typography>
+              <IconButton color="inherit">
+                <Badge color="secondary">
+                  <NotificationsIcon  onClick={() => router.push("/notifications-cmc")}/>
+                </Badge>
+              </IconButton>
+              <IconButton aria-label="profile" color="inherit" onClick={() => router.push("/profile")}>
+                <AccountCircleIcon />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
       <Box className={styles.outsideContainer}>
         <Container
           className={styles.unitsContainer}
