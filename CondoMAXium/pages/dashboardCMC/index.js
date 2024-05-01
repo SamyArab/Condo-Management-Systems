@@ -21,8 +21,9 @@ import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import supabase from "../../config/supabaseClient";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AddIcon from "@mui/icons-material/Add";
 
-import { useRouter } from "next/router";
+
 
 
 // Define width of drawer
@@ -120,7 +121,7 @@ export default function PropertyList() {
         setOpen(!open);
     };
 
-    const router = useRouter();
+
 
     // Function to render a single property
     const renderProperty = (property) => {
@@ -281,6 +282,16 @@ export default function PropertyList() {
                         </IconButton>
                     </Toolbar>
                     <Divider />
+                    {/* Add Property Button */}
+                    <Button
+                        variant="text"
+                        color="inherit"
+                        onClick={() => router.push("/add-property")}
+                        startIcon={<AddIcon />}
+                        sx={{ textTransform: 'none', justifyContent: 'flex-start' }}
+                    >
+                        Add Property
+                    </Button>
                 </Drawer>
                 <Box
                     component="main"

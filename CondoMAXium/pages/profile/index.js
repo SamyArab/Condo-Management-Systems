@@ -55,7 +55,7 @@ const ProfilePage = () => {
         }
 
         // Fetch phone number from units table only if role is not 'cmc'
-        if (roleData.roleOfUser !== 'cmc') {
+        if (roleData.roleOfUser === 'owner') {
           const { data: unitData, error: unitError } = await supabase
               .from("units")
               .select("owner_phone")
@@ -69,6 +69,22 @@ const ProfilePage = () => {
             name: profileData[0].first_name.concat(" ", profileData[0].last_name),
             email: userEmail,
             phone: unitData[0].owner_phone,
+          });
+        }
+        else if (roleData.roleOfUser === 'tenant') {
+          const { data: unitData, error: unitError } = await supabase
+              .from("units")
+              .select("tenant_phone")
+              .eq("tenant_email", userEmail);
+
+          if (unitError || !unitData.length) {
+            throw new Error("Tenant phone number not found.");
+          }
+
+          setUserObject({
+            name: profileData[0].first_name.concat(" ", profileData[0].last_name),
+            email: userEmail,
+            phone: unitData[0].tenant_phone,
           });
         } else {
           setUserObject({

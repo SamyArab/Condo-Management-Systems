@@ -71,12 +71,10 @@ export default function SignInSide() {
       const role = profiles.roleOfUser;
 
       // Redirect user based on their role
-      if (role === "owner") {
+      if (role === "owner" || role === "tenant") {
         router.push("/dashboard");
       } else if (role === "cmc") {
         router.push("/dashboardCMC");
-      } else {
-        // Handle other roles if needed
       }
     } catch (error) {
       // Old code from before

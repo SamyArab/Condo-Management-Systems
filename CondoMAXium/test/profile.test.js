@@ -2,85 +2,118 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import ProfilePage from '../pages/profile/index';
 import supabase from '../config/supabaseClient';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
+import '@testing-library/jest-dom';
 
-// Mocking supabase
-jest.mock('../config/supabaseClient', () => ({
-    auth: {
-        getUser: jest.fn()
-    },
-    from: jest.fn(() => ({
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn()
-    }))
+const mockedStyles = {};
+jest.mock('../styles/profile.module.css', () => ({
+    ...mockedStyles,
 }));
 
-const mockUser = {
-    user: {
-        email: 'test@example.com'
+// mock next/router
+jest.mock('next/router', () => ({
+    useRouter: jest.fn().mockReturnValue({
+        route: '/',
+        pathname: '',
+        query: '',
+        asPath: '',
+    }),
+}));
+
+
+
+// Mocking supabase
+// Mock the supabase client module
+jest.mock('../config/supabaseClient', () => ({
+    auth: {
+        getUser: jest.fn().mockResolvedValue({
+            data: {
+                user: { id: 'user123' },
+            },
+        }),
     },
-    data: {
-        user: {
-            email: 'test@example.com'
-        }
-    },
-    error: null
-};
-
-const mockProfileData = {
-    data: [{ first_name: "John", last_name: "Doe", phone: "1234567890" }],
-    error: null
-};
-
-const mockRoleData = {
-    data: { roleOfUser: 'owner' },
-    error: null
-};
-
-const mockUnitData = {
-    data: [{ owner_phone: "1234567890" }],
-    error: null
-};
-
+    from: () => ({
+        select: () => ({
+            eq: () => ({
+                data: [
+                    {
+                        email: 'test@example.com',
+                        name: 'John Doe',
+                        phone: '123456789',
+                    },
+                ],
+                error: null,
+            }),
+        }),
+    }),
+}));
+// Cleanup mocks after each test
+afterEach(() => {
+    jest.clearAllMocks();
+});
 describe('ProfilePage', () => {
-    beforeEach(() => {
-        supabase.auth.getUser.mockResolvedValue(mockUser);
-        supabase.from().select().eq().single.mockResolvedValue(mockRoleData);
-        supabase.from().select().eq.mockResolvedValue(mockProfileData);
-        supabase.from().select().eq.mockResolvedValue(mockUnitData);
-    });
+
 
     test('renders ProfilePage and loads user data', async () => {
-        render(<Router><ProfilePage /></Router>);
+        render( <ProfilePage />);
 
-        await waitFor(() => expect(supabase.auth.getUser).toHaveBeenCalledTimes(1));
-        expect(screen.getByText(/John Doe/i)).toBeInTheDocument();
-        expect(screen.getByText(/test@example.com/i)).toBeInTheDocument();
-        expect(screen.getByText(/1234567890/i)).toBeInTheDocument(); // Phone number should appear for 'owner'
+        await waitFor(() => expect(screen.getByText('Joe Doe')).toBeInTheDocument());
+
     });
 
     test('handles errors during data fetching', async () => {
         supabase.auth.getUser.mockResolvedValue({ error: { message: 'Error fetching user' }, data: null });
-        render(<Router><ProfilePage /></Router>);
+        render(
+            <MemoryRouter>
+                <ProfilePage />
+            </MemoryRouter>
+        );
 
         await waitFor(() => expect(screen.getByText(/Error:/i)).toBeInTheDocument());
     });
 
     test('does not display phone for CMC role', async () => {
         supabase.from().select().eq().single.mockResolvedValue({ data: { roleOfUser: 'cmc' }, error: null });
-        render(<Router><ProfilePage /></Router>);
+        render(
+            <MemoryRouter>
+                <ProfilePage />
+            </MemoryRouter>
+        );
 
         await waitFor(() => {
             expect(screen.queryByText(/1234567890/i)).toBeNull(); // Phone number should not appear for 'cmc'
         });
     });
 
-    test('handles logout', async () => {
-        render(<Router><ProfilePage /></Router>);
+    test('renders ProfilePage and loads user data', async () => {
+        render(
+            <MemoryRouter>
+                <ProfilePage />
+            </MemoryRouter>
+        );
 
-        const logoutButton = screen.getByRole('button', { name: /logout/i });
+        // Wait for the data to be loaded
+        await waitFor(() => expect(supabase.auth.getUser).toHaveBeenCalledTimes(1));
+
+        // Check if the profile data is displayed correctly
+        expect(screen.getByText(/John Doe/i)).toBeInTheDocument();
+        expect(screen.getByText(/test@example.com/i)).toBeInTheDocument();
+        expect(screen.getByText(/1234567890/i)).toBeInTheDocument(); // Phone number should appear
+    });
+
+    test('handles logout', async () => {
+        render(<ProfilePage />);
+
+        // Wait for the ProfilePage to render before locating the logout button
+        await waitFor(() => expect(screen.getByText('Logout')).toBeInTheDocument());
+
+        // Now find the logout button by its text content
+        const logoutButton = screen.getByText('Logout');
+
         fireEvent.click(logoutButton);
+
+        // Wait for the "You have been logged out" message to appear
         await waitFor(() => expect(screen.getByText(/You have been logged out/i)).toBeInTheDocument());
     });
+
 });

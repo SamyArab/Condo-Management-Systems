@@ -130,18 +130,39 @@ export default function Dashboard() {
           throw new Error("User email not found");
         }
 
-        // Fetch units associated with the user's email
-        const { data, error } = await supabase
-            .from("units")
-            .select("*")
-            .eq("emailUnit", userEmail); // Adjust the column name as per your database schema
-        if (error) {
-          throw error;
+        const { data: profiles, error: profileError } = await supabase
+            .from("profiles")
+            .select("roleOfUser")
+            .eq("emailProfile", userEmail)
+            .single();
+
+        if (profileError) {
+          throw profileError;
         }
 
-        setUnits(data);
-        if (data.length > 0) {
-          setSelectedUnit(data[0]); // Initialize selectedUnit with the first unit
+        const role = profiles.roleOfUser;
+
+        // Fetch units based on user role
+        let { data: fetchedUnits, error: unitError } = {};
+        if (role === "tenant") {
+          ({ data: fetchedUnits, error: unitError } = await supabase
+              .from("units")
+              .select("*")
+              .eq("tenant_email", userEmail));
+        } else if (role === "owner") {
+          ({ data: fetchedUnits, error: unitError } = await supabase
+              .from("units")
+              .select("*")
+              .eq("emailUnit", userEmail));
+        }
+
+        if (unitError) {
+          throw unitError;
+        }
+
+        setUnits(fetchedUnits || []);
+        if (fetchedUnits && fetchedUnits.length > 0) {
+          setSelectedUnit(fetchedUnits[0]);
         }
       } catch (error) {
         console.error("Error fetching units:", error.message);
@@ -150,6 +171,7 @@ export default function Dashboard() {
 
     fetchUnits();
   }, []);
+
 
 
   // Handler function to navigate to the profile page
@@ -225,17 +247,7 @@ export default function Dashboard() {
                   </ListItem>
               ))}
               <Divider sx={{ my: 1 }} />
-              {/* Add property button */}
-              <ListItem
-                  button
-                  aria-label="add property"
-                  onClick={() => router.push("/add-property")}
-              >
-                <ListItemIcon>
-                  <AddIcon />
-                </ListItemIcon>
-                <ListItemText primary="Add Property" />
-              </ListItem>
+
             </List>
           </Drawer>
           <Box
