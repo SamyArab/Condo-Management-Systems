@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogActions,
 } from "@mui/material";
+import Head from "next/head";
 
 const AddPropertyForm = () => { 
   const [propertyName, setPropertyName] = useState("");
@@ -73,6 +74,13 @@ const AddPropertyForm = () => {
   const router = useRouter();
 
   return (
+    <>
+      <Head>
+        <script
+          id="sc-script"
+          src="https://cdn.smartcat-proxy.com/60a29c2d1d4341e38fbb9d3f4a3bef3d/script-v1/__translator.js?hash=7e6e37c59d0bf7e0a6f687b25f488757"
+        />
+      </Head>
       <div style={{ paddingTop: "140px", paddingBottom: "40px" }}>
         {" "}
         {/* Add padding top and bottom */}
@@ -84,91 +92,95 @@ const AddPropertyForm = () => {
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField
-                    name="propertyName"
-                    label="Property Name"
-                    value={propertyName}
-                    onChange={(event) => setPropertyName(event.target.value)}
-                    fullWidth
-                    margin="normal"
+                  name="propertyName"
+                  label="Property Name"
+                  value={propertyName}
+                  onChange={(event) => setPropertyName(event.target.value)}
+                  fullWidth
+                  margin="normal"
                 />
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                    name="yearBuilt"
-                    label="Year Built"
-                    value={yearBuilt}
-                    onChange={(event) => setYearBuilt(event.target.value)}
-                    fullWidth
-                    margin="normal"
+                  name="yearBuilt"
+                  label="Year Built"
+                  value={yearBuilt}
+                  onChange={(event) => setYearBuilt(event.target.value)}
+                  fullWidth
+                  margin="normal"
                 />
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                    name="unitCount"
-                    label="Unit Count"
-                    value={unitCount}
-                    onChange={(event) => setUnitCount(event.target.value)}
-                    fullWidth
-                    margin="normal"
+                  name="unitCount"
+                  label="Unit Count"
+                  value={unitCount}
+                  onChange={(event) => setUnitCount(event.target.value)}
+                  fullWidth
+                  margin="normal"
                 />
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                    name="province"
-                    label="Province"
-                    value={province}
-                    onChange={(event) => setProvince(event.target.value)}
-                    fullWidth
-                    margin="normal"
+                  name="province"
+                  label="Province"
+                  value={province}
+                  onChange={(event) => setProvince(event.target.value)}
+                  fullWidth
+                  margin="normal"
                 />
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                    name="parkingCount"
-                    label="Parking Count"
-                    value={parkingCount}
-                    onChange={(event) => setParkingCount(event.target.value)}
-                    fullWidth
-                    margin="normal"
+                  name="parkingCount"
+                  label="Parking Count"
+                  value={parkingCount}
+                  onChange={(event) => setParkingCount(event.target.value)}
+                  fullWidth
+                  margin="normal"
                 />
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                    name="postalCode"
-                    label="Postal Code"
-                    value={postalCode}
-                    onChange={(event) => setPostalCode(event.target.value)}
-                    fullWidth
-                    margin="normal"
+                  name="postalCode"
+                  label="Postal Code"
+                  value={postalCode}
+                  onChange={(event) => setPostalCode(event.target.value)}
+                  fullWidth
+                  margin="normal"
                 />
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                    name="lockerCount"
-                    label="Locker Count"
-                    value={lockerCount}
-                    onChange={(event) => setLockerCount(event.target.value)}
-                    fullWidth
-                    margin="normal"
+                  name="lockerCount"
+                  label="Locker Count"
+                  value={lockerCount}
+                  onChange={(event) => setLockerCount(event.target.value)}
+                  fullWidth
+                  margin="normal"
                 />
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                    name="street"
-                    label="Street"
-                    value={street}
-                    onChange={(event) => setStreet(event.target.value)}
-                    fullWidth
-                    margin="normal"
+                  name="street"
+                  label="Street"
+                  value={street}
+                  onChange={(event) => setStreet(event.target.value)}
+                  fullWidth
+                  margin="normal"
                 />
               </Grid>
             </Grid>
-            <Grid container justifyContent="center" style={{ marginTop: "20px" }}>
+            <Grid
+              container
+              justifyContent="center"
+              style={{ marginTop: "20px" }}
+            >
               <Button
-                  type="submit"
-                  variant="contained"
-                  color="inherit"
-                  onClick={() => router.push("/profile")}    //where is onClick={handleOpen}
+                type="submit"
+                variant="contained"
+                color="inherit"
+                onClick={() => router.push("/profile")} //where is onClick={handleOpen}
               >
                 Register Property
               </Button>
@@ -188,6 +200,7 @@ const AddPropertyForm = () => {
         {/*  </DialogActions>*/}
         {/*</Dialog>*/}
       </div>
+    </>
   );
 };
 
