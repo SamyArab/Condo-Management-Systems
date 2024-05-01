@@ -131,25 +131,30 @@ const UserRequests = () => {
     const paddingVertical = 1;
     const minWidth = 100;
 
-    return (
-      <Box
-        sx={{
-          ...statusStyles[status],
-          borderRadius: "20px", // Rounded corners
-          alignItems: "center",
-          justifyContent: "center",
-          pX: paddingHorizontal,
-          pY: paddingVertical,
-          minWidth: minWidth,
-          display: "inline-flex", // Make the box wrap its content
-        }}
-      >
-        <Typography variant="body2" sx={{ color: "white" }}>
-          {status}
-        </Typography>
-      </Box>
-    );
-  }
+    // function StatusIndicator({ status }) {
+    //     const paddingHorizontal = 2;
+    //     const paddingVertical = 1;
+    //     const minWidth = 100;
+
+    //     return (
+    //         <Box
+    //             sx={{
+    //                 ...statusStyles[status],
+    //                 borderRadius: '20px', // Rounded corners
+    //                 alignItems: "center",
+    //                 justifyContent: "center",
+    //                 pX: paddingHorizontal,
+    //                 pY: paddingVertical,
+    //                 minWidth: minWidth,
+    //                 display: 'inline-flex', // Make the box wrap its content
+    //             }}
+    //         >
+    //             <Typography variant="body2" sx={{ color: 'white' }}>
+    //                 {status}
+    //             </Typography>
+    //         </Box>
+    //     );
+    // }
 
   const toggleDrawer = () => {
     setOpen(!open);

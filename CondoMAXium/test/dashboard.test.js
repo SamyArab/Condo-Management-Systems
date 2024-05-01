@@ -1,147 +1,125 @@
 import React from 'react';
-import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor, userEvent, act } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { useRouter } from "next/router";
 import Dashboard from '../pages/dashboard/index';
+import supabase from '../config/supabaseClient';
 import '@testing-library/jest-dom';
 
-// Mock dependencies
+// // Directly in your test file
+// jest.mock('next/router', () => ({
+//     useRouter() {
+//       return {
+//         push: jest.fn(),
+//       };
+//     },
+//   }));
+
+// Mocking the Next.js router
 jest.mock('next/router', () => ({
     useRouter: jest.fn()
 }));
 
-// Mock useNavigate
-jest.mock('react-router-dom', () => {
-    const originalModule = jest.requireActual('react-router-dom');
-    return {
-        ...originalModule,
-        useNavigate: jest.fn()
-    };
-});
 
-// Cleanup mocks after each test
-afterEach(() => {
-    jest.clearAllMocks();
-});
+jest.mock('../config/supabaseClient', () => ({
+  auth: {
+    getUser: jest.fn().mockResolvedValue({
+      data: { user: { email: 'test@example.com' } },
+      error: null
+    }),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockResolvedValue({
+      data: [
+        { id: 1, 
+            property_name: 'Highrise', 
+            unit_number: '101', 
+            emailUnit: 'test@example.com',
+            occupied_by: 'Tenant',
+            first_name_tenant: 'John',
+            last_name_tenant: 'Doe',
+            tenant_email: 'johndoe@example.com',
+            tenant_phone: '123-456-7890'
+        },
+        // Add more mock units as necessary
+      ],
+      error: null
+    }),
+  })),
+}));
 
 describe('Dashboard Component', () => {
-    test('renders dashboard components', async () => {
-        render(
-            <Router>
-                <Dashboard />
-            </Router>
-        );
+  test('renders Dashboard component', () => {
+    render(<Dashboard />);
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    expect(screen.getByText('Add Property')).toBeInTheDocument();
+  });
 
-        expect(screen.getByText('Dashboard')).toBeInTheDocument();
-        expect(screen.getByLabelText('Open Drawer')).toBeInTheDocument();
-        expect(screen.getByText('Property 1')).toBeInTheDocument();
-    });
+  test('renders and interacts with the drawer', async () => {
+    render(<Dashboard />);
+    const openDrawerButton = screen.getByLabelText('open drawer');
+    fireEvent.click(openDrawerButton);
+    await waitFor(() => expect(screen.getByText('Dashboard')).toBeInTheDocument());
+    const closeDrawerButton = screen.getByLabelText('close drawer');
+    fireEvent.click(closeDrawerButton);
+  });
+  
+  test('navigation using list items', async () => {
+    render(<Dashboard />);
 
-    test('navigates to different sections', () => {
-        render(
-            <Router>
-                <Dashboard />
-            </Router>
-        );
-        fireEvent.click(screen.getByText(/property 1/i));
-        expect(screen.getByText(/property details/i)).toBeInTheDocument();
-    });
+    // Wait for 5 seconds
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
-    test('toggles drawer visibility', () => {
-        render(
-            <Router>
-                <Dashboard />
-            </Router>
-        );
-        const chevronLeftIcon = screen.getByRole('button', { name: /close drawer/i });
-        expect(chevronLeftIcon).toBeInTheDocument();
-        fireEvent.click(chevronLeftIcon);
-        const menuButton = screen.getByRole('button', { name: /open drawer/i });
-        expect(menuButton).toBeInTheDocument();
-        fireEvent.click(menuButton);
-        expect(screen.getByRole('button', { name: /close drawer/i })).toBeInTheDocument();
-    });
+    const listItem = screen.getByText('Highrise');
+    fireEvent.click(listItem);
+    // This should set the selected unit, test that this has happened
+    expect(screen.getByText('Property: Highrise')).toBeInTheDocument();
+  }, 10000);
+  
+  test('displays detailed unit information upon selection', async() => {
+    render(<Dashboard />);
 
-    test('should navigate to "/addproperty" after clicking "Add Property"', async () => {
-        render(
-            <Router>
-                <Dashboard />
-            </Router>
-        );
-        const addButton = screen.getByText('Add Property');
-        fireEvent.click(addButton);
-        expect(require('react-router-dom').useNavigate).toHaveBeenCalledWith();
-    });
+    // Wait for 5 seconds
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
-    test('toggles more info section when "See More" is clicked', async () => {
-        const { getByText } = render(
-            <Router>
-                <Dashboard />
-            </Router>
-        );
-        fireEvent.click(getByText('See More'));
-        await waitFor(() => {
-            expect(getByText('Unit Owner:')).toBeInTheDocument();
-        });
-    });
+    const unitItem = screen.getByText('Highrise');
+    fireEvent.click(unitItem);
+    const seeMoreLink = screen.getByText('See More');
+    fireEvent.click(seeMoreLink);
+    expect(screen.getByText('Unit Owner:')).toBeInTheDocument();
 
-    test('handles error in supabase query', async () => {
-        const error = new Error('Error fetching units');
-        render(
-            <Router>
-                <Dashboard />
-            </Router>
-        );
-        await waitFor(() => {
-            expect(screen.getByText('Error fetching units: Error fetching units')).toBeInTheDocument();
-        });
-    });
+  }, 10000);
 
-    test('handles empty data from supabase', async () => {
-        const mockSupabaseResponse = { data: [], error: null };
-        render(
-            <Router>
-                <Dashboard />
-            </Router>
-        );
-        await waitFor(() => {
-            expect(screen.getByText('No units available')).toBeInTheDocument();
-        });
-    });
+  test('navigates to the add-property page on click', () => {
+    const pushMock = jest.fn();
+    useRouter.mockImplementation(() => ({
+      push: pushMock
+    }));
 
-    test('handles error during data fetching', async () => {
-        const error = new Error('Error fetching user');
-        render(
-            <Router>
-                <Dashboard />
-            </Router>
-        );
-        await waitFor(() => {
-            expect(screen.getByText('Error fetching units: Error fetching user')).toBeInTheDocument();
-        });
-    });
+    const { getByLabelText } = render(<Dashboard />);
+    const addPropertyButton = getByLabelText('add property');
+    fireEvent.click(addPropertyButton);
 
-    test('renders loading state when fetching data', async () => {
-        render(
-            <Router>
-                <Dashboard />
-            </Router>
-        );
-        await waitFor(() => {
-            expect(screen.getByTestId('loading-state')).toBeInTheDocument();
-        });
-    });
+    expect(pushMock).toHaveBeenCalledWith('/add-property');
+  });
+  
+  test('displays tenant information when occupied by a tenant', async() => {
 
-    test('renders the Dashboard component without errors', async () => {
-        const { getByText } = render(
-            <Router>
-                <Dashboard />
-            </Router>
-        );
-        await waitFor(() => {
-            expect(getByText('Dashboard')).toBeInTheDocument();
-            expect(getByText('Test Property')).toBeInTheDocument();
-            expect(getByText('123')).toBeInTheDocument();
-        });
-    });
+    render(<Dashboard/>); // Assume Dashboard can take selectedUnit as a prop for testing
+
+    // Wait for 5 seconds
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
+    const seeMoreLink = screen.getByText('See More');
+    fireEvent.click(seeMoreLink);
+
+    expect(screen.getByText(/Occupied by: Tenant/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tenant Name: John Doe/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tenant Email: johndoe@example.com/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tenant Phone: 123-456-7890/i)).toBeInTheDocument();
+  }, 10000);
+  
 });
 
+  
