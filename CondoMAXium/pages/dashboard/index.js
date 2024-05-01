@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useRouter } from "next/router";
+import { useState, useEffect } from 'react';
 
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -30,6 +31,7 @@ import supabase from "../../config/supabaseClient";
 import Head from "next/head";
 
 function Copyright(props) {
+  
   return (
     <Typography
       variant="body2"
@@ -97,6 +99,8 @@ const Drawer = styled(MuiDrawer, {
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
+  
+  const [notificationCount, setNotificationCount] = useState('');
   const [open, setOpen] = React.useState(true);
   const [showMoreInfo, setShowMoreInfo] = React.useState(false); // Define showMoreInfo state variable
   const router = useRouter();
@@ -123,6 +127,21 @@ export default function Dashboard() {
         const {
           data: { user },
         } = await supabase.auth.getUser();
+
+        const { data: RequestData, error:RequestError } = await supabase
+        .from('requests')
+        .select('status')
+        .eq('user', user.email)
+        .eq('status', 'Open');
+
+        if (error) {
+          console.log('Error: ', RequestError);
+        } else {
+          console.log('Returned data: ', RequestData);
+          console.log(`The email ${user.email} exists in ${RequestData.length} row(s) with status 'Open'.`);
+          setNotificationCount(RequestData.length);
+        }
+        
 
         // Extract user email
         const userEmail = user?.email;
@@ -177,6 +196,9 @@ export default function Dashboard() {
   const goToProfile = () => {
     router.push("/profile");
   };
+  const goToNotifications = () => {
+    router.push("/notifications");
+  };
 
   return (
     <>
@@ -216,8 +238,8 @@ export default function Dashboard() {
               >
                 Dashboard
               </Typography>
-              <IconButton color="inherit">
-                <Badge badgeContent={4} color="secondary">
+              <IconButton color="inherit" onClick={goToNotifications}>
+                <Badge badgeContent={notificationCount} color="secondary">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>

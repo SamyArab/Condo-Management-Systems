@@ -74,8 +74,9 @@ const Drawer = styled(MuiDrawer, {
 
 // PropertyList component
 export default function PropertyList() {
-  const [open, setOpen] = React.useState(true);
-  const [properties, setProperties] = React.useState([]); // State to store fetched properties
+  
+    const [open, setOpen] = React.useState(true);
+    const [properties, setProperties] = React.useState([]); // State to store fetched properties
 
   // Fetch properties from the database on component mount
   React.useEffect(() => {
@@ -104,6 +105,9 @@ export default function PropertyList() {
       } catch (error) {
         console.error("Error fetching properties:", error.message);
       }
+    };
+    const goToNotificationCMC = () => {
+        router.push("/notifications-cmc");
     };
 
     fetchProperties();
