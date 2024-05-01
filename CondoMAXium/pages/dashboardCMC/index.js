@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useRouter } from "next/router";
+
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
@@ -134,7 +135,6 @@ export default function PropertyList() {
       // Navigate to add amenities page
       console.log(`Navigating to add amenities for ${property.name}`);
     };
-
     // Handle click event for maintenance
     const handleMaintenanceClick = () => {
       // Navigate to maintenance page
@@ -226,7 +226,8 @@ export default function PropertyList() {
                 aria-label="Add Amenities"
                 onClick={handleAmenitiesClick}
                 sx={{ minWidth: 120, marginBottom: "8px", width: "100%" }}
-              >
+                name="Add Amenities" // Set the name attribute
+                >
                 Add Amenities
               </Button>
               <div style={{ marginBottom: "8px" }} />{" "}
@@ -236,6 +237,7 @@ export default function PropertyList() {
                 color="secondary"
                 onClick={handleMaintenanceClick}
                 sx={{ minWidth: 120, width: "100%" }}
+                name="Maintenance" // Set the name attribute
               >
                 Maintenance
               </Button>
@@ -286,11 +288,11 @@ export default function PropertyList() {
                 Dashboard CMC
               </Typography>
               <IconButton color="inherit">
-                <Badge badgeContent={4} color="secondary">
+                <Badge aria-label="notification" badgeContent={4} color="secondary">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
-              <IconButton color="inherit" onClick={goToProfile}>
+              <IconButton aria-label="profile" color="inherit" onClick={goToProfile}>
                 <AccountCircleIcon />
               </IconButton>
             </Toolbar>
