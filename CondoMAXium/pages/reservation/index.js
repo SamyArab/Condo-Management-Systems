@@ -21,6 +21,7 @@ import Paper from "@mui/material/Paper";
 import GymRoom from "../../public/gymroom.jpg";
 import RoofTopDeck from "../../public/rooftop_deck.jpeg";
 import SpaRoom from "../../public/sparoom.jpg";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle"; 
 
 import { useRouter } from "next/router";
 import "../../styles/reservation.module.css";
